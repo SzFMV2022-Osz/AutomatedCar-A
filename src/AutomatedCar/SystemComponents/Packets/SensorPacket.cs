@@ -1,17 +1,27 @@
-﻿namespace AutomatedCar.SystemComponents.Packets
+﻿// <copyright file="SensorPacket.cs" company="TEAM-A2">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace AutomatedCar.SystemComponents.Packets
 {
     using System.Collections.Generic;
     using AutomatedCar.Models;
     using ReactiveUI;
 
+    /// <summary>
+    /// An implementation of ISensorPacket.
+    /// </summary>
     internal class SensorPacket : ReactiveObject, ISensorPacket
     {
-        private List<WorldObject> relevantWorldObjs;
+        private IEnumerable<WorldObject> relevantWorldObjects;
 
-        public List<WorldObject> RelevantWorldObjs
+        /// <summary>
+        /// Gets or sets a collection of type WorldObject.
+        /// </summary>
+        public IEnumerable<WorldObject> RelevantWorldObjects
         {
-            get => this.RelevantWorldObjs;
-            set => this.RaiseAndSetIfChanged(ref this.relevantWorldObjs, value);
+            get => this.RelevantWorldObjects;
+            set => this.RaiseAndSetIfChanged(ref this.relevantWorldObjects, value);
         }
     }
 }
