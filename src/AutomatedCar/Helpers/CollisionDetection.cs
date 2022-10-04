@@ -72,7 +72,7 @@
             return o4.Equals(Orientation.Collinear) && PointOnLine(line1Start, line2Start, line2End);
         }
 
-        public static bool BoundingBoxesCollide(PolylineGeometry source, PolylineGeometry destination, int treshold)
+        public static bool BoundingBoxesCollide(PolylineGeometry source, PolylineGeometry destination, int threshold)
         {
             int intersectionCounter = 0;
             for (int sourceIdx = 1; sourceIdx < source.Points.Count - 1; sourceIdx++)
@@ -90,7 +90,7 @@
                 }
             }
 
-            return intersectionCounter >= treshold;
+            return intersectionCounter >= threshold;
         }
 
         /// <summary>
