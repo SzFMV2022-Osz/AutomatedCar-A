@@ -1,6 +1,9 @@
 ﻿namespace AutomatedCar.Helpers
 {
+    using Avalonia;
+    using Avalonia.Media;
     using System;
+    using System.Collections.Generic;
     using System.Numerics;
 
     public static class CollisionDetection
@@ -12,9 +15,9 @@
             Collinear
         }
 
-        private static Orientation GetOrientation(Vector2 p, Vector2 q, Vector2 r)
+        private static Orientation GetOrientation(Point p, Point q, Point r)
         {
-            float slopeCoefficient = ((q.Y - p.Y) * (r.X - q.X)) - ((q.X - p.X) * (r.Y - q.Y));
+            double slopeCoefficient = ((q.Y - p.Y) * (r.X - q.X)) - ((q.X - p.X) * (r.Y - q.Y));
             return slopeCoefficient switch
             {
                 0 => Orientation.Collinear,
@@ -23,21 +26,20 @@
             };
         }
 
-        private static bool PointOnLine(Vector2 point, Vector2 lineStart, Vector2 lineEnd)
+        private static bool PointOnLine(Point point, Point lineStart, Point lineEnd)
         {
-            Vector2 firstHalf = point - lineStart;
-            Vector2 secondHalf = lineEnd - point;
+            Point firstHalf = point - lineStart;
+            Point secondHalf = lineEnd - point;
 
-            float dotProduct = (firstHalf.X * secondHalf.X) + (firstHalf.Y * secondHalf.Y);
-            float squaredLineLength =
-                (float)(Math.Pow(lineEnd.X - lineStart.X, 2) + Math.Pow(lineEnd.Y - lineStart.Y, 2));
+            double dotProduct = (firstHalf.X * secondHalf.X) + (firstHalf.Y * secondHalf.Y);
+            double squaredLineLength = Math.Pow(lineEnd.X - lineStart.X, 2) + Math.Pow(lineEnd.Y - lineStart.Y, 2);
 
             return dotProduct > 0 && dotProduct <= squaredLineLength;
         }
 
-        private static float DotProduct(Vector2 pointA, Vector2 pointB) => (pointA.X * pointB.X) + (pointA.Y * pointB.Y);
+        private static double DotProduct(Point pointA, Point pointB) => (pointA.X * pointB.X) + (pointA.Y * pointB.Y);
 
-        public static bool LinesIntersect(Vector2 line1Start, Vector2 line1End, Vector2 line2Start, Vector2 line2End)
+        private static bool LinesIntersect(Point line1Start, Point line1End, Point line2Start, Point line2End)
         {
             // Logic: https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/
             Orientation o1 = GetOrientation(line1Start, line1End, line2Start);
@@ -70,6 +72,27 @@
             return o4.Equals(Orientation.Collinear) && PointOnLine(line1Start, line2Start, line2End);
         }
 
+        public static bool BoundingBoxesCollide(PolylineGeometry source, PolylineGeometry destination, int treshold)
+        {
+            int intersectionCounter = 0;
+            for (int sourceIdx = 1; sourceIdx < source.Points.Count - 1; sourceIdx++)
+            {
+                Tuple<Point, Point> sourceLine = new (source.Points[sourceIdx - 1], source.Points[sourceIdx]);
+                for (int destIdx = 1; destIdx < destination.Points.Count -1; destIdx++)
+                {
+                    Tuple<Point, Point> destinationLine =
+                        new (destination.Points[destIdx - 1], destination.Points[destIdx]);
+
+                    if (LinesIntersect(sourceLine.Item1, sourceLine.Item2, destinationLine.Item1, destinationLine.Item2))
+                    {
+                        intersectionCounter++;
+                    }
+                }
+            }
+
+            return intersectionCounter >= treshold;
+        }
+
         /// <summary>
         /// Checks if a 2d point lies in the area specified by the 3 coordinates of the triangle.
         /// Edge cases:
@@ -79,11 +102,11 @@
         /// <param name="point">The point we want to check.</param>
         /// <param name="triangle">The coordinates of the 3 points of the triangle. Ordering doesn't matter.</param>
         /// <returns>Whether the point lies inside, or at the edge of the triangle.</returns>
-        public static bool PointInTriangle(Vector2 point, Tuple<Vector2, Vector2, Vector2> triangle)
+        public static bool PointInTriangle(Point point, Tuple<Point, Point, Point> triangle)
         {
-            float dotProduct1 = DotProduct(triangle.Item2 - triangle.Item1, point);
-            float dotProduct2 = DotProduct(triangle.Item3 - triangle.Item2, point);
-            float dotProduct3 = DotProduct(triangle.Item1 - triangle.Item3, point);
+            double dotProduct1 = DotProduct(triangle.Item2 - triangle.Item1, point);
+            double dotProduct2 = DotProduct(triangle.Item3 - triangle.Item2, point);
+            double dotProduct3 = DotProduct(triangle.Item1 - triangle.Item3, point);
 
             return dotProduct1 >= 0 && dotProduct2 >= 0 && dotProduct3 >= 0;
         }
