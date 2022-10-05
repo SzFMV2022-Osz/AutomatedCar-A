@@ -72,11 +72,23 @@
 
             return o4.Equals(Orientation.Collinear) && PointOnLine(line1End, line2Start, line2End);
         }
-        
-        
+
+        /// <summary>
+        /// Checks if two bounding boxes have >= threshold number of line intersections.
+        /// Edge cases:
+        ///     - Common Points count as 1 intersection.
+        ///     - Common Lines count as 1 intersection.
+        ///     - If there are 2 common lines with a common point, they are counted as 2 intersections.
+        /// </summary>
+        /// <param name="source">The bounding box of the source object.</param>
+        /// <param name="destination">The bounding box of the destination object.</param>
+        /// <param name="threshold">The number of line intersections, above which we identify a collision. Inclusive bound.</param>
+        /// <returns>Whether the number of line intersections >= the treshold.</returns>
         public static bool BoundingBoxesCollide(PolylineGeometry source, PolylineGeometry destination, int threshold)
         {
             int intersectionCounter = 0;
+
+            var commonEndpoints = new List<Point>(source.Points.Where(point => destination.Points.Contains(point)));
 
             // We want to add the first point to the list for easier iteration.
             // Basically representing the last point -> first point line.
@@ -84,10 +96,6 @@
             var destinationWithFirstElement =
                 new List<Point>(destination.Points.Concat(new List<Point> { destination.Points[0] }));
 
-
-            // Goal: Count common points as intersections. If 2 endpoints form a line in both source and destination, only include 1 point.
-            var commonEndpoints = new List<Point>(source.Points.Where(point => destination.Points.Contains(point)));
-            
             for (int sourceIdx = 1; sourceIdx < sourceWithFirstElement.Count; sourceIdx++)
             {
                 Tuple<Point, Point> sourceLine = new (sourceWithFirstElement[sourceIdx - 1], sourceWithFirstElement[sourceIdx]);
@@ -96,6 +104,8 @@
                     Tuple<Point, Point> destinationLine =
                         new (destinationWithFirstElement[destIdx - 1], destinationWithFirstElement[destIdx]);
 
+                    // Common endpoints will automatically be added to intersectionCounter at the end.
+                    // We don't want to double dip.
                     if (LinesIntersect(sourceLine.Item1, sourceLine.Item2, destinationLine.Item1, destinationLine.Item2)
                         && !(commonEndpoints.Contains(destinationLine.Item1) || commonEndpoints.Contains(destinationLine.Item2)))
                     {
@@ -143,10 +153,11 @@
             Point v1 = new(triangle.Item2.Y - triangle.Item1.Y, triangle.Item1.X - triangle.Item2.X);
             Point v2 = new(triangle.Item3.Y - triangle.Item2.Y, triangle.Item2.X - triangle.Item3.X);
             Point v3 = new(triangle.Item1.Y - triangle.Item3.Y, triangle.Item3.X - triangle.Item1.X);
-            
+
             Point v1p = new(point.X - triangle.Item1.X, point.Y - triangle.Item1.Y);
             Point v2p= new(point.X - triangle.Item2.X, point.Y - triangle.Item2.Y);
             Point v3p = new(point.X - triangle.Item3.X, point.Y - triangle.Item3.Y);
+
             double dotProduct1 = DotProduct(v1, v1p);
             double dotProduct2 = DotProduct(v2, v2p);
             double dotProduct3 = DotProduct(v3, v3p);
