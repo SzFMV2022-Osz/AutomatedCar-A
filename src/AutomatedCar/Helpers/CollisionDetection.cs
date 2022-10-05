@@ -140,9 +140,16 @@
         /// <returns>Whether the point lies inside, or at the edge of the triangle.</returns>
         public static bool PointInTriangle(Point point, Tuple<Point, Point, Point> triangle)
         {
-            double dotProduct1 = DotProduct(triangle.Item2 - triangle.Item1, point);
-            double dotProduct2 = DotProduct(triangle.Item3 - triangle.Item2, point);
-            double dotProduct3 = DotProduct(triangle.Item1 - triangle.Item3, point);
+            Point v1 = new(triangle.Item2.Y - triangle.Item1.Y, triangle.Item1.X - triangle.Item2.X);
+            Point v2 = new(triangle.Item3.Y - triangle.Item2.Y, triangle.Item2.X - triangle.Item3.X);
+            Point v3 = new(triangle.Item1.Y - triangle.Item3.Y, triangle.Item3.X - triangle.Item1.X);
+            
+            Point v1p = new(point.X - triangle.Item1.X, point.Y - triangle.Item1.Y);
+            Point v2p= new(point.X - triangle.Item2.X, point.Y - triangle.Item2.Y);
+            Point v3p = new(point.X - triangle.Item3.X, point.Y - triangle.Item3.Y);
+            double dotProduct1 = DotProduct(v1, v1p);
+            double dotProduct2 = DotProduct(v2, v2p);
+            double dotProduct3 = DotProduct(v3, v3p);
 
             return dotProduct1 >= 0 && dotProduct2 >= 0 && dotProduct3 >= 0;
         }
