@@ -1,30 +1,44 @@
 ﻿namespace AutomatedCar.SystemComponents.Sensors
 {
     using System.Collections.Generic;
+    using System.Linq;
+    using System.Numerics;
     using AutomatedCar.Models;
     using AutomatedCar.SystemComponents.Packets;
 
-    internal abstract class Sensor : SystemComponent
+    public abstract class Sensor : SystemComponent
     {
         protected ISensorPacket sensorPacket;
+
+        protected Vector2 X { get; set; }
+
+        protected Vector2 Y { get; set; }
+
+        protected Vector2 Z { get; set; }
 
         public Sensor(VirtualFunctionBus virtualFunctionBus)
             : base(virtualFunctionBus)
         {
         }
 
-        protected abstract List<WorldObject> FilterRelevantWorldObjects(List<WorldObject> worldObjects);
+        protected abstract void SaveWorldObjectsToPacket();
 
-        protected abstract void SaveWorldObjectsToPacket(List<WorldObject> worldObjects);
-
-        private AutomatedCar GetAutomatedCar()
+        protected AutomatedCar GetAutomatedCar()
         {
             return World.Instance.ControlledCar;
         }
 
-        private List<WorldObject> GetWorldObjects()
+        protected List<WorldObject> GetWorldObjects()
         {
             return World.Instance.WorldObjects;
         }
+
+        protected List<WorldObject> FilterObjectsInSensor()
+        {
+            List<WorldObject> objs = this.GetWorldObjects();
+            return objs.Where(obj => this.X.X <= obj.X && this.Y.X >= obj.X && this.Z.Y <= obj.Y && this.Y.Y >= obj.Y).ToList();
+        }
+
+        protected abstract List<WorldObject> FilterRelevantWorldObjects();
     }
 }
