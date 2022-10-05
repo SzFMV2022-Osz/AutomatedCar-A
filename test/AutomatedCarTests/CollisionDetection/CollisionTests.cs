@@ -75,5 +75,20 @@ namespace Tests.CollisionDetection
             Assert.IsTrue(lessThanThreeIntersections);
             Assert.IsTrue(atLeastTwoIntersections);
         }
+
+        [TestMethod]
+        public void Collision_Detection_Is_Commutative()
+        {
+            // Code segment taken from Two_Distant_Objects_Dont_Collide
+            List<Point> sourcePoints = new List<Point>(){ new (3, 2), new (4.7, 3.2), new (5.2, 13.4) };
+            List<Point> destinationPoints = new List<Point>() { new(15.2, 24), new(33, 72), new(53, 14) };
+
+            PolylineGeometry sourceTriangle = new PolylineGeometry(points: sourcePoints, isFilled: false);
+            PolylineGeometry destinationTriangle = new PolylineGeometry(points: destinationPoints, isFilled: false);
+
+            bool sourceDoesntCollideWithDestination = BoundingBoxesCollide(sourceTriangle, destinationTriangle, 1);
+            bool destinationDoesntCollideWithSource = BoundingBoxesCollide(destinationTriangle, sourceTriangle, 1);
+            Assert.AreEqual(sourceDoesntCollideWithDestination, destinationDoesntCollideWithSource);
+        }
     }
 }
