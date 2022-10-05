@@ -4,6 +4,7 @@
     using Avalonia.Media;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Numerics;
 
     public static class CollisionDetection
@@ -34,7 +35,7 @@
             double dotProduct = (firstHalf.X * secondHalf.X) + (firstHalf.Y * secondHalf.Y);
             double squaredLineLength = Math.Pow(lineEnd.X - lineStart.X, 2) + Math.Pow(lineEnd.Y - lineStart.Y, 2);
 
-            return dotProduct > 0 && dotProduct <= squaredLineLength;
+            return dotProduct >= 0 && dotProduct <= squaredLineLength;
         }
 
         private static double DotProduct(Point pointA, Point pointB) => (pointA.X * pointB.X) + (pointA.Y * pointB.Y);
@@ -47,7 +48,7 @@
             Orientation o3 = GetOrientation(line2Start, line2End, line1Start);
             Orientation o4 = GetOrientation(line2Start, line2End, line1End);
 
-            bool orientationsDiffer = !o1.Equals(o2) && !o3.Equals(o4);
+            bool orientationsDiffer = !o1.Equals(o2) && !o3.Equals(o4); 
 
             if (orientationsDiffer)
             {
@@ -69,27 +70,62 @@
                 return true;
             }
 
-            return o4.Equals(Orientation.Collinear) && PointOnLine(line1Start, line2Start, line2End);
+            return o4.Equals(Orientation.Collinear) && PointOnLine(line1End, line2Start, line2End);
         }
-
+        
+        
         public static bool BoundingBoxesCollide(PolylineGeometry source, PolylineGeometry destination, int threshold)
         {
             int intersectionCounter = 0;
-            for (int sourceIdx = 1; sourceIdx < source.Points.Count - 1; sourceIdx++)
+
+            // We want to add the first point to the list for easier iteration.
+            // Basically representing the last point -> first point line.
+            var sourceWithFirstElement = new List<Point>(source.Points.Concat(new List<Point> { source.Points[0] }));
+            var destinationWithFirstElement =
+                new List<Point>(destination.Points.Concat(new List<Point> { destination.Points[0] }));
+
+
+            // Goal: Count common points as intersections. If 2 endpoints form a line in both source and destination, only include 1 point.
+            var commonEndpoints = new List<Point>(source.Points.Where(point => destination.Points.Contains(point)));
+            
+            for (int sourceIdx = 1; sourceIdx < sourceWithFirstElement.Count; sourceIdx++)
             {
-                Tuple<Point, Point> sourceLine = new (source.Points[sourceIdx - 1], source.Points[sourceIdx]);
-                for (int destIdx = 1; destIdx < destination.Points.Count -1; destIdx++)
+                Tuple<Point, Point> sourceLine = new (sourceWithFirstElement[sourceIdx - 1], sourceWithFirstElement[sourceIdx]);
+                for (int destIdx = 1; destIdx < destinationWithFirstElement.Count; destIdx++)
                 {
                     Tuple<Point, Point> destinationLine =
-                        new (destination.Points[destIdx - 1], destination.Points[destIdx]);
+                        new (destinationWithFirstElement[destIdx - 1], destinationWithFirstElement[destIdx]);
 
-                    if (LinesIntersect(sourceLine.Item1, sourceLine.Item2, destinationLine.Item1, destinationLine.Item2))
+                    if (LinesIntersect(sourceLine.Item1, sourceLine.Item2, destinationLine.Item1, destinationLine.Item2)
+                        && !(commonEndpoints.Contains(destinationLine.Item1) || commonEndpoints.Contains(destinationLine.Item2)))
                     {
                         intersectionCounter++;
                     }
                 }
             }
 
+            // How do we know that we have a common line? source[i] = dest[j] and source[i + 1] = dest[i + 1]
+            // If we have a common line, we only want to count it as one intersection.
+            // So we delete one of it's endpoints. This approach works even if there are 2 common lines coming from the same endpoint,
+            // Since by definition we'll delete the common endpoint, thus the third intersecting point won't count as a line ending.
+            for (int i = 0; i < sourceWithFirstElement.Count - 1; i++)
+            {
+                if (!commonEndpoints.Contains(sourceWithFirstElement[i]))
+                {
+                    continue;
+                }
+
+                for (int j = 0; j < destinationWithFirstElement.Count - 1; j++)
+                {
+                    if (sourceWithFirstElement[i].Equals(destinationWithFirstElement[j])
+                        && sourceWithFirstElement[i + 1].Equals(destinationWithFirstElement[j + 1]))
+                    {
+                        commonEndpoints.Remove(destinationWithFirstElement[j + 1]);
+                    }
+                }
+            }
+
+            intersectionCounter += commonEndpoints.Count;
             return intersectionCounter >= threshold;
         }
 
