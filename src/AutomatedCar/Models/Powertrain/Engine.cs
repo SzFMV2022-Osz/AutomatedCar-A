@@ -12,9 +12,12 @@
         private int mass;
         private float dragCoefficient;
         private float frontArea;
+        private float crr;
+        private float torque;
+        private IGearshift gearshift;
         public Engine()
         {
-
+            this.crr = 30 * this.Drag();
         }
 
         public void Accelerate()
@@ -30,6 +33,11 @@
         private float Drag()
         {
             return 0.5f * this.dragCoefficient * this.frontArea * 1.29f;
+        }
+
+        private float DrivingForce()
+        {
+            return 0.0f;
         }
     }
 }
