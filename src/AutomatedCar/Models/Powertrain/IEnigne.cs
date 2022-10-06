@@ -11,6 +11,7 @@
         int Speed { get; }
 
         void Accelerate();
+
         void Decelerate();
     }
 }
