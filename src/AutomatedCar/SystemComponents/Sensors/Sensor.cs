@@ -8,37 +8,36 @@
 
     public abstract class Sensor : SystemComponent
     {
+        protected float HorizontalDistance { get; set; }
+
+        protected float VerticalDistance { get; set; }
+
         protected ISensorPacket sensorPacket;
 
-        protected Vector2 X { get; set; }
+        protected SensorTriangle triangle;
 
-        protected Vector2 Y { get; set; }
+        protected struct SensorTriangle
+        {
+            public Vector2 X { get; set; }
 
-        protected Vector2 Z { get; set; }
+            public Vector2 Y { get; set; }
+
+            public Vector2 Z { get; set; }
+        }
 
         public Sensor(VirtualFunctionBus virtualFunctionBus)
             : base(virtualFunctionBus)
         {
+            this.triangle = new SensorTriangle();
         }
 
         protected abstract void SaveWorldObjectsToPacket();
 
-        protected AutomatedCar GetAutomatedCar()
-        {
-            return World.Instance.ControlledCar;
-        }
+        protected abstract List<WorldObject> FilterRelevantWorldObjects();
 
         protected List<WorldObject> GetWorldObjects()
         {
             return World.Instance.WorldObjects;
         }
-
-        protected List<WorldObject> FilterObjectsInSensor()
-        {
-            List<WorldObject> objs = this.GetWorldObjects();
-            return objs.Where(obj => this.X.X <= obj.X && this.Y.X >= obj.X && this.Z.Y <= obj.Y && this.Y.Y >= obj.Y).ToList();
-        }
-
-        protected abstract List<WorldObject> FilterRelevantWorldObjects();
     }
 }
