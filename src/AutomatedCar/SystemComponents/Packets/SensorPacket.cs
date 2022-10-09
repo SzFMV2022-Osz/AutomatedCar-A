@@ -4,7 +4,7 @@
     using AutomatedCar.Models;
     using ReactiveUI;
 
-    internal class SensorPacket : ReactiveObject, ISensorPacket
+    public class SensorPacket : ReactiveObject, ISensorPacket
     {
         private List<WorldObject> relevantWorldObjs;
 
