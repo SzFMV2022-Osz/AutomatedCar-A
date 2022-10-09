@@ -7,7 +7,7 @@
     using System.Text;
     using System.Threading.Tasks;
 
-    internal interface ISensorPacket
+    public interface ISensorPacket
     {
         List<WorldObject> RelevantWorldObjs { get; set; }
     }
