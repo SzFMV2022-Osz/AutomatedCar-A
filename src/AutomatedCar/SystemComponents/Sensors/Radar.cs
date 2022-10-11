@@ -49,8 +49,7 @@
 
         public override void Process()
         {
-            var filtered = this.FilterRelevantWorldObjects();
-            this.SaveWorldObjectsToPacket(this.FilterRelevantWorldObjects());
+            this.SaveWorldObjectsToPacket();
         }
 
         protected override List<WorldObject> FilterRelevantWorldObjects()
@@ -58,10 +57,10 @@
             return this.GetWorldObjects().Where(x => this.IsRelevant(x)).ToList();
         }
 
-        protected override void SaveWorldObjectsToPacket(List<WorldObject> worldObjects)
+        protected override void SaveWorldObjectsToPacket()
         {
             ISensorPacket packet = new SensorPacket();
-            packet.RelevantWorldObjs = worldObjects;
+            packet.RelevantWorldObjs = this.FilterRelevantWorldObjects();
             this.virtualFunctionBus.RadarPacket = packet;
         }
 
