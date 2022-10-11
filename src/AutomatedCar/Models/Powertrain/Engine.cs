@@ -6,12 +6,16 @@
     using System.Text;
     using System.Threading.Tasks;
 
+    /// <summary>
+    /// Engine.
+    /// </summary>
     internal class Engine : IEnigne
     {
-        public int Speed { get; private set; }
-        private int mass;
-        private float dragCoefficient;
+        private static readonly float Pi = (float)Math.PI;
+        private readonly int mass; private float dragCoefficient;
         private float rpm;
+        private float maxrpm;
+        private float minrpm;
         private float frontArea;
         private float crr;
         private float torque;
@@ -20,10 +24,20 @@
         private float wheelradius;
         private float wheelrotationrate;
         private IGearshift gearshift;
-        private static float pi = (float)Math.PI;
 
-        public Engine(int mass, float dragCoefficient = 0.30f, float frontArea = 2.2f, float diferential = 3.42f, float transmissionefficiency = 0.7f, float wheelradius = 0.34f)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Engine"/> class.
+        /// </summary>
+        /// <param name="gearshift">Gearshift to use.</param>
+        /// <param name="mass">Mass of the car.</param>
+        /// <param name="dragCoefficient">Drag coefficient of the car.</param>
+        /// <param name="frontArea">Front area of the car.</param>
+        /// <param name="diferential">Diferencial ratio of the car.</param>
+        /// <param name="transmissionefficiency">Transmission efficiency of the car.</param>
+        /// <param name="wheelradius">Wheelradious.</param>
+        public Engine(IGearshift gearshift, int mass, float dragCoefficient = 0.30f, float frontArea = 2.2f, float diferential = 3.42f, float transmissionefficiency = 0.7f, float wheelradius = 0.34f)
         {
+            this.gearshift = gearshift;
             this.mass = mass;
             this.dragCoefficient = dragCoefficient;
             this.frontArea = frontArea;
@@ -33,29 +47,63 @@
             this.crr = 30 * this.Cdrag();
         }
 
+        /// <summary>
+        /// Gets speed of the car.
+        /// </summary>
+        public int Speed { get; private set; }
+
+        /// <summary>
+        /// Accelerate the car.
+        /// </summary>
         public void Accelerate()
         {
+            if (this.rpm.Equals(this.maxrpm))
+                return;
 
+            if (this.rpm > 5000)
+            {
+                this.gearshift.ShiftUp();
+            }
+
+            this.rpm += 0.5f;
+            this.Speed = (int)this.GetSpeedByWheelRotation();
         }
 
+        /// <summary>
+        /// Slows the car.
+        /// </summary>
         public void Decelerate()
         {
+            if (this.rpm.Equals(this.minrpm))
+                return;
 
+            if (this.rpm < 1500)
+            {
+                this.gearshift.ShiftDown();
+            }
+
+            this.rpm -= 0.5f;
+            this.Speed = (int)this.GetSpeedByWheelRotation();
         }
 
-        private int getRPM()
+        private int GetRPM()
         {
-            return (int)(this.wheelrotationrate * this.gearshift.GetGearRatio() * this.diferential * 60 / 2 * pi);
+            return (int)(this.wheelrotationrate * this.gearshift.GetGearRatio() * this.diferential * 60 / 2 * Pi);
         }
 
         private float GetWheelRotationRateByRPM()
         {
-            return this.rpm / (this.gearshift.GetGearRatio() * this.diferential * 60 / 2 * pi);
+            return this.rpm / (this.gearshift.GetGearRatio() * this.diferential * 60 / 2 * Pi);
         }
 
         private float GetWheelRotationRateBySpeed()
         {
             return this.Speed / this.wheelradius;
+        }
+
+        private float GetSpeedByWheelRotation()
+        {
+            return this.GetWheelRotationRateByRPM() * this.wheelradius;
         }
 
         private float Cdrag()
