@@ -16,8 +16,10 @@
         }
 
         public int Speed { get; set; }
-        public abstract void Move();
+        protected MoveComponent moveComponent;
 
+        protected abstract void Move();
+        
         public VirtualFunctionBus VirtualFunctionBus { get; }
 
 
