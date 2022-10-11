@@ -34,9 +34,10 @@
 
         protected abstract List<WorldObject> FilterRelevantWorldObjects();
 
-        protected abstract void SaveWorldObjectsToPacket(List<WorldObject> worldObjects);
+//        protected abstract void SaveWorldObjectsToPacket(List<WorldObject> worldObjects);
+        protected abstract void SaveWorldObjectsToPacket();
 
-        private AutomatedCar GetAutomatedCar()
+        protected AutomatedCar GetAutomatedCar()
         {
             return World.Instance.ControlledCar;
         }
