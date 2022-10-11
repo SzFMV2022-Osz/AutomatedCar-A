@@ -1,5 +1,7 @@
 ﻿namespace AutomatedCar.SystemComponents.Sensors
 {
+    using AutomatedCar.Models;
+    using AutomatedCar.SystemComponents.Packets;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -8,7 +10,7 @@
     using AutomatedCar.Models;
     using AutomatedCar.SystemComponents.Packets;
 
-    internal class Radar : Sensor
+    public class Radar : Sensor
     {
         private Vector2 visionRightPos;
         private Vector2 visionLeftPos;
@@ -97,7 +99,7 @@
             var t = ((p1.X - p0.X) * (p.Y - p0.Y)) - ((p1.Y - p0.Y) * (p.X - p0.X));
 
             if ((s < 0) != (t < 0) && s != 0 && t != 0)
-            {
+        {
                 return false;
             }
 

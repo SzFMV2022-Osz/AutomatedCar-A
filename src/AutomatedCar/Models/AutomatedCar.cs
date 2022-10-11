@@ -2,6 +2,7 @@ namespace AutomatedCar.Models
 {
     using Avalonia.Media;
     using global::AutomatedCar.SystemComponents.Sensors;
+    using global::AutomatedCar.SystemComponents.Packets;
     using SystemComponents;
 
     public class AutomatedCar : Car
@@ -16,6 +17,7 @@ namespace AutomatedCar.Models
             this.virtualFunctionBus = new VirtualFunctionBus();
             this.radarSensor = new Radar(this.virtualFunctionBus);
 
+            this.virtualFunctionBus.CarCoordinatesPacket = new CarCoordinatesPacket(x, y);
             this.ZIndex = 10;
         }
 
