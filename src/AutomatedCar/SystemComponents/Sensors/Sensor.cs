@@ -70,5 +70,27 @@
                 (int)((pos.X * Math.Cos(angleRad)) - (pos.Y * Math.Sin(angleRad))),
                 (int)((pos.X * Math.Sin(angleRad)) + (pos.Y * Math.Cos(angleRad))));
         }
+
+        /// <summary>
+        /// Returns whether point is in a triangle with Barycentric method.
+        /// </summary>
+        /// <param name="p">Point</param>
+        /// <param name="p0">Triangle Point 1.</param>
+        /// <param name="p1">Triangle Point 2.</param>
+        /// <param name="p2">Triangle Point 3.</param>
+        /// <returns>Point is in triangle or not.</returns>
+        protected bool PointInTriangle(Vector2 p, Vector2 p0, Vector2 p1, Vector2 p2)
+        {
+            var s = ((p0.X - p2.X) * (p.Y - p2.Y)) - ((p0.Y - p2.Y) * (p.X - p2.X));
+            var t = ((p1.X - p0.X) * (p.Y - p0.Y)) - ((p1.Y - p0.Y) * (p.X - p0.X));
+
+            if ((s < 0) != (t < 0) && s != 0 && t != 0)
+        {
+                return false;
+            }
+
+            var d = ((p2.X - p1.X) * (p.Y - p1.Y)) - ((p2.Y - p1.Y) * (p.X - p1.X));
+            return d == 0 || (d < 0) == (s + t <= 0);
+        }
     }
 }
