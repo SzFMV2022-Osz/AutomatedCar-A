@@ -1,13 +1,11 @@
 ﻿namespace AutomatedCar.Models.NPC
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
+    using global::AutomatedCar.SystemComponents;
 
     public interface INPC
     {
+        MoveComponent MoveComponent { get; set; }
+
         void Move();
     }
 }
