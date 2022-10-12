@@ -12,18 +12,18 @@
     internal class Engine : IEnigne
     {
         private static readonly float Pi = (float)Math.PI;
-        private readonly int mass; private float dragCoefficient;
+        private readonly IGearshift gearshift;
+        private readonly int mass;
+        private readonly float frontArea;
+        private readonly float wheelradius;
+        private readonly float dragCoefficient;
+        private readonly float diferential;
+        private readonly float transmissionefficiency;
         private float rpm;
         private float maxrpm;
         private float minrpm;
-        private float frontArea;
         private float crr;
         private float torque;
-        private float diferential;
-        private float transmissionefficiency;
-        private float wheelradius;
-        private float wheelrotationrate;
-        private IGearshift gearshift;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Engine"/> class.
@@ -53,42 +53,68 @@
         public int Speed { get; private set; }
 
         /// <summary>
+        /// Gets rotation rate of the wheel.
+        /// </summary>
+        private float WheelRotationRate
+        {
+            get { return this.GetWheelRotationRateBySpeed(); }
+        }
+
+        /// <summary>
         /// Accelerate the car.
         /// </summary>
-        public void Accelerate()
+        /// <returns>driving force lenght.</returns>
+        public float Accelerate()
         {
-            if (this.rpm.Equals(this.maxrpm))
-                return;
-
-            if (this.rpm > 5000)
+            if (!this.rpm.Equals(this.maxrpm))
             {
-                this.gearshift.ShiftUp();
+                if (this.GetNextGearRPM() > this.minrpm)
+                {
+                    this.gearshift.ShiftUp();
+                    this.rpm = this.GetRPM();
+                }
+
+                this.rpm += 0.5f;
+                this.Speed = (int)this.GetSpeedByWheelRotation();
             }
 
-            this.rpm += 0.5f;
-            this.Speed = (int)this.GetSpeedByWheelRotation();
+            return this.DrivingForce();
         }
 
         /// <summary>
         /// Slows the car.
         /// </summary>
-        public void Decelerate()
+        /// <returns>driving force lenght.</returns>
+        public float Decelerate()
         {
-            if (this.rpm.Equals(this.minrpm))
-                return;
-
-            if (this.rpm < 1500)
+            if (!this.rpm.Equals(this.minrpm))
             {
-                this.gearshift.ShiftDown();
+                if (this.GetPrewGearRPM() < this.maxrpm)
+                {
+                    this.gearshift.ShiftDown();
+                    this.rpm = this.GetRPM();
+                }
+
+                this.rpm -= 0.5f;
+                this.Speed = (int)this.GetSpeedByWheelRotation();
             }
 
-            this.rpm -= 0.5f;
-            this.Speed = (int)this.GetSpeedByWheelRotation();
+            return this.DrivingForce();
         }
 
         private int GetRPM()
         {
-            return (int)(this.wheelrotationrate * this.gearshift.GetGearRatio() * this.diferential * 60 / 2 * Pi);
+            return (int)(this.WheelRotationRate * this.gearshift.GetGearRatio() * this.diferential * 60 / 2 * Pi);
+        }
+
+        private int GetNextGearRPM()
+        {
+            return (int)(this.WheelRotationRate * this.gearshift.NextGearRatio() * this.diferential * 60 / 2 * Pi);
+        }
+
+        private int GetPrewGearRPM()
+        {
+            return (int)(this.WheelRotationRate * this.gearshift.PreviousGearRatio() * this.diferential * 60 / 2 * Pi);
         }
 
         private float GetWheelRotationRateByRPM()
