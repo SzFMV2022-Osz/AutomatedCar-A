@@ -26,6 +26,7 @@ namespace AutomatedCar.Models.NPC
             : base(x, y, filename, 10, true, WorldObjectType.Car)
         {
             this.MoveComponent = new MoveComponent(this.VirtualFunctionBus, this);
+            this.VirtualFunctionBus.RegisterComponent(this.MoveComponent);
         }
 
         /// <inheritdoc/>
