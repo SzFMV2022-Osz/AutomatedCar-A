@@ -8,6 +8,8 @@
 
     internal interface IGearshift
     {
+        float NextGearRatio();
+        float PreviousGearRatio();
         void ShiftUp();
         void ShiftDown();
         void SetState(GearshiftState state);
