@@ -1,11 +1,6 @@
 ﻿namespace AutomatedCar.Models.NPC
 {
     using global::AutomatedCar.SystemComponents;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
 
     abstract class NPC : WorldObject
     {
@@ -16,12 +11,10 @@
         }
 
         public int Speed { get; set; }
-        protected MoveComponent moveComponent;
 
-        protected abstract void Move();
-        
-        public VirtualFunctionBus VirtualFunctionBus { get; }
+        protected abstract MoveComponent MoveComponent { get; set; }
 
+        protected VirtualFunctionBus VirtualFunctionBus { get; }
 
         /// <summary>Starts the ticker in the Virtual Function Bus, that cyclically calls the system components.</summary>
         public void Start()
