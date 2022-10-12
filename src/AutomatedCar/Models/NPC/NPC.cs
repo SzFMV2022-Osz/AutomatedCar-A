@@ -12,9 +12,7 @@
 
         public int Speed { get; set; }
 
-        protected abstract MoveComponent MoveComponent { get; set; }
-
-        protected VirtualFunctionBus VirtualFunctionBus { get; }
+        protected VirtualFunctionBus VirtualFunctionBus { get; set; }
 
         /// <summary>Starts the ticker in the Virtual Function Bus, that cyclically calls the system components.</summary>
         public void Start()
