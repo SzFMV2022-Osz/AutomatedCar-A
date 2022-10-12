@@ -1,23 +1,38 @@
-﻿namespace AutomatedCar.Models.NPC
+﻿// <copyright file="NpcCar.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace AutomatedCar.Models.NPC
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using global::AutomatedCar.SystemComponents;
 
     /// <summary>
     /// Represents the NPC car.
     /// </summary>
-    internal class NpcCar : NPC
+    internal class NpcCar : NPC, INPC
     {
-        public NpcCar(int x, int y, string filename, int zindex = 1)
-            : base(x, y, filename, zindex, true, WorldObjectType.Car)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NpcCar"/> class.
+        /// </summary>
+        /// <param name="x">X coordinate of current position.</param>
+        /// <param name="y">Y coordinate of current position.</param>
+        /// <param name="filename">.</param>
+        public NpcCar(int x, int y, string filename)
+            : base(x, y, filename, 10, true, WorldObjectType.Car)
         {
+            this.MoveComponent = new MoveComponent(this.VirtualFunctionBus, this);
         }
 
         /// <inheritdoc/>
-        protected override void Move()
+        public MoveComponent MoveComponent { get; set; }
+
+        /// <inheritdoc/>
+        public void Move()
         {
         }
     }
