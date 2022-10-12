@@ -28,6 +28,22 @@
             return state;
         }
 
+        public float NextGearRatio()
+        {
+            if (gear == 6)
+                return -1f;
+            else
+                return ratios[gear + 1];
+        }
+
+        public float PreviousGearRatio()
+        {
+            if (gear == 0)
+                return -1f;
+            else
+                return ratios[gear - 1];
+        }
+
         public void SetState(GearshiftState state)
         {
             this.state = state;
