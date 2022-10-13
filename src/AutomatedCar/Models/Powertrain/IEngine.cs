@@ -1,4 +1,8 @@
-﻿namespace AutomatedCar.Models.Powertrain
+﻿// <copyright file="IEngine.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace AutomatedCar.Models.Powertrain
 {
     using System;
     using System.Collections.Generic;
@@ -9,7 +13,7 @@
     /// <summary>
     /// Engine interface.
     /// </summary>
-    internal interface IEnigne
+    internal interface IEngine
     {
         /// <summary>
         /// Gets speed of the car.
