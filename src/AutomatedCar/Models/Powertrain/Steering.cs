@@ -1,4 +1,4 @@
-﻿namespace AutomatedCar.Models
+﻿namespace AutomatedCar.Models.Powertrain
 {
     using Avalonia;
     using System;
