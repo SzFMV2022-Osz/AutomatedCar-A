@@ -5,6 +5,7 @@ namespace AutomatedCar
     using System.IO;
     using System.Reflection;
     using AutomatedCar.Models;
+    using AutomatedCar.Models.NPC;
     using AutomatedCar.ViewModels;
     using AutomatedCar.Views;
     using Avalonia;
@@ -35,7 +36,7 @@ namespace AutomatedCar
         {
             var world = World.Instance;
 
-            // this.AddDummyCircleTo(world);
+            this.AddDummyCircleTo(world);
 
             world.PopulateFromJSON($"AutomatedCar.Assets.test_world.json");
 
@@ -68,7 +69,11 @@ namespace AutomatedCar
             circle.ZIndex = 20;
             circle.Rotation = 45;
 
-            world.AddObject(circle);
+            //world.AddObject(circle);
+
+            var car = new NpcCar(200, 200, "circle.png");
+            car.Start();
+            world.AddObject(car);
         }
 
         private AutomatedCar CreateControlledCar(int x, int y, int rotation, string filename)

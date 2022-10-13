@@ -35,6 +35,27 @@ namespace AutomatedCar.Models.NPC
         /// <inheritdoc/>
         public void Move()
         {
+            int x = 300;
+            int y = 600;
+            int width = Math.Abs(this.X - x);
+            int height = Math.Abs(this.Y - y);
+
+            if (this.Y > y)
+            {
+                this.Y = this.Y - (height + width) / width;
+            }
+            if (this.Y < y)
+            {
+                this.Y = this.Y + (height + width) / width;
+            }
+            if (this.X > x)
+            {
+                this.X = this.X - (width + height) / height;
+            }
+            if (this.X < x)
+            {
+                this.X = this.X + (width + height) / height;
+            }
         }
     }
 }
