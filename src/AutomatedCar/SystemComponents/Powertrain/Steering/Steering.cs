@@ -1,6 +1,9 @@
-﻿namespace AutomatedCar.Models.Powertrain
+﻿// <copyright file="Steering.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace AutomatedCar.Models.Powertrain
 {
-    using Avalonia;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -10,6 +13,9 @@
     using System.Threading.Tasks;
     using Vector = Avalonia.Vector;
 
+    /// <summary>
+    /// Steering.
+    /// </summary>
     internal class Steering
     {
         //atan(wheelBase / (turningCircle - carWidth)) = turningAngle
