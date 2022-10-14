@@ -1,4 +1,8 @@
-﻿namespace AutomatedCar.Models.Powertrain
+﻿// <copyright file="IGearshift.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace AutomatedCar.Models.Powertrain
 {
     using System;
     using System.Collections.Generic;

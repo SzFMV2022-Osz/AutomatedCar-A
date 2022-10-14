@@ -1,4 +1,8 @@
-﻿namespace AutomatedCar.Models.Powertrain
+﻿// <copyright file="Engine.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace AutomatedCar.Models.Powertrain
 {
     using System;
     using System.Collections.Generic;
@@ -9,7 +13,7 @@
     /// <summary>
     /// Engine.
     /// </summary>
-    internal class Engine : IEnigne
+    internal class Engine : IEngine
     {
         private static readonly float Pi = (float)Math.PI;
         private readonly IGearshift gearshift;
@@ -35,7 +39,7 @@
         /// <param name="diferential">Diferencial ratio of the car.</param>
         /// <param name="transmissionefficiency">Transmission efficiency of the car.</param>
         /// <param name="wheelradius">Wheelradious.</param>
-        public Engine(IGearshift gearshift, int mass, float dragCoefficient = 0.30f, float frontArea = 2.2f, float diferential = 3.42f, float transmissionefficiency = 0.7f, float wheelradius = 0.34f)
+        public Engine(IGearshift gearshift, int mass = 1800, float dragCoefficient = 0.30f, float frontArea = 2.2f, float diferential = 3.42f, float transmissionefficiency = 0.7f, float wheelradius = 0.34f)
         {
             this.gearshift = gearshift;
             this.mass = mass;
@@ -78,7 +82,7 @@
                 this.Speed = (int)this.GetSpeedByWheelRotation();
             }
 
-            return this.DrivingForce();
+            return this.DrivingForce() - this.DragForce();
         }
 
         /// <summary>
@@ -99,7 +103,7 @@
                 this.Speed = (int)this.GetSpeedByWheelRotation();
             }
 
-            return this.DrivingForce();
+            return this.DrivingForce() - this.DragForce();
         }
 
         private int GetRPM()
@@ -129,7 +133,24 @@
 
         private float GetSpeedByWheelRotation()
         {
-            return this.GetWheelRotationRateByRPM() * this.wheelradius;
+            float speed = 0;
+            switch (this.gearshift.GetState())
+            {
+                case GearshiftState.P:
+                    speed = 0;
+                    break;
+                case GearshiftState.R:
+                    speed = -1 * this.GetWheelRotationRateByRPM() * this.wheelradius;
+                    break;
+                case GearshiftState.N:
+                    speed = 0;
+                    break;
+                case GearshiftState.D:
+                    speed = this.GetWheelRotationRateByRPM() * this.wheelradius;
+                    break;
+            }
+
+            return speed;
         }
 
         private float Cdrag()
