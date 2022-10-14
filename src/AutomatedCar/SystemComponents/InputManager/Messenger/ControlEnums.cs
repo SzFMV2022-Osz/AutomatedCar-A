@@ -61,5 +61,10 @@ namespace AutomatedCar.Models.InputManager.Messenger
         /// Shift down one value
         /// </summary>
         ShiftDown,
+
+        /// <summary>
+        /// No gear shifting
+        /// </summary>
+        Steady,
     }
 }
