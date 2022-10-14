@@ -40,6 +40,11 @@ namespace AutomatedCar.Models.InputManager.Messenger
         /// Brake pedal
         /// </summary>
         Brake,
+
+        /// <summary>
+        /// No pedal movement
+        /// </summary>
+        Empty,
     }
 
     /// <summary>
@@ -48,23 +53,18 @@ namespace AutomatedCar.Models.InputManager.Messenger
     public enum Gears
     {
         /// <summary>
-        /// Park position
+        /// Shift up one value
         /// </summary>
-        Park,
+        ShiftUp,
 
         /// <summary>
-        /// Reverse position
+        /// Shift down one value
         /// </summary>
-        Reverse,
+        ShiftDown,
 
         /// <summary>
-        /// Neutral position
+        /// No gear shifting
         /// </summary>
-        Neutral,
-
-        /// <summary>
-        /// Drive position
-        /// </summary>
-        Drive,
+        Steady,
     }
 }
