@@ -18,9 +18,19 @@ namespace AutomatedCar.Models.InputManager.Messenger
         private Gears gears;
 
         /// <summary>
-        /// Event for the powertrain.
+        /// Event for the steering.
         /// </summary>
-        public static event EventHandler ControleEventHandler;
+        public static event EventHandler SteeringEventHandler;
+
+        /// <summary>
+        /// Event for the pedals.
+        /// </summary>
+        public static event EventHandler PedalEventHandler;
+
+        /// <summary>
+        /// Event for the gearbox.
+        /// </summary>
+        public static event EventHandler GearboxEventHandler;
 
         /// <summary>
         /// Gets or sets the position of steering wheel.
@@ -34,7 +44,7 @@ namespace AutomatedCar.Models.InputManager.Messenger
 
             set
             {
-                EventHandler handler = ControlMessenger.ControleEventHandler;
+                EventHandler handler = ControlMessenger.SteeringEventHandler;
                 ControlEventArgs eventArgs = new ControlEventArgs();
                 if (handler != null)
                 {
@@ -57,7 +67,7 @@ namespace AutomatedCar.Models.InputManager.Messenger
 
             set
             {
-                EventHandler handler = ControlMessenger.ControleEventHandler;
+                EventHandler handler = ControlMessenger.PedalEventHandler;
                 ControlEventArgs eventArgs = new ControlEventArgs();
                 if (handler != null)
                 {
@@ -80,7 +90,7 @@ namespace AutomatedCar.Models.InputManager.Messenger
 
             set
             {
-                EventHandler handler = ControlMessenger.ControleEventHandler;
+                EventHandler handler = ControlMessenger.GearboxEventHandler;
                 ControlEventArgs eventArgs = new ControlEventArgs();
                 if (handler != null)
                 {
