@@ -2,35 +2,34 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace AutomatedCar.Models.Powertrain
+namespace AutomatedCar.SystemComponents.Powertrain
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Numerics;
-    using System.Reflection.Metadata;
-    using System.Text;
-    using System.Threading.Tasks;
     using Vector = Avalonia.Vector;
 
     /// <summary>
     /// Steering.
     /// </summary>
-    internal class Steering
+    internal class Steering : ISteering
     {
-        //atan(wheelBase / (turningCircle - carWidth)) = turningAngle
-        float wheelBase;
-        double steerAngle;
+        // atan(wheelBase / (turningCircle - carWidth)) = turningAngle
+        private float wheelBase;
+        private double steerAngle;
 
-        Vector carLocation;
-        double carHeading;
-        float carSpeed;
+        private Vector carLocation;
+        private double carHeading;
+        private float carSpeed;
 
-        Vector frontWheel;
-        Vector backWheel;
+        private Vector frontWheel;
+        private Vector backWheel;
 
-        float dt;
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Steering"/> class.
+        /// </summary>
+        /// <param name="steerAngle">Angle of steering.</param>
+        /// <param name="x">X position of car.</param>
+        /// <param name="y">Y position of car.</param>
+        /// <param name="carSpeed">Speed of car.</param>
         public Steering(double steerAngle, int x, int y, float carSpeed)
         {
             this.wheelBase = 130f;
@@ -39,22 +38,31 @@ namespace AutomatedCar.Models.Powertrain
             this.carSpeed = carSpeed;
         }
 
-        public void findWheelLocations()
+        /// <summary>
+        /// Finds the location of the wheels.
+        /// </summary>
+        public void FindWheelLocations()
         {
-            frontWheel = carLocation + wheelBase / 2 * new Vector(Math.Cos(carHeading), Math.Sin(carHeading));
-            backWheel = carLocation - wheelBase / 2 * new Vector(Math.Cos(carHeading), Math.Sin(carHeading));
+            this.frontWheel = this.carLocation + (this.wheelBase / 2 * new Vector(Math.Cos(this.carHeading), Math.Sin(this.carHeading)));
+            this.backWheel = this.carLocation - (this.wheelBase / 2 * new Vector(Math.Cos(this.carHeading), Math.Sin(this.carHeading)));
         }
 
-        public void findNewWheelLocations()
+        /// <summary>
+        /// Calculates the new wheel locations.
+        /// </summary>
+        public void FindNewWheelLocations()
         {
-            backWheel += carSpeed * dt * new Vector(Math.Cos(carHeading), Math.Sin(carHeading));
-            frontWheel += carSpeed * dt * new Vector(Math.Cos(carHeading + steerAngle), Math.Sin(carHeading + steerAngle));
+            this.backWheel += this.carSpeed * new Vector(Math.Cos(this.carHeading), Math.Sin(this.carHeading));
+            this.frontWheel += this.carSpeed * new Vector(Math.Cos(this.carHeading + this.steerAngle), Math.Sin(this.carHeading + this.steerAngle));
         }
 
-        public void getNewHeading()
+        /// <summary>
+        /// Calculates the new heading of the car.
+        /// </summary>
+        public void GetNewHeading()
         {
-            carLocation = (frontWheel + backWheel) / 2;
-            carHeading = Math.Atan2(frontWheel.Y - backWheel.Y, frontWheel.X - backWheel.X);
+            this.carLocation = (this.frontWheel + this.backWheel) / 2;
+            this.carHeading = Math.Atan2(this.frontWheel.Y - this.backWheel.Y, this.frontWheel.X - this.backWheel.X);
         }
     }
 }
