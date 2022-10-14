@@ -26,7 +26,6 @@ namespace AutomatedCar.Models.Powertrain
         /// <returns>driving force lenght.</returns>
         float Accelerate();
 
-
         /// <summary>
         /// Slows the car.
         /// </summary>

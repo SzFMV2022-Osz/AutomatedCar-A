@@ -133,7 +133,24 @@ namespace AutomatedCar.Models.Powertrain
 
         private float GetSpeedByWheelRotation()
         {
-            return this.GetWheelRotationRateByRPM() * this.wheelradius;
+            float speed = 0;
+            switch (this.gearshift.GetState())
+            {
+                case GearshiftState.P:
+                    speed = 0;
+                    break;
+                case GearshiftState.R:
+                    speed = -1 * this.GetWheelRotationRateByRPM() * this.wheelradius;
+                    break;
+                case GearshiftState.N:
+                    speed = 0;
+                    break;
+                case GearshiftState.D:
+                    speed = this.GetWheelRotationRateByRPM() * this.wheelradius;
+                    break;
+            }
+
+            return speed;
         }
 
         private float Cdrag()
