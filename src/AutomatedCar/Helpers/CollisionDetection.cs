@@ -164,5 +164,24 @@
 
             return dotProduct1 >= 0 && dotProduct2 >= 0 && dotProduct3 >= 0;
         }
+
+        private static Point RotatePoint(Point point, double angle)
+        {
+            // Rotation Matrix equation: https://en.wikipedia.org/wiki/Rotation_matrix#Common_rotations
+            return new Point(
+                (point.X * Math.Cos(angle)) - (point.Y * Math.Sin(angle)),
+                (point.X * Math.Sin(angle)) + (point.Y * Math.Cos(angle)));
+        }
+        
+        /// <summary>
+        /// Calculates a new, rotated bounding box. Method is not tested, possible bug source.
+        /// </summary>
+        /// <param name="boundingBox">The bounding box of the object.</param>
+        /// <param name="angle">The angle of the rotation, in degrees.</param>
+        /// <returns>A new Bounding Box, with all of its' points rotated.</returns>
+        public static PolylineGeometry RotateBoundingBox(PolylineGeometry boundingBox, double angle)
+        {
+            return new PolylineGeometry(boundingBox.Points.Select(point => RotatePoint(point, angle)).ToList(), false);
+        }
     }
 }
