@@ -36,7 +36,7 @@ namespace AutomatedCar
         {
             var world = World.Instance;
 
-            this.AddDummyCircleTo(world);
+            this.CreateNPCcar(325, 800, "car_3_black.png", world);
 
             world.PopulateFromJSON($"AutomatedCar.Assets.test_world.json");
 
@@ -60,26 +60,19 @@ namespace AutomatedCar
             return new PolylineGeometry(points, false);
         }
 
-        private void AddDummyCircleTo(World world)
+        private void CreateNPCcar(int x, int y, string filename, World world)
         {
-            var circle = new Circle(200, 200, "circle.png", 20);
-            
-            circle.Width = 40;
-            circle.Height = 40;
-            circle.ZIndex = 20;
-            circle.Rotation = 45;
-
-            //world.AddObject(circle);
-
-            var car = new NpcCar(200, 200, "circle.png");
+            var car = new NpcCar(x, y, filename);
+            car.SetRoute();
+            car.SetCoordinates();
             car.Start();
+
             world.AddObject(car);
         }
 
         private AutomatedCar CreateControlledCar(int x, int y, int rotation, string filename)
         {
             var controlledCar = new Models.AutomatedCar(x, y, filename);
-            
             controlledCar.Geometry = this.GetControlledCarBoundaryBox();
             controlledCar.RawGeometries.Add(controlledCar.Geometry);
             controlledCar.Geometries.Add(controlledCar.Geometry);
