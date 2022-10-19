@@ -4,6 +4,7 @@ namespace AutomatedCar
     using System.IO;
     using System.Reflection;
     using AutomatedCar.Models;
+    using AutomatedCar.Models.NPC;
     using AutomatedCar.ViewModels;
     using AutomatedCar.Views;
     using Avalonia;
@@ -34,6 +35,7 @@ namespace AutomatedCar
         {
             var world = World.Instance;
 
+            this.CreateNPCcar(325, 800, "car_3_black.png", world);
             world.PopulateFromJSON($"AutomatedCar.Assets.test_world.json");
 
             this.AddControlledCarsTo(world);
@@ -56,22 +58,19 @@ namespace AutomatedCar
             return new PolylineGeometry(points, false);
         }
 
-        private void AddDummyCircleTo(World world)
+        private void CreateNPCcar(int x, int y, string filename, World world)
         {
-            var circle = new Circle(200, 200, "circle.png", 20);
+            var car = new NpcCar(x, y, filename);
+            car.SetRoute();
+            car.SetCoordinates();
+            car.Start();
 
-            circle.Width = 40;
-            circle.Height = 40;
-            circle.ZIndex = 20;
-            circle.Rotation = 45;
-
-            world.AddObject(circle);
+            world.AddObject(car);
         }
 
         private AutomatedCar CreateControlledCar(int x, int y, int rotation, string filename)
         {
             var controlledCar = new Models.AutomatedCar(x, y, filename);
-
             controlledCar.Geometry = this.GetControlledCarBoundaryBox();
             controlledCar.RawGeometries.Add(controlledCar.Geometry);
             controlledCar.Geometries.Add(controlledCar.Geometry);

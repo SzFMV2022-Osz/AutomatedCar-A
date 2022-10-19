@@ -5,12 +5,10 @@
 namespace AutomatedCar.SystemComponents.Packets
 {
     using System.Collections.Generic;
-    using AutomatedCar.Models;
 
     /// <summary>
     /// A service that provides a collection of type <see cref="WorldObject"/>.
     /// </summary>
-    internal interface ISensorPacket
     {
         /// <summary>
         /// Gets or sets a collection of type WorldObject.

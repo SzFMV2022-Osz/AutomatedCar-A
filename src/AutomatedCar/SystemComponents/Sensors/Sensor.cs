@@ -5,15 +5,20 @@
 namespace AutomatedCar.SystemComponents.Sensors
 {
     using System.Collections.Generic;
+    using System.Linq;
+    using System.Numerics;
     using AutomatedCar.Models;
     using AutomatedCar.SystemComponents.Packets;
 
     /// <summary>
     /// Abstract Sensor class with basic abstractions.
     /// </summary>
-    internal abstract class Sensor : SystemComponent
     {
         private readonly ISensorPacket sensorPacket;
+        protected float HorizontalDistance { get; set; }
+
+        protected float VerticalDistance { get; set; }
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Sensor"/> class.
@@ -21,12 +26,10 @@ namespace AutomatedCar.SystemComponents.Sensors
         /// <param name="sensorPacket"><see cref="ISensorPacket"/> implementation.</param>
         /// <param name="virtualFunctionBus">An instance of <see cref="VirtualFunctionBus"/>.</param>
         public Sensor(ISensorPacket sensorPacket, VirtualFunctionBus virtualFunctionBus)
-            : base(virtualFunctionBus)
         {
-            this.sensorPacket = sensorPacket;
-        }
+            public Vector2 X { get; set; }
 
-        /// <summary>
+            public Vector2 Y { get; set; }
         /// Filters relevant <see cref="WorldObject"/> items.
         /// </summary>
         /// <param name="worldObjects">A collection of type <see cref="WorldObject"/>.</param>
@@ -39,12 +42,17 @@ namespace AutomatedCar.SystemComponents.Sensors
         /// <param name="worldObjects">A collection of type <see cref="WorldObject"/>.</param>
         protected abstract void SaveWorldObjectsToPacket(IEnumerable<WorldObject> worldObjects);
 
-        private static AutomatedCar GetAutomatedCar()
+        public Sensor(VirtualFunctionBus virtualFunctionBus)
+            : base(virtualFunctionBus)
         {
-            return World.Instance.ControlledCar;
+            this.triangle = new SensorTriangle();
         }
 
-        private IEnumerable<WorldObject> GetWorldObjects()
+        protected abstract void SaveWorldObjectsToPacket();
+
+        protected abstract List<WorldObject> FilterRelevantWorldObjects();
+
+        protected List<WorldObject> GetWorldObjects()
         {
             return World.Instance.WorldObjects;
         }

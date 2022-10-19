@@ -11,7 +11,6 @@ namespace AutomatedCar.SystemComponents.Packets
     /// <summary>
     /// An implementation of <see cref="ISensorPacket"/>.
     /// </summary>
-    internal class SensorPacket : ReactiveObject, ISensorPacket
     {
         private IEnumerable<WorldObject> relevantWorldObjects;
 
