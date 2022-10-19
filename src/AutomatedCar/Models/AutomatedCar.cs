@@ -18,6 +18,8 @@ namespace AutomatedCar.Models
 
         public VirtualFunctionBus VirtualFunctionBus { get => this.virtualFunctionBus; }
 
+        public CarCollisionDetector CarCollisionDetector { get; set; }
+
         public int Revolution { get; set; }
 
         public int Velocity { get; set; }
