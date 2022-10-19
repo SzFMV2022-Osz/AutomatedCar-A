@@ -9,14 +9,14 @@ namespace AutomatedCar.SystemComponents.Packets
     using ReactiveUI;
 
     /// <summary>
-    /// An implementation of ISensorPacket.
+    /// An implementation of <see cref="ISensorPacket"/>.
     /// </summary>
     internal class SensorPacket : ReactiveObject, ISensorPacket
     {
         private IEnumerable<WorldObject> relevantWorldObjects;
 
         /// <summary>
-        /// Gets or sets a collection of type WorldObject.
+        /// Gets or sets a collection of type <see cref="WorldObject"/>.
         /// </summary>
         public IEnumerable<WorldObject> RelevantWorldObjects
         {
