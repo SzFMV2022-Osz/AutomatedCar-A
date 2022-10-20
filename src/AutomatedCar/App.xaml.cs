@@ -79,7 +79,7 @@ namespace AutomatedCar
         private void CreateNPCcar(int x, int y, string filename, int typeID, World world)
         {
             var car = new NpcCar(x, y, filename);
-            PolylineGeometry boundaryBox = GetBoundaryBox(typeID);
+            PolylineGeometry boundaryBox = this.GetBoundaryBox(typeID);
             car.Geometries.Add(boundaryBox);
             car.RawGeometries.Add(boundaryBox);
             car.SetRoute();
