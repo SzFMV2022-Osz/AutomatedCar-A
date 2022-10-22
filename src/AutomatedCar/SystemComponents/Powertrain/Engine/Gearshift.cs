@@ -109,5 +109,27 @@ namespace AutomatedCar.Models.Powertrain
                 this.gear++;
             }
         }
+
+        /// <summary>
+        /// Switch state dawn.
+        /// </summary>
+        public void StateDown()
+        {
+            if (this.state != GearshiftState.P)
+            {
+                this.state--;
+            }
+        }
+
+        /// <summary>
+        /// Switch state up.
+        /// </summary>
+        public void StateUp()
+        {
+            if (this.state == GearshiftState.D)
+            {
+                this.state++;
+            }
+        }
     }
 }

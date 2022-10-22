@@ -54,5 +54,15 @@ namespace AutomatedCar.Models.Powertrain
         /// </summary>
         /// <returns>state.</returns>
         GearshiftState GetState();
+
+        /// <summary>
+        /// Switch state dawn.
+        /// </summary>
+        void StateDown();
+
+        /// <summary>
+        /// Switch state up.
+        /// </summary>
+        void StateUp();
     }
 }
