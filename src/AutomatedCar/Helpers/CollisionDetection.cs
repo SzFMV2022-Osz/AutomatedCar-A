@@ -1,5 +1,6 @@
 ﻿namespace AutomatedCar.Helpers
 {
+    using AutomatedCar.Models;
     using Avalonia;
     using Avalonia.Media;
     using System;
@@ -165,7 +166,29 @@
             return dotProduct1 >= 0 && dotProduct2 >= 0 && dotProduct3 >= 0;
         }
 
-        private static Point RotatePoint(Point point, double angle)
+        /// <summary>
+        /// Returns whether point is in a triangle with Barycentric method.
+        /// </summary>
+        /// <param name="p">Point</param>
+        /// <param name="p0">Triangle Point 1.</param>
+        /// <param name="p1">Triangle Point 2.</param>
+        /// <param name="p2">Triangle Point 3.</param>
+        /// <returns>Point is in triangle or not.</returns>
+        public static bool PointInTriangle(Point p, Point p0, Point p1, Point p2)
+        {
+            var s = ((p0.X - p2.X) * (p.Y - p2.Y)) - ((p0.Y - p2.Y) * (p.X - p2.X));
+            var t = ((p1.X - p0.X) * (p.Y - p0.Y)) - ((p1.Y - p0.Y) * (p.X - p0.X));
+
+            if ((s < 0) != (t < 0) && s != 0 && t != 0)
+            {
+                return false;
+            }
+
+            var d = ((p2.X - p1.X) * (p.Y - p1.Y)) - ((p2.Y - p1.Y) * (p.X - p1.X));
+            return d == 0 || (d < 0) == (s + t <= 0);
+        }
+
+        public static Point RotatePoint(Point point, double angle)
         {
             // Convert to rad
             angle *= Math.PI / 180f;
@@ -174,7 +197,7 @@
                 (point.X * Math.Cos(angle)) - (point.Y * Math.Sin(angle)),
                 (point.X * Math.Sin(angle)) + (point.Y * Math.Cos(angle)));
         }
-        
+
         /// <summary>
         /// Calculates a new, rotated bounding box. Method is not tested, possible bug source.
         /// </summary>
@@ -184,6 +207,21 @@
         public static PolylineGeometry RotateBoundingBox(PolylineGeometry boundingBox, double angle)
         {
             return new PolylineGeometry(boundingBox.Points.Select(point => RotatePoint(point, angle)).ToList(), false);
+        }
+
+        public static PolylineGeometry TransformGeometry(WorldObject obj, double angle = 0)
+        {
+            // Convert to rad
+            angle *= Math.PI / 180f;
+
+            PolylineGeometry transformedGeometry = new PolylineGeometry();
+
+            foreach (Point point in obj.RawGeometries.First().Points)
+            {
+                transformedGeometry.Points.Add(RotatePoint(new Point(point.X, point.Y), angle) + new Point(obj.X, obj.Y));
+            }
+
+            return transformedGeometry;
         }
     }
 }

@@ -52,5 +52,16 @@ namespace Tests.CollisionDetection
 
             Assert.IsTrue(pointInTriangle);
         }
+
+        [TestMethod]
+        public void Point_MinusCoordinates_IsDetected()
+        {
+            Tuple<Point, Point, Point> triangle = new(new Point(-4520, -7235), new Point(5480, -7235), new Point(480, 1425));
+            Point point = new(365, 1034);
+            
+            bool pointInTriangle = PointInTriangle(point, triangle);
+
+            Assert.IsTrue(pointInTriangle);
+        }
     }
 }
