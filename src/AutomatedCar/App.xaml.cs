@@ -37,6 +37,7 @@ namespace AutomatedCar
             var world = World.Instance;
 
             this.CreateNPCcar(325, 800, "car_1_blue.png", 1,  world);
+            this.CreateNPCPerson(225,800,"woman.png", 1, world);
 
             world.PopulateFromJSON($"AutomatedCar.Assets.test_world.json");
 
@@ -87,6 +88,18 @@ namespace AutomatedCar
             car.Start();
 
             world.AddObject(car);
+        }
+
+        private void CreateNPCPerson(int x, int y, string filename, int typeID, World world)
+        {
+            var person = new NpcPerson(x, y, filename);
+            PolylineGeometry boundaryBox = this.GetBoundaryBox(typeID);
+            person.Geometries.Add(boundaryBox);
+            person.RawGeometries.Add(boundaryBox);
+            person.SetRoute();
+            person.SetCoordinates();
+            person.Start();
+            world.AddObject(person);
         }
 
         private AutomatedCar CreateControlledCar(int x, int y, int rotation, string filename)
