@@ -1,7 +1,9 @@
 ﻿namespace AutomatedCar.Helpers
 {
+    using AutomatedCar.Models;
     using Avalonia;
     using Avalonia.Media;
+    using ReactiveUI;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -167,6 +169,7 @@
 
         private static Point RotatePoint(Point point, double angle)
         {
+            angle *= Math.PI / 180f;
             // Rotation Matrix equation: https://en.wikipedia.org/wiki/Rotation_matrix#Common_rotations
             return new Point(
                 (point.X * Math.Cos(angle)) - (point.Y * Math.Sin(angle)),
@@ -182,6 +185,31 @@
         public static PolylineGeometry RotateBoundingBox(PolylineGeometry boundingBox, double angle)
         {
             return new PolylineGeometry(boundingBox.Points.Select(point => RotatePoint(point, angle)).ToList(), false);
+        }
+
+        /// <summary>
+        /// Adds (dx, dy) to every point in geometry.
+        /// </summary>
+        public static PolylineGeometry TranslateGeometry(PolylineGeometry geometry, double dx, double dy)
+        {
+            PolylineGeometry translated = new PolylineGeometry();
+            foreach (var point in geometry.Points)
+            {
+                translated.Points.Add(new Point(point.X + dx, point.Y + dy));
+            }
+
+            return translated;
+        }
+
+        /// <summary>
+        /// Transforms a WorldObject's raw geometry to it's world centric coordinates.
+        /// </summary>
+        public static PolylineGeometry TransformRawGeometry(WorldObject obj)
+        {
+            var geom = TranslateGeometry(obj.RawGeometries.First(), -obj.RotationPoint.X, -obj.RotationPoint.Y);
+            geom = RotateBoundingBox(geom, obj.Rotation);
+            geom = TranslateGeometry(geom, obj.X, obj.Y);
+            return geom;
         }
     }
 }
