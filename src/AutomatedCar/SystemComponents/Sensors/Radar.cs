@@ -1,50 +1,26 @@
 ﻿namespace AutomatedCar.SystemComponents.Sensors
 {
-    using AutomatedCar.Models;
-    using AutomatedCar.SystemComponents.Packets;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
     using System.Numerics;
+    using AutomatedCar.Helpers;
     using AutomatedCar.Models;
+    using AutomatedCar.Models.NPC;
     using AutomatedCar.SystemComponents.Packets;
+    using Avalonia;
+    using Avalonia.Media;
 
     public class Radar : Sensor
     {
-        private Vector2 visionRightPos;
-        private Vector2 visionLeftPos;
-
-        private Vector2 RotatedVisionRightPos
-        {
-            get
-            {
-                return this.RotatePosition(this.visionRightPos, this.GetAutomatedCar().Rotation);
-            }
-        }
-
-        private Vector2 RotatedVisionLeftPos
-        {
-            get
-            {
-                return this.RotatePosition(this.visionLeftPos, this.GetAutomatedCar().Rotation);
-            }
-        }
-
         public Radar(VirtualFunctionBus virtualFunctionBus)
             : base(virtualFunctionBus)
         {
             double deg = 60;
             int dist = 200;
 
-            double rad = this.AngleDegToRad(deg);
-            int gameDist = 50 * dist;
-
-            int x = (int)(gameDist * Math.Cos(rad));
-            int y = (int)(gameDist * Math.Sin(rad));
-
-            this.visionLeftPos = new Vector2(-x, -y);
-            this.visionRightPos = new Vector2(x, -y);
+            this.vision = SensorVision.CalculateVision(dist, deg, new Point(0, 0));
         }
 
         public override void Process()
@@ -68,20 +44,27 @@
         {
             AutomatedCar car = this.GetAutomatedCar();
 
-            if (obj is AutomatedCar)
+            if (obj.Equals(car))
             {
                 return false;
             }
 
-            var carPos = new Vector2(car.X, car.Y);
+            if (!(obj is INPC) || !(obj is Car))
+            {
+                return false;
+            }
 
-            bool isInTriangle = this.PointInTriangle(
-                new Vector2(obj.X, obj.Y),
-                carPos,
-                carPos + this.RotatedVisionLeftPos,
-                carPos + this.RotatedVisionRightPos);
+            var objPoly = CollisionDetection.TransformGeometry(obj, obj.Rotation);
 
-            return obj is Car && isInTriangle;
+            var roi = this.GetROI();
+
+            bool isInTriangle = false;
+            for (int i = 0; i < objPoly.Points.Count && !isInTriangle; ++i)
+            {
+                isInTriangle = CollisionDetection.PointInTriangle(objPoly.Points[i], roi.Item1, roi.Item2, roi.Item3);
+            }
+
+            return isInTriangle;
         }
     }
 }
