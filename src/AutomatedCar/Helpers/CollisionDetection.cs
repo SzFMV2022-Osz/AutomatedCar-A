@@ -169,6 +169,7 @@
 
         private static Point RotatePoint(Point point, double angle)
         {
+            // Convert to rad
             angle *= Math.PI / 180f;
             // Rotation Matrix equation: https://en.wikipedia.org/wiki/Rotation_matrix#Common_rotations
             return new Point(
