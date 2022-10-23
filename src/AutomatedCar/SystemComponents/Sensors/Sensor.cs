@@ -1,10 +1,12 @@
 ﻿namespace AutomatedCar.SystemComponents.Sensors
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Numerics;
     using AutomatedCar.Models;
     using AutomatedCar.SystemComponents.Packets;
+    using Avalonia;
 
     public abstract class Sensor : SystemComponent
     {
@@ -18,11 +20,11 @@
 
         protected struct SensorTriangle
         {
-            public Vector2 X { get; set; }
+            public Point X { get; set; }
 
-            public Vector2 Y { get; set; }
+            public Point Y { get; set; }
 
-            public Vector2 Z { get; set; }
+            public Point Z { get; set; }
         }
 
         public Sensor(VirtualFunctionBus virtualFunctionBus)
@@ -38,6 +40,11 @@
         protected List<WorldObject> GetWorldObjects()
         {
             return World.Instance.WorldObjects;
+        }
+
+        protected AutomatedCar GetAutomatedCar()
+        {
+            return World.Instance.ControlledCar;
         }
     }
 }
