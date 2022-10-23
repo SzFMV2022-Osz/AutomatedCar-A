@@ -12,7 +12,6 @@ namespace AutomatedCar.Models
             : base(x, y, filename)
         {
             this.virtualFunctionBus = new VirtualFunctionBus();
-            this.virtualFunctionBus.CarCoordinatesPacket = new CarCoordinatesPacket(x, y);
             this.ZIndex = 10;
         }
 
