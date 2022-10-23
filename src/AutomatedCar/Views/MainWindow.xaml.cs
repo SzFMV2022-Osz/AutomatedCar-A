@@ -1,15 +1,30 @@
 namespace AutomatedCar.Views
 {
+    using System;
+    using System.Reactive.Linq;
     using AutomatedCar.ViewModels;
     using Avalonia.Controls;
     using Avalonia.Input;
     using Avalonia.Markup.Xaml;
+    using Avalonia.ReactiveUI;
+    using ReactiveUI;
 
-    public class MainWindow : Window
+    public class MainWindow : ReactiveWindow<MainWindowViewModel>
     {
         public MainWindow()
         {
             this.InitializeComponent();
+            var popUpWindow = new PopUpWindow();
+            popUpWindow.Closing += (s, e) =>
+            {
+                ((Window)s).Hide();
+                e.Cancel = true;
+            };
+            this.WhenActivated(x => x(ViewModel.WhenAnyValue(x => x.PopUp.ControlledCar.Car.VirtualFunctionBus.CollisionPacket.Collided).Where(x => x == true).Subscribe(x =>
+            {
+                popUpWindow.DataContext = ViewModel.PopUp;
+                popUpWindow.ShowDialog(this);
+            })));
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
