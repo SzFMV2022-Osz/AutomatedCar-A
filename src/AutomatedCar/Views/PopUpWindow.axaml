@@ -1,0 +1,40 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:viewmodels="clr-namespace:AutomatedCar.ViewModels;assembly=AutomatedCar"
+        mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="200"
+        x:Class="AutomatedCar.Views.PopUpWindow"
+		xmlns:models="clr-namespace:AutomatedCar.Models;assembly=AutomatedCar"
+        Title="PopUpWindow"
+		Width="200" Height="200">
+	<Grid>
+		<StackPanel>
+			<ContentControl Name="PopUpWindow" Content="{Binding ControlledCar, Mode=OneWay}" >
+				<ContentControl.ContentTemplate>
+					<DataTemplate DataType="{x:Type viewmodels:CarViewModel}">
+						<Border Background="Red">
+							<Grid>
+								<Grid.RowDefinitions>
+									<RowDefinition />
+									<RowDefinition Height="300"/>
+									<RowDefinition></RowDefinition>
+								</Grid.RowDefinitions>
+								<TextBlock Grid.Row="0" Text="The Car crashed with:"></TextBlock>
+								<ListBox  Grid.Row="1" Items="{Binding Car.VirtualFunctionBus.CollisionPacket.CollidedObjects}">
+									<ListBox.ItemTemplate>
+										<DataTemplate>
+											<StackPanel>
+												<TextBlock Text="{Binding WorldObjectType}" />
+											</StackPanel>
+										</DataTemplate>
+									</ListBox.ItemTemplate>
+								</ListBox>
+							</Grid>
+						</Border>
+					</DataTemplate>
+				</ContentControl.ContentTemplate>
+			</ContentControl>
+		</StackPanel>
+	</Grid>
+</Window>
