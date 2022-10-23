@@ -2,7 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace AutomatedCar.Models.InputManager.Messenger
+namespace AutomatedCar.SystemComponents.InputManager.Messenger
 {
     using System;
 

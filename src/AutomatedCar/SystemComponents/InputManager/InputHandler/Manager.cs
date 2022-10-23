@@ -4,7 +4,7 @@
 
 namespace AutomatedCar.SystemComponents.InputManager.InputHandler
 {
-    using AutomatedCar.Models.InputManager.Messenger;
+    using AutomatedCar.SystemComponents.InputManager.Messenger;
 
     /// <summary>
     /// This class manages the inputs.

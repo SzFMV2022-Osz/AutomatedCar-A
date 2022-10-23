@@ -2,7 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace AutomatedCar.Models.InputManager.Messenger
+namespace AutomatedCar.SystemComponents.InputManager.Messenger
 {
     using System;
 
@@ -20,17 +20,17 @@ namespace AutomatedCar.Models.InputManager.Messenger
         /// <summary>
         /// Event for the steering.
         /// </summary>
-        public static event EventHandler SteeringEventHandler;
+        public static event EventHandler<ControlEventArgs> SteeringEventHandler;
 
         /// <summary>
         /// Event for the pedals.
         /// </summary>
-        public static event EventHandler PedalEventHandler;
+        public static event EventHandler<ControlEventArgs> PedalEventHandler;
 
         /// <summary>
         /// Event for the gearbox.
         /// </summary>
-        public static event EventHandler GearboxEventHandler;
+        public static event EventHandler<ControlEventArgs> GearboxEventHandler;
 
         /// <summary>
         /// Gets or sets the position of steering wheel.
@@ -44,7 +44,7 @@ namespace AutomatedCar.Models.InputManager.Messenger
 
             set
             {
-                EventHandler handler = ControlMessenger.SteeringEventHandler;
+                EventHandler<ControlEventArgs> handler = SteeringEventHandler;
                 ControlEventArgs eventArgs = new ControlEventArgs();
                 if (handler != null)
                 {
@@ -67,7 +67,7 @@ namespace AutomatedCar.Models.InputManager.Messenger
 
             set
             {
-                EventHandler handler = ControlMessenger.PedalEventHandler;
+                EventHandler<ControlEventArgs> handler = PedalEventHandler;
                 ControlEventArgs eventArgs = new ControlEventArgs();
                 if (handler != null)
                 {
@@ -90,7 +90,7 @@ namespace AutomatedCar.Models.InputManager.Messenger
 
             set
             {
-                EventHandler handler = ControlMessenger.GearboxEventHandler;
+                EventHandler<ControlEventArgs> handler = GearboxEventHandler;
                 ControlEventArgs eventArgs = new ControlEventArgs();
                 if (handler != null)
                 {
