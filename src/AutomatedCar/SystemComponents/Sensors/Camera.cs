@@ -1,7 +1,9 @@
 ﻿namespace AutomatedCar.SystemComponents.Sensors
 {
+    using AutomatedCar.Helpers;
     using AutomatedCar.Models;
     using AutomatedCar.SystemComponents.Packets;
+    using Avalonia;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -23,22 +25,32 @@
 
         private void CalculateCoordinates()
         {
-            this.triangle.X = new Vector2(this.virtualFunctionBus.CarCoordinatesPacket.X + this.HorizontalDistance, this.virtualFunctionBus.CarCoordinatesPacket.Y);
-            this.triangle.Y = new Vector2(this.virtualFunctionBus.CarCoordinatesPacket.X + this.HorizontalDistance, this.virtualFunctionBus.CarCoordinatesPacket.Y + this.VerticalDistance);
-            this.triangle.Z = new Vector2(this.virtualFunctionBus.CarCoordinatesPacket.X + this.HorizontalDistance, this.virtualFunctionBus.CarCoordinatesPacket.Y - this.VerticalDistance);
+            this.triangle.X = new Point(this.GetAutomatedCar().X + this.HorizontalDistance, this.GetAutomatedCar().Y);
+            this.triangle.Y = new Point(this.GetAutomatedCar().X + this.HorizontalDistance, this.GetAutomatedCar().Y + this.VerticalDistance);
+            this.triangle.Z = new Point(this.GetAutomatedCar().X + this.HorizontalDistance, this.GetAutomatedCar().Y - this.VerticalDistance);
         }
 
-        //Todo: Filter Road, highlight nearest object.
         protected override List<WorldObject> FilterRelevantWorldObjects()
         {
             List<WorldObject> objs = this.GetWorldObjects();
-            return objs.Where(obj => this.triangle.X.X <= obj.X && this.triangle.Y.X >= obj.X && this.triangle.Z.Y <= obj.Y && this.triangle.Y.Y >= obj.Y).ToList();
+            objs = objs.Where(obj => CollisionDetection.PointInTriangle(new Point(obj.X, obj.Y), new Tuple<Point, Point, Point>(this.triangle.X, this.triangle.Y, this.triangle.Z))).ToList();
+            return objs.OrderBy(t => t.X).ToList();
         }
 
         protected override void SaveWorldObjectsToPacket()
         {
             this.sensorPacket = new SensorPacket();
             this.sensorPacket.RelevantWorldObjs = this.FilterRelevantWorldObjects();
+        }
+
+        protected List<WorldObject> FilterRoad()
+        {
+            return this.sensorPacket.RelevantWorldObjs.Where(obj => obj.WorldObjectType == WorldObjectType.Road).ToList();
+        }
+
+        protected WorldObject NearestWorldObject()
+        {
+            return this.sensorPacket.RelevantWorldObjs.FirstOrDefault();
         }
     }
 }
