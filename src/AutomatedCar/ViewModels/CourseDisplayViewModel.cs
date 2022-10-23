@@ -6,7 +6,7 @@ using ReactiveUI;
 
 namespace AutomatedCar.ViewModels
 {
-    using AutomatedCar.Models.InputManager.Messenger;
+    using AutomatedCar.SystemComponents.InputManager.Messenger;
     using AutomatedCar.SystemComponents.InputManager.InputHandler;
     using Avalonia.Controls;
     using JetBrains.Annotations;
