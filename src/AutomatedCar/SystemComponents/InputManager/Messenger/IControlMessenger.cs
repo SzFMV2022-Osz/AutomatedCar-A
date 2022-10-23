@@ -2,7 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace AutomatedCar.Models.InputManager.Messenger
+namespace AutomatedCar.SystemComponents.InputManager.Messenger
 {
     using System;
 
@@ -12,9 +12,19 @@ namespace AutomatedCar.Models.InputManager.Messenger
     public interface IControlMessenger
     {
         /// <summary>
-        /// Event for the powertrain.
+        /// Event for the steering.
         /// </summary>
-        static event EventHandler ControleEventHandler;
+        static event EventHandler<ControlEventArgs> SteeringEventHandler;
+
+        /// <summary>
+        /// Event for the pedals.
+        /// </summary>
+        static event EventHandler<ControlEventArgs> PedalsEventHandler;
+
+        /// <summary>
+        /// Event for the gears.
+        /// </summary>
+        static event EventHandler<ControlEventArgs> GearsEventHandler;
 
         /// <summary>
         /// Gets or sets the position of steering wheel.
