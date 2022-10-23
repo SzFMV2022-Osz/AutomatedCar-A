@@ -61,7 +61,7 @@
             bool isInTriangle = false;
             for (int i = 0; i < objPoly.Points.Count && !isInTriangle; ++i)
             {
-                isInTriangle = CollisionDetection.PointInTriangle(objPoly.Points[i], roi.Item1, roi.Item2, roi.Item3);
+                isInTriangle = CollisionDetection.PointInTriangle(objPoly.Points[i], new Tuple<Point, Point, Point>(roi.Item1, roi.Item2, roi.Item3));
             }
 
             return isInTriangle;
