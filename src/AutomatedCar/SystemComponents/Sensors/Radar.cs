@@ -36,7 +36,16 @@
         protected override void SaveWorldObjectsToPacket()
         {
             ISensorPacket packet = new SensorPacket();
-            packet.RelevantWorldObjs = this.FilterRelevantWorldObjects();
+
+            var filtered = this.FilterRelevantWorldObjects();
+
+            /*
+            Trace.WriteLine(filtered.Count);
+            filtered.ForEach(x => Trace.Write(x.X + "," + x.Y + " " + x.Filename + "; "));
+            Trace.WriteLine(" ");
+            */
+
+            packet.RelevantWorldObjs = filtered;
             this.virtualFunctionBus.RadarPacket = packet;
         }
 
@@ -49,12 +58,12 @@
                 return false;
             }
 
-            if (!(obj is INPC) || !(obj is Car))
+            if (!(obj is INPC) && !(obj is Car))
             {
                 return false;
             }
 
-            var objPoly = CollisionDetection.TransformGeometry(obj, obj.Rotation);
+            var objPoly = CollisionDetection.TransformRawGeometry(obj);
 
             var roi = this.GetROI();
 
