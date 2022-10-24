@@ -2,7 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace AutomatedCar.Models.Powertrain
+namespace AutomatedCar.SystemComponents.Powertrain
 {
     using System;
     using System.Collections.Generic;
