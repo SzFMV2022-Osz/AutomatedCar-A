@@ -42,8 +42,8 @@ namespace AutomatedCar
 
             this.CreateNPCcar(325, 800, "car_3_black.png", world);
 
-            //world.PopulateFromJSON($"AutomatedCar.Assets.test_world.json");
-            world.PopulateFromJSON($"AutomatedCar.Assets.oval.json");
+            world.PopulateFromJSON($"AutomatedCar.Assets.test_world.json");
+            //world.PopulateFromJSON($"AutomatedCar.Assets.oval.json");
 
             this.AddControlledCarsTo(world);
             this.DrawPath(world);
@@ -55,7 +55,7 @@ namespace AutomatedCar
         private void DrawPath(World world)
         {
             StreamReader reader = new StreamReader(Assembly.GetExecutingAssembly()
-                    .GetManifestResourceStream("AutomatedCar.Assets.oval.csv"));
+                    .GetManifestResourceStream("AutomatedCar.Assets.test_world.csv"));
 
             string line;
             bool first = true;
@@ -67,11 +67,11 @@ namespace AutomatedCar
                 int speed = int.Parse(coordinate[2]);
 
                 string filename = "circle.png";
-                if (first)
-                {
-                    filename = "bicycle.png";
-                    first = false;
-                }
+                //if (first)
+                //{
+                //    filename = "bicycle.png";
+                //    first = false;
+                //}
 
                 var circle = new Circle(x, y, filename, 2);
 
@@ -101,7 +101,7 @@ namespace AutomatedCar
 
         private void CreateNPCcar(int x, int y, string filename, World world)
         {
-            Route route = Route.CreateFromJson("AutomatedCar.Assets.oval.csv");
+            Route route = Route.CreateFromJson("AutomatedCar.Assets.test_world.csv");
             var car = new NpcCar(route, filename);
             //car.SetRoute();
             car.SetCoordinates();

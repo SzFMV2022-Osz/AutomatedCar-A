@@ -18,10 +18,12 @@
   <ItemGroup>
     <AvaloniaResource Remove="Assets\oval.csv" />
     <AvaloniaResource Remove="Assets\oval.json" />
+    <AvaloniaResource Remove="Assets\test_world.csv" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Assets\oval.csv" />
     <None Remove="Assets\oval.json" />
+    <None Remove="Assets\test_world.csv" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.10.7" />
