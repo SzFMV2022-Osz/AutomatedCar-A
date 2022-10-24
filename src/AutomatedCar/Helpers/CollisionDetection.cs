@@ -165,7 +165,7 @@
             return dotProduct1 >= 0 && dotProduct2 >= 0 && dotProduct3 >= 0;
         }
 
-        private static Point RotatePoint(Point point, double angle)
+        public static Point RotatePoint(Point point, double angle)
         {
             // Convert to rad
             angle *= Math.PI / 180f;
