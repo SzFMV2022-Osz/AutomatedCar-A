@@ -58,7 +58,6 @@ namespace AutomatedCar
                     .GetManifestResourceStream("AutomatedCar.Assets.test_world.csv"));
 
             string line;
-            bool first = true;
             while ((line = reader.ReadLine()) != null)
             {
                 string[] coordinate = line.Split(';');
@@ -66,15 +65,7 @@ namespace AutomatedCar
                 int y = int.Parse(coordinate[1]);
                 int speed = int.Parse(coordinate[2]);
 
-                string filename = "circle.png";
-                //if (first)
-                //{
-                //    filename = "bicycle.png";
-                //    first = false;
-                //}
-
-                var circle = new Circle(x, y, filename, 2);
-
+                var circle = new Circle(x, y, "circle.png", 2);
                 circle.Width = 4;
                 circle.Height = 4;
                 circle.ZIndex = 20;
@@ -103,7 +94,6 @@ namespace AutomatedCar
         {
             Route route = Route.CreateFromJson("AutomatedCar.Assets.test_world.csv");
             var car = new NpcCar(route, filename);
-            //car.SetRoute();
             car.SetCoordinates();
             car.Start();
 
