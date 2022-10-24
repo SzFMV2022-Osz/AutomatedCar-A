@@ -14,8 +14,6 @@
 
         protected float VerticalDistance { get; set; }
 
-        protected ISensorPacket sensorPacket;
-
         protected SensorTriangle triangle;
 
         protected struct SensorTriangle
