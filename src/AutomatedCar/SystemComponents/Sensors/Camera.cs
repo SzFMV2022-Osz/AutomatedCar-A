@@ -26,9 +26,9 @@
 
         private void CalculateCoordinates()
         {
-            this.triangle.X = new Point(this.GetAutomatedCar().X, this.GetAutomatedCar().Y);
-            this.triangle.Y = new Point(this.GetAutomatedCar().X + this.HorizontalDistance, this.GetAutomatedCar().Y + this.VerticalDistance);
-            this.triangle.Z = new Point(this.GetAutomatedCar().X + this.HorizontalDistance, this.GetAutomatedCar().Y - this.VerticalDistance);
+            this.triangle.X = CollisionDetection.RotatePoint(new Point(this.GetAutomatedCar().X, this.GetAutomatedCar().Y), this.GetAutomatedCar().Rotation);
+            this.triangle.Y = CollisionDetection.RotatePoint(new Point(this.GetAutomatedCar().X + this.HorizontalDistance, this.GetAutomatedCar().Y + this.VerticalDistance), this.GetAutomatedCar().Rotation);
+            this.triangle.Z = CollisionDetection.RotatePoint(new Point(this.GetAutomatedCar().X + this.HorizontalDistance, this.GetAutomatedCar().Y - this.VerticalDistance), this.GetAutomatedCar().Rotation);
         }
 
         protected override List<WorldObject> FilterRelevantWorldObjects()
