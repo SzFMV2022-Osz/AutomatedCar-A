@@ -24,9 +24,9 @@ namespace AutomatedCar.SystemComponents.Powertrain
         private readonly float diferential;
         private readonly float transmissionefficiency;
         private readonly float cBreak;
+        private readonly float maxrpm;
+        private readonly float minrpm;
         private float rpm;
-        private float maxrpm;
-        private float minrpm;
         private float gasPedal;
         private float breakPedal;
 
@@ -74,6 +74,8 @@ namespace AutomatedCar.SystemComponents.Powertrain
         public float Accelerate()
         {
             this.gasPedal += .01f;
+            this.breakPedal -= .01f;
+            this.ClampPedals();
             this.Velocity += this.ChangeVelocity(false);
             this.rpm = this.GetRPM();
 
@@ -90,7 +92,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
         }
 
         /// <summary>
-        /// Slows the car.
+        /// Slows the car with enginebreak.
         /// </summary>
         /// <returns>driving force lenght.</returns>
         public float Lift()
@@ -110,12 +112,14 @@ namespace AutomatedCar.SystemComponents.Powertrain
         }
 
         /// <summary>
-        /// Breaks the car.
+        /// Slows the car with breaks.
         /// </summary>
         /// <returns>driving force lenght.</returns>
         public float Breaking()
         {
             this.breakPedal += 0.01f;
+            this.gasPedal -= 0.01f;
+            this.ClampPedals();
             this.Velocity += this.ChangeVelocity(true);
             this.rpm = this.GetRPM();
 
@@ -216,12 +220,39 @@ namespace AutomatedCar.SystemComponents.Powertrain
 
         private float LongitudinalForce(bool isbreaking = false)
         {
-            if (isbreaking)
+            float temp = 0.0f;
+            switch (this.gearshift.GetState())
             {
-                return this.BreakingForce() + this.DragForce() + this.Frr();
+                case GearshiftState.P:
+                    break;
+                case GearshiftState.R:
+                    if (isbreaking)
+                    {
+                        temp = this.BreakingForce() + this.DragForce() + this.Frr();
+                    }
+                    else
+                    {
+                        temp = this.DrivingForce() + this.DragForce() + this.Frr();
+                    }
+
+                    temp *= -1;
+                    break;
+                case GearshiftState.N:
+                    break;
+                case GearshiftState.D:
+                    if (isbreaking)
+                    {
+                        temp = this.BreakingForce() + this.DragForce() + this.Frr();
+                    }
+                    else
+                    {
+                        temp = this.DrivingForce() + this.DragForce() + this.Frr();
+                    }
+
+                    break;
             }
 
-            return this.DrivingForce() + this.DragForce() + this.Frr();
+            return temp;
         }
 
         private float BreakingForce()
@@ -263,6 +294,27 @@ namespace AutomatedCar.SystemComponents.Powertrain
         private float Frr()
         {
             return -1 * this.Crr() * this.Velocity;
+        }
+
+        private void ClampPedals()
+        {
+            if (this.gasPedal > 1.0f)
+            {
+                this.gasPedal = 1.0f;
+            }
+            else if (this.gasPedal < 0.0f)
+            {
+                this.gasPedal = 0;
+            }
+
+            if (this.breakPedal > 1.0f)
+            {
+                this.breakPedal = 1.0f;
+            }
+            else if (this.breakPedal < 0.0f)
+            {
+                this.breakPedal = 0;
+            }
         }
     }
 }
