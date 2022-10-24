@@ -17,7 +17,8 @@
         private Route(RoutePoint[] routePoints, int startFrom)
         {
             this.routePoints = routePoints;
-            this.CurrentPoint = this.CurrentPoint = this.routePoints[startFrom];
+            this.currentPoint = startFrom;
+            this.CurrentPoint = this.CurrentPoint = this.routePoints[this.currentPoint];
         }
 
         public RoutePoint CurrentPoint { get; private set; }

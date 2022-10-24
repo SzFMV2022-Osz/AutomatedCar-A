@@ -46,7 +46,7 @@ namespace AutomatedCar
             //world.PopulateFromJSON($"AutomatedCar.Assets.oval.json");
 
             this.AddControlledCarsTo(world);
-            this.DrawPath(world);
+            //this.DrawPath(world);
 
             return world;
         }

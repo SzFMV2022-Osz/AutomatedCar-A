@@ -18,7 +18,6 @@ namespace AutomatedCar.Models.NPC
     /// </summary>
     internal class NpcCar : NPC, INPC
     {
-        //private MockedRoute[] routes;
         private int index;
         private double betterX;
         private double betterY;
@@ -40,27 +39,6 @@ namespace AutomatedCar.Models.NPC
         public MoveComponent MoveComponent { get; set; }
 
         /// <summary>
-        /// Sets the points of the route.
-        /// </summary>
-        //public void SetRoute()
-        //{
-        //    this.routes = new MockedRoute[10];
-        //    this.routes[0] = new MockedRoute { X = 325, Y = 600 };
-        //    this.routes[1] = new MockedRoute { X = 850, Y = 340 };
-        //    this.routes[2] = new MockedRoute { X = 3100, Y = 340 };
-        //    this.routes[3] = new MockedRoute { X = 3560, Y = 560 };
-        //    this.routes[4] = new MockedRoute { X = 3580, Y = 690 };
-        //    this.routes[5] = new MockedRoute { X = 3675, Y = 1100 };
-        //    this.routes[6] = new MockedRoute { X = 3675, Y = 2320 };
-        //    this.routes[7] = new MockedRoute { X = 3170, Y = 2645 };
-        //    this.routes[8] = new MockedRoute { X = 890, Y = 2645 };
-        //    this.routes[9] = new MockedRoute { X = 325, Y = 1950 };
-
-        //    this.Speed = 2;
-        //    this.index = 0;
-        //}
-
-        /// <summary>
         /// Sets the coordinates in double format.
         /// </summary>
         public void SetCoordinates()
@@ -72,8 +50,6 @@ namespace AutomatedCar.Models.NPC
         /// <inheritdoc/>
         public void Move()
         {
-            //double distanceX = Math.Abs(this.betterX - this.routes[this.index].X);
-            //double distanceY = Math.Abs(this.betterY - this.routes[this.index].Y);
             double distanceX = Math.Abs(this.betterX - this.Route.CurrentPoint.X);
             double distanceY = Math.Abs(this.betterY - this.Route.CurrentPoint.Y);
             double distance = Math.Sqrt((distanceX * distanceX) + (distanceY * distanceY));
@@ -82,16 +58,8 @@ namespace AutomatedCar.Models.NPC
 
             if (distanceX == 0 && distanceY == 0)
             {
-                //if (this.index < this.routes.Length - 1)
-                //{
-                //    this.index++;
-                //}
-                //else
-                //{
-                //    this.index = 0;
-                //}
                 this.Route.NextPoint();
-                this.Speed = this.Route.CurrentPoint.Speed / 10;
+                this.Speed = this.Route.CurrentPoint.Speed / 10; // TODO: calculate pixels/meter and convert speed from km/h
             }
             else
             {
@@ -123,8 +91,13 @@ namespace AutomatedCar.Models.NPC
                 }
             }
 
-            this.X = (int)this.betterX;
-            this.Y = (int)this.betterY;
+            int carWidth = 100; // TODO: should be calculated somewhere based on the image (filename) or get it as a parameter
+            double rotationRadians = rotation * Math.PI / 180;
+            double offsetX = Math.Cos(rotationRadians) * (carWidth / 2);
+            double offsetY = Math.Sin(rotationRadians) * (carWidth / 2);
+
+            this.X = (int)(this.betterX - offsetX);
+            this.Y = (int)(this.betterY - offsetY);
         }
 
         private Vector NewDirection()
