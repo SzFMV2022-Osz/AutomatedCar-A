@@ -68,10 +68,13 @@
 							<ListBox Items="{Binding Car.VirtualFunctionBus.RadarPacket.RelevantWorldObjs}">
 								<ListBox.ItemTemplate>
 									<DataTemplate>
-										<Grid ColumnDefinitions="Auto,Auto,Auto" RowDefinitions="Auto">
-											<Label Grid.Column="0" Content="{Binding X}" Foreground="Black"></Label>
-											<Label Grid.Column="1" Content="{Binding Y}" Foreground="Black"></Label>
-											<Label Grid.Column="2" Content="{Binding WorldObjectType}" Foreground="Black"></Label>
+										<Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowDefinitions="Auto">
+											<Label Grid.Column="0" Content="X:" Foreground="Black"></Label>
+											<Label Grid.Column="1" Content="{Binding X}" Foreground="Black"></Label>
+											<Label Grid.Column="2" Content="Y:" Foreground="Black"></Label>
+											<Label Grid.Column="3" Content="{Binding Y}" Foreground="Black"></Label>
+											<Label Grid.Column="4" Content="Type:" Foreground="Black"></Label>
+											<Label Grid.Column="5" Content="{Binding WorldObjectType}" Foreground="Black"></Label>
 										</Grid>
 									</DataTemplate>
 								</ListBox.ItemTemplate>
