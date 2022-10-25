@@ -10,7 +10,7 @@
 
         public List<WorldObject> RelevantWorldObjs
         {
-            get => this.RelevantWorldObjs;
+            get => this.relevantWorldObjs;
             set => this.RaiseAndSetIfChanged(ref this.relevantWorldObjs, value);
         }
     }
