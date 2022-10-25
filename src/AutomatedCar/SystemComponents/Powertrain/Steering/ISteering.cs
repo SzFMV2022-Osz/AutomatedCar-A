@@ -20,6 +20,11 @@ namespace AutomatedCar.SystemComponents.Powertrain
         void TurnRight();
 
         /// <summary>
+        /// Resets the wheel to a straight position.
+        /// </summary>
+        void StraightenWheel();
+
+        /// <summary>
         /// Calculates the rotation of the car.
         /// </summary>
         void GetRotation();

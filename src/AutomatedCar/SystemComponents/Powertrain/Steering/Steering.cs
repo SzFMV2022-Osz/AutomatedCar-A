@@ -65,6 +65,21 @@ namespace AutomatedCar.SystemComponents.Powertrain
         }
 
         /// <summary>
+        /// Resets the wheel to a straight position.
+        /// </summary>
+        public void StraightenWheel()
+        {
+            if (this.steerAngle < 0)
+            {
+                this.steerAngle += TurningOffset;
+            }
+            else if (this.steerAngle > 0)
+            {
+                this.steerAngle -= TurningOffset;
+            }
+        }
+
+        /// <summary>
         /// Calculates the rotation of the car.
         /// </summary>
         public void GetRotation()
