@@ -1,7 +1,9 @@
 ﻿namespace AutomatedCar.SystemComponents.Sensors
 {
+    using AutomatedCar.Helpers;
     using AutomatedCar.Models;
     using AutomatedCar.SystemComponents.Packets;
+    using Avalonia;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -11,34 +13,59 @@
     {
         public Camera(VirtualFunctionBus virtualFunctionBus) : base(virtualFunctionBus)
         {
-            this.HorizontalDistance = 50 * 80;
-            this.VerticalDistance = 50 * (92.37f / 2);
-            this.CalculateCoordinates();
+            double deg = 60;
+            int dist = 80;
+
+            this.vision = SensorVision.CalculateVision(dist, deg, new Point(this.GetAutomatedCar().X, this.GetAutomatedCar().Y));
         }
 
         public override void Process()
         {
-            this.CalculateCoordinates();
+            this.SaveWorldObjectsToPacket();
         }
 
-        private void CalculateCoordinates()
-        {
-            this.triangle.X = new Vector2(this.virtualFunctionBus.CarCoordinatesPacket.X + this.HorizontalDistance, this.virtualFunctionBus.CarCoordinatesPacket.Y);
-            this.triangle.Y = new Vector2(this.virtualFunctionBus.CarCoordinatesPacket.X + this.HorizontalDistance, this.virtualFunctionBus.CarCoordinatesPacket.Y + this.VerticalDistance);
-            this.triangle.Z = new Vector2(this.virtualFunctionBus.CarCoordinatesPacket.X + this.HorizontalDistance, this.virtualFunctionBus.CarCoordinatesPacket.Y - this.VerticalDistance);
-        }
-
-        //Todo: Filter Road, highlight nearest object.
         protected override List<WorldObject> FilterRelevantWorldObjects()
         {
             List<WorldObject> objs = this.GetWorldObjects();
-            return objs.Where(obj => this.triangle.X.X <= obj.X && this.triangle.Y.X >= obj.X && this.triangle.Z.Y <= obj.Y && this.triangle.Y.Y >= obj.Y).ToList();
+            return objs.Where(obj => (obj.WorldObjectType == WorldObjectType.Road || obj.WorldObjectType == WorldObjectType.RoadSign) && this.IsRelevant(obj)).ToList();
         }
 
         protected override void SaveWorldObjectsToPacket()
         {
-            this.sensorPacket = new SensorPacket();
-            this.sensorPacket.RelevantWorldObjs = this.FilterRelevantWorldObjects();
+            this.virtualFunctionBus.CameraPacket = new SensorPacket();
+            this.virtualFunctionBus.CameraPacket.RelevantWorldObjs = this.FilterRelevantWorldObjects();
+        }
+
+        private bool IsRelevant(WorldObject obj)
+        {
+            var objPoly = CollisionDetection.TransformRawGeometry(obj);
+
+            var roi = this.GetROI();
+
+            bool isInTriangle = false;
+            for (int i = 0; i < objPoly.Points.Count && !isInTriangle; ++i)
+            {
+                isInTriangle = CollisionDetection.PointInTriangle(objPoly.Points[i], new Tuple<Point, Point, Point>(roi.Item1, roi.Item2, roi.Item3));
+            }
+
+            return isInTriangle;
+        }
+
+        protected List<WorldObject> FilterRoad()
+        {
+            return this.virtualFunctionBus.CameraPacket.RelevantWorldObjs.Where(obj => obj.WorldObjectType == WorldObjectType.Road).ToList();
+        }
+
+        protected WorldObject NearestWorldObject()
+        {
+            OrderByDistance();
+            return this.virtualFunctionBus.CameraPacket.RelevantWorldObjs.FirstOrDefault();
+        }
+
+        private void OrderByDistance()
+        {
+            //distance = sqrt((x2-x1)^2+(y2-y1)^2)
+            this.virtualFunctionBus.CameraPacket.RelevantWorldObjs = this.virtualFunctionBus.CameraPacket.RelevantWorldObjs.OrderBy(obj => Math.Sqrt(Math.Pow(obj.X - this.vision.SensorPos.X, 2) + Math.Pow(obj.Y - this.vision.SensorPos.Y, 2))).ToList();
         }
     }
 }
