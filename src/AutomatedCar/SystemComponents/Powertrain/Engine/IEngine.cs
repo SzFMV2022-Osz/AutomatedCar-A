@@ -2,7 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace AutomatedCar.Models.Powertrain
+namespace AutomatedCar.SystemComponents.Powertrain
 {
     using System;
     using System.Collections.Generic;
@@ -16,7 +16,7 @@ namespace AutomatedCar.Models.Powertrain
     internal interface IEngine
     {
         /// <summary>
-        /// Gets speed of the car.
+        /// Gets speed of the car (km/h).
         /// </summary>
         int Speed { get; }
 
@@ -30,6 +30,22 @@ namespace AutomatedCar.Models.Powertrain
         /// Slows the car.
         /// </summary>
         /// <returns>driving force lenght.</returns>
-        float Decelerate();
+        float Lift();
+
+        /// <summary>
+        /// Breaks the car.
+        /// </summary>
+        /// <returns>driving force lenght.</returns>
+        float Breaking();
+
+        /// <summary>
+        /// Switch state dawn.
+        /// </summary>
+        void StateDown();
+
+        /// <summary>
+        /// Switch state up.
+        /// </summary>
+        void StateUp();
     }
 }
