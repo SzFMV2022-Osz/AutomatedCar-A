@@ -52,6 +52,9 @@
 
         /// <summary>
         /// Calculates absolute coordinates of the sensor's vision.
+        /// Item1: Left Pos
+        /// Item2: Right Pos
+        /// Item3: Sensor Pos
         /// </summary>
         /// <returns>Region of interest.</returns>
         protected Tuple<Point, Point, Point> GetROI()
