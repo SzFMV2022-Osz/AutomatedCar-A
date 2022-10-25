@@ -76,7 +76,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
             this.gasPedal += .01f;
             this.breakPedal -= .01f;
             this.ClampPedals();
-            this.Velocity += this.ChangeVelocity(false);
+            this.Velocity += this.ChangeVelocity(false) + this.ChangeVelocity(true);
             this.rpm = this.GetRPM();
 
             if (this.rpm.Equals(this.maxrpm))
@@ -98,7 +98,9 @@ namespace AutomatedCar.SystemComponents.Powertrain
         public float Lift()
         {
             this.rpm -= 0.25f; // enginebreak
-            this.Velocity = (int)this.GetSpeedByWheelRotation();
+            this.breakPedal -= .01f;
+            this.gasPedal -= .01f;
+            this.Velocity = (int)this.GetSpeedByWheelRotation() + this.ChangeVelocity(false) + this.ChangeVelocity(true);
             if (this.rpm < this.minrpm + 0.25f)
             {
                 if (this.GetPrewGearRPM() < this.maxrpm)
@@ -117,10 +119,10 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// <returns>driving force lenght.</returns>
         public float Breaking()
         {
-            this.breakPedal += 0.01f;
-            this.gasPedal -= 0.01f;
+            this.breakPedal += .01f;
+            this.gasPedal -= .01f;
             this.ClampPedals();
-            this.Velocity += this.ChangeVelocity(true);
+            this.Velocity += this.ChangeVelocity(false) + this.ChangeVelocity(true);
             this.rpm = this.GetRPM();
 
             if (this.rpm < this.minrpm)
