@@ -6,8 +6,6 @@ using ReactiveUI;
 
 namespace AutomatedCar.ViewModels
 {
-    using AutomatedCar.SystemComponents.InputManager.Messenger;
-    using AutomatedCar.SystemComponents.InputManager.InputHandler;
     using Avalonia.Controls;
     using JetBrains.Annotations;
     using Models;
@@ -48,37 +46,31 @@ namespace AutomatedCar.ViewModels
         public void KeyUp()
         {
             // World.Instance.ControlledCar.Y -= 5;
-            Manager.GasPedal();
         }
 
         public void KeyDown()
         {
             // World.Instance.ControlledCar.Y += 5;
-            Manager.BrakePedal();
         }
 
         public void KeyLeft()
         {
             // World.Instance.ControlledCar.X -= 5;
-            Manager.TurnLeft();
         }
 
         public void KeyRight()
         {
             // World.Instance.ControlledCar.X += 5;
-            Manager.TurnRight();
         }
 
         public void PageUp()
         {
             // World.Instance.ControlledCar.Rotation += 5;
-            Manager.ShiftUp();
         }
 
         public void PageDown()
         {
             // World.Instance.ControlledCar.Rotation -= 5;
-            Manager.ShiftDown();
         }
 
         public void ToggleDebug()
@@ -108,14 +100,7 @@ namespace AutomatedCar.ViewModels
 
         public void OnKeyUp(string inputStopped)
         {
-            if (inputStopped == nameof(Steering.Center))
-            {
-                Manager.TurnToCenter();
-            }
-            else if (inputStopped == nameof(Pedals.Empty))
-            {
-                Manager.Empty();
-            }
+           
         }
 
         public void FocusCar(ScrollViewer scrollViewer)
