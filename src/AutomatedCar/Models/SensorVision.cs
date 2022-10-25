@@ -32,11 +32,11 @@
         /// <returns>Calculated positions.</returns>
         public static SensorVision CalculateVision(int dist, double deg, Point sensorPos)
         {
-            double rad = Math.PI * deg / 180;
+            double rad = Math.PI * ((deg / 2) / 180);
             int gameDist = 50 * dist;
 
-            int x = (int)(gameDist * Math.Cos(rad));
-            int y = (int)(gameDist * Math.Sin(rad));
+            int x = (int)(gameDist * Math.Tan(rad));
+            int y = dist;
 
             return new SensorVision
             {
