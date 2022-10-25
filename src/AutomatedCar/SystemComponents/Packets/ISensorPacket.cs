@@ -1,10 +1,11 @@
 ﻿namespace AutomatedCar.SystemComponents.Packets
 {
     using AutomatedCar.Models;
+    using Avalonia.Collections;
     using System.Collections.Generic;
 
     public interface ISensorPacket
     {
-        List<WorldObject> RelevantWorldObjs { get; set; }
+        AvaloniaList<WorldObject> RelevantWorldObjs { get; set; }
     }
 }
