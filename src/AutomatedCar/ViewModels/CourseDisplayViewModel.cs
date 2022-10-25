@@ -108,7 +108,7 @@ namespace AutomatedCar.ViewModels
 
         public void OnKeyUp(string inputStopped)
         {
-            if (inputStopped == nameof(Steering.Center))
+            if (inputStopped == nameof(SteeringState.Center))
             {
                 Manager.TurnToCenter();
             }

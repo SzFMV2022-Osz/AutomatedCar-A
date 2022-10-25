@@ -21,7 +21,7 @@ namespace AutomatedCar.SystemComponents.InputManager.InputHandler
         /// </summary>
         public static void TurnLeft()
         {
-            controlMessenger.Steering = Steering.Left;
+            controlMessenger.Steering = SteeringState.Left;
         }
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace AutomatedCar.SystemComponents.InputManager.InputHandler
         /// </summary>
         public static void TurnRight()
         {
-            controlMessenger.Steering = Steering.Right;
+            controlMessenger.Steering = SteeringState.Right;
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace AutomatedCar.SystemComponents.InputManager.InputHandler
         /// </summary>
         public static void TurnToCenter()
         {
-            controlMessenger.Steering = Steering.Center;
+            controlMessenger.Steering = SteeringState.Center;
         }
 
         /// <summary>
