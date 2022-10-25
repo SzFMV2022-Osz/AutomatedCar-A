@@ -13,7 +13,6 @@
         private ISteering steering;
         private IGearshift gearshift;
 
-
         public PowertrainManager(VirtualFunctionBus virtualFunctionBus) : base(virtualFunctionBus)
         {
             this.powertrainPacket = new PowertrainPacket();
@@ -27,36 +26,50 @@
             ControlMessenger.GearboxEventHandler += OnGearbox;
         }
 
-
         public void OnSteering(object sender, ControlEventArgs eventArgs)
         {
-           
+            switch (eventArgs.Steering)
+            {
+                case SteeringState.Left:
+                    break;
+                case SteeringState.Right:
+                    break;
+                case SteeringState.Center:
+                    break;
+            }
         }
 
         public void OnPedal(object sender, ControlEventArgs eventArgs)
         {
-            ;
             switch (eventArgs.Pedal)
             {
-                case Pedals.Empty: engine.Lift(); break;
-                case Pedals.Brake: engine.Breaking(); break;
-               // case Pedals.Gas: engine.; break;
+                case Pedals.Empty:
+                    this.engine.Lift();
+                    break;
+                case Pedals.Brake:
+                    this.engine.Breaking();
+                    break;
+                case Pedals.Gas:
+                    this.engine.Accelerate();
+                    break;
             }
         }
 
         public void OnGearbox(object sender, ControlEventArgs eventArgs)
         {
-            ;
             switch (eventArgs.Gear)
             {
-                case Gears.ShiftUp: engine.StateUp(); break;
-                case Gears.ShiftDown: engine.StateDown(); break;
+                case Gears.ShiftUp:
+                    this.engine.StateUp();
+                    break;
+                case Gears.ShiftDown:
+                    this.engine.StateDown();
+                    break;
             }
         }
 
         public override void Process()
         {
-          
         }
     }
 }
