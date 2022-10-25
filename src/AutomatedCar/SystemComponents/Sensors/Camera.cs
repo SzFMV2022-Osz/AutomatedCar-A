@@ -4,6 +4,7 @@
     using AutomatedCar.Models;
     using AutomatedCar.SystemComponents.Packets;
     using Avalonia;
+    using Avalonia.Media;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -11,16 +12,45 @@
 
     public class Camera : Sensor
     {
+        private WorldObject CameraViewField;
+        private PolylineGeometry viewFieldGeometry;
+
         public Camera(VirtualFunctionBus virtualFunctionBus) : base(virtualFunctionBus)
         {
             double deg = 60;
             int dist = 80;
+            this.vision = SensorVision.CalculateVision(dist, deg, new Point(0, 0));
+        }
 
-            this.vision = SensorVision.CalculateVision(dist, deg, new Point(this.GetAutomatedCar().X, this.GetAutomatedCar().Y));
+        private void InitCameraViewField()
+        {
+            var car = World.Instance.ControlledCar;
+            Point cameraPos = new Point(
+                x: car.RotationPoint.X,
+                y: car.Geometry.Bounds.Top + 50);
+
+            CameraViewField = new WorldObject(0, 0, string.Empty);
+            var geometries = new Avalonia.Media.PolylineGeometry();
+            geometries.Points.Add(vision.SensorPos + cameraPos);
+            geometries.Points.Add(vision.Left + cameraPos);
+            geometries.Points.Add(vision.Right + cameraPos);
+
+            CameraViewField.RawGeometries.Add(geometries);
+            CameraViewField.RotationPoint = car.RotationPoint;
         }
 
         public override void Process()
         {
+            if (CameraViewField is null)
+            {
+                InitCameraViewField();
+            }
+
+            // Update camera view field
+            CameraViewField.X = World.Instance.ControlledCar.X;
+            CameraViewField.Y = World.Instance.ControlledCar.Y;
+            CameraViewField.Rotation = World.Instance.ControlledCar.Rotation;
+            this.viewFieldGeometry = Helpers.CollisionDetection.TransformRawGeometry(CameraViewField);
             this.SaveWorldObjectsToPacket();
         }
 
@@ -40,12 +70,11 @@
         {
             var objPoly = CollisionDetection.TransformRawGeometry(obj);
 
-            var roi = this.GetROI();
-
             bool isInTriangle = false;
-            for (int i = 0; i < objPoly.Points.Count && !isInTriangle; ++i)
+
+            foreach (var geom in CollisionDetection.TransformRoadRawGeometry(obj))
             {
-                isInTriangle = CollisionDetection.PointInTriangle(objPoly.Points[i], new Tuple<Point, Point, Point>(roi.Item1, roi.Item2, roi.Item3));
+                isInTriangle |= CollisionDetection.BoundingBoxesCollide(viewFieldGeometry, geom, 1);
             }
 
             return isInTriangle;
