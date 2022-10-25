@@ -10,18 +10,23 @@ namespace AutomatedCar.SystemComponents.Powertrain
     internal interface ISteering
     {
         /// <summary>
-        /// Finds the location of the wheels.
+        /// Sets the turning direction to the left side.
         /// </summary>
-        void FindNewWheelLocations();
+        void TurnLeft();
 
         /// <summary>
-        /// Calculates the new wheel locations.
+        /// Sets the turning direction to the right side.
         /// </summary>
-        void FindWheelLocations();
+        void TurnRight();
 
         /// <summary>
-        /// Calculates the new heading of the car.
+        /// Resets the wheel to a straight position.
         /// </summary>
-        void GetNewHeading();
+        void StraightenWheel();
+
+        /// <summary>
+        /// Calculates the rotation of the car.
+        /// </summary>
+        void GetRotation();
     }
 }
