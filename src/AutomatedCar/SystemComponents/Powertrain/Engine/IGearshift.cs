@@ -13,7 +13,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
     /// <summary>
     /// GearShift interface.
     /// </summary>
-    internal interface IGearshift
+    public interface IGearshift
     {
         /// <summary>
         /// Returns next gear ratio.

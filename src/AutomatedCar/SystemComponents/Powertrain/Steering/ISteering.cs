@@ -7,7 +7,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
     /// <summary>
     /// Steering interface.
     /// </summary>
-    internal interface ISteering
+    public interface ISteering
     {
         /// <summary>
         /// Finds the location of the wheels.

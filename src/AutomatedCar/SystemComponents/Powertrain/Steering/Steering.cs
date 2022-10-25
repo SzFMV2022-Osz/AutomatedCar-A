@@ -10,7 +10,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
     /// <summary>
     /// Steering.
     /// </summary>
-    internal class Steering : ISteering
+    public class Steering : ISteering
     {
         // atan(wheelBase / (turningCircle - carWidth)) = turningAngle
         private float wheelBase;
