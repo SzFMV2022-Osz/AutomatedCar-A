@@ -11,13 +11,14 @@ namespace AutomatedCar.Models
 
         private Sensor radarSensor;
 
+        private Sensor cameraSensor;
+
         public AutomatedCar(int x, int y, string filename)
             : base(x, y, filename)
         {
             this.virtualFunctionBus = new VirtualFunctionBus();
             this.radarSensor = new Radar(this.virtualFunctionBus);
-
-            this.virtualFunctionBus.CarCoordinatesPacket = new CarCoordinatesPacket(x, y);
+            this.cameraSensor = new Camera(this.virtualFunctionBus);
             this.ZIndex = 10;
         }
 
