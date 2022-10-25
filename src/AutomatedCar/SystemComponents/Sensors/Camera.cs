@@ -38,7 +38,7 @@
         protected override void SaveWorldObjectsToPacket()
         {
             this.sensorPacket = new SensorPacket();
-            this.sensorPacket.RelevantWorldObjs = this.FilterRelevantWorldObjects();
+
         }
     }
 }
