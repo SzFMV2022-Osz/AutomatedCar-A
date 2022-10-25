@@ -1,10 +1,13 @@
 ﻿namespace AutomatedCar.SystemComponents.Sensors
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Numerics;
+    using AutomatedCar.Helpers;
     using AutomatedCar.Models;
     using AutomatedCar.SystemComponents.Packets;
+    using Avalonia;
 
     public abstract class Sensor : SystemComponent
     {
@@ -25,19 +28,43 @@
             public Vector2 Z { get; set; }
         }
 
+        protected SensorVision vision;
+
         public Sensor(VirtualFunctionBus virtualFunctionBus)
             : base(virtualFunctionBus)
         {
             this.triangle = new SensorTriangle();
         }
 
+        protected abstract List<WorldObject> FilterRelevantWorldObjects();
+
         protected abstract void SaveWorldObjectsToPacket();
 
-        protected abstract List<WorldObject> FilterRelevantWorldObjects();
+        protected AutomatedCar GetAutomatedCar()
+        {
+            return World.Instance.ControlledCar;
+        }
 
         protected List<WorldObject> GetWorldObjects()
         {
             return World.Instance.WorldObjects;
+        }
+
+        /// <summary>
+        /// Calculates absolute coordinates of the sensor's vision.
+        /// </summary>
+        /// <returns>Region of interest.</returns>
+        protected Tuple<Point, Point, Point> GetROI()
+        {
+            var car = this.GetAutomatedCar();
+            var carPos = new Point(car.X, car.Y);
+
+            List<Point> points = new List<Point>();
+            points.Add(CollisionDetection.RotatePoint(this.vision.Left, car.Rotation) + carPos);
+            points.Add(CollisionDetection.RotatePoint(this.vision.Right, car.Rotation) + carPos);
+            points.Add(CollisionDetection.RotatePoint(this.vision.SensorPos, car.Rotation) + carPos);
+
+            return new Tuple<Point, Point, Point>(points[0], points[1], points[2]);
         }
     }
 }

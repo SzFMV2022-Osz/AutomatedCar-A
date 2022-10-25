@@ -142,32 +142,32 @@
         }
 
         /// <summary>
-        /// Checks if a 2d point lies in the area specified by the 3 coordinates of the triangle.
+        /// Checks if a 2d point lies in the area specified by the 3 coordinates of the triangle using the Barycentric method.
         /// Edge cases:
         ///     - Point lies in edge of the triangle -> returns true
         ///     - Point equals one of the points of the triangle -> returns true.
         /// </summary>
-        /// <param name="point">The point we want to check.</param>
+        /// <param name="p">The point we want to check.</param>
         /// <param name="triangle">The coordinates of the 3 points of the triangle. Ordering doesn't matter.</param>
         /// <returns>Whether the point lies inside, or at the edge of the triangle.</returns>
-        public static bool PointInTriangle(Point point, Tuple<Point, Point, Point> triangle)
+        public static bool PointInTriangle(Point p, Tuple<Point, Point, Point> triangle)
         {
-            Point v1 = new(triangle.Item2.Y - triangle.Item1.Y, triangle.Item1.X - triangle.Item2.X);
-            Point v2 = new(triangle.Item3.Y - triangle.Item2.Y, triangle.Item2.X - triangle.Item3.X);
-            Point v3 = new(triangle.Item1.Y - triangle.Item3.Y, triangle.Item3.X - triangle.Item1.X);
+            Point p0 = triangle.Item1;
+            Point p1 = triangle.Item2;
+            Point p2 = triangle.Item3;
+            var s = ((p0.X - p2.X) * (p.Y - p2.Y)) - ((p0.Y - p2.Y) * (p.X - p2.X));
+            var t = ((p1.X - p0.X) * (p.Y - p0.Y)) - ((p1.Y - p0.Y) * (p.X - p0.X));
 
-            Point v1p = new(point.X - triangle.Item1.X, point.Y - triangle.Item1.Y);
-            Point v2p= new(point.X - triangle.Item2.X, point.Y - triangle.Item2.Y);
-            Point v3p = new(point.X - triangle.Item3.X, point.Y - triangle.Item3.Y);
+            if ((s < 0) != (t < 0) && s != 0 && t != 0)
+            {
+                return false;
+            }
 
-            double dotProduct1 = DotProduct(v1, v1p);
-            double dotProduct2 = DotProduct(v2, v2p);
-            double dotProduct3 = DotProduct(v3, v3p);
-
-            return dotProduct1 >= 0 && dotProduct2 >= 0 && dotProduct3 >= 0;
+            var d = ((p2.X - p1.X) * (p.Y - p1.Y)) - ((p2.Y - p1.Y) * (p.X - p1.X));
+            return d == 0 || (d < 0) == (s + t <= 0);
         }
 
-        private static Point RotatePoint(Point point, double angle)
+        public static Point RotatePoint(Point point, double angle)
         {
             // Convert to rad
             angle *= Math.PI / 180f;
@@ -176,7 +176,7 @@
                 (point.X * Math.Cos(angle)) - (point.Y * Math.Sin(angle)),
                 (point.X * Math.Sin(angle)) + (point.Y * Math.Cos(angle)));
         }
-        
+
         /// <summary>
         /// Calculates a new, rotated bounding box. Method is not tested, possible bug source.
         /// </summary>

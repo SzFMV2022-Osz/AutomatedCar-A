@@ -1,6 +1,7 @@
 namespace AutomatedCar.Models
 {
     using Avalonia.Media;
+    using global::AutomatedCar.SystemComponents.Sensors;
     using global::AutomatedCar.SystemComponents.Packets;
     using SystemComponents;
 
@@ -8,10 +9,14 @@ namespace AutomatedCar.Models
     {
         private VirtualFunctionBus virtualFunctionBus;
 
+        private Sensor radarSensor;
+
         public AutomatedCar(int x, int y, string filename)
             : base(x, y, filename)
         {
             this.virtualFunctionBus = new VirtualFunctionBus();
+            this.radarSensor = new Radar(this.virtualFunctionBus);
+
             this.virtualFunctionBus.CarCoordinatesPacket = new CarCoordinatesPacket(x, y);
             this.ZIndex = 10;
         }
