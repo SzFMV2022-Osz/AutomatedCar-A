@@ -43,8 +43,7 @@
             filtered.ForEach(x => Trace.Write(x.X + "," + x.Y + " " + x.Filename + "; "));
             Trace.WriteLine(" ");
             */
-
-            this.virtualFunctionBus.RadarPacket.RelevantWorldObjs = filtered;
+            this.virtualFunctionBus.RadarPacket.RelevantWorldObjs = new Avalonia.Collections.AvaloniaList<WorldObject>(filtered);
         }
 
         private bool IsRelevant(WorldObject obj)
