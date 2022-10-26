@@ -20,6 +20,7 @@
             double deg = 60;
             int dist = 80;
             this.vision = SensorVision.CalculateVision(dist, deg, new Point(0, 0));
+            this.virtualFunctionBus.CameraPacket = new SensorPacket();
         }
 
         private void InitCameraViewField()
@@ -62,7 +63,6 @@
 
         protected override void SaveWorldObjectsToPacket()
         {
-            this.virtualFunctionBus.CameraPacket = new SensorPacket();
             this.virtualFunctionBus.CameraPacket.RelevantWorldObjs = this.FilterRelevantWorldObjects();
         }
 

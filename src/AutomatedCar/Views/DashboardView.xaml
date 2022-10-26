@@ -84,6 +84,25 @@
 								</ItemsControl>
 								</StackPanel>
 							</Border>
+							<Border BorderThickness="0.5" BorderBrush="White" CornerRadius="3,3,3,3">
+								<StackPanel>
+									<Label Content="Detected items by camera:"></Label>
+									<ItemsControl Items="{Binding Car.VirtualFunctionBus.CameraPacket.RelevantWorldObjs}">
+										<ItemsControl.ItemTemplate>
+											<DataTemplate>
+												<Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowDefinitions="Auto">
+													<Label Grid.Column="0" Content="X:"></Label>
+													<Label Grid.Column="1" Content="{Binding X}"></Label>
+													<Label Grid.Column="2" Content="Y:"></Label>
+													<Label Grid.Column="3" Content="{Binding Y}"></Label>
+													<Label Grid.Column="4" Content="Type:"></Label>
+													<Label Grid.Column="5" Content="{Binding WorldObjectType}"></Label>
+												</Grid>
+											</DataTemplate>
+										</ItemsControl.ItemTemplate>
+									</ItemsControl>
+								</StackPanel>
+							</Border>
 						</StackPanel>
                     </DataTemplate>
                 </ContentControl.ContentTemplate>
