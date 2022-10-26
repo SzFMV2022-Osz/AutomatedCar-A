@@ -9,6 +9,7 @@ namespace AutomatedCar.Models.NPC
     using System.Threading.Tasks;
     using Avalonia;
     using global::AutomatedCar.SystemComponents;
+    using Route;
 
     /// <summary>
     /// Represents the NPC car.
@@ -26,8 +27,8 @@ namespace AutomatedCar.Models.NPC
         /// <param name="x">X coordinate of current position.</param>
         /// <param name="y">Y coordinate of current position.</param>
         /// <param name="filename">.</param>
-        public NpcPerson(int x, int y, string filename)
-            : base(x, y, filename, 10, true, WorldObjectType.Car)
+        public NpcPerson(Route route, string filename)
+            : base(route, filename, 10, true, WorldObjectType.Car)
         {
             this.MoveComponent = new MoveComponent(this.VirtualFunctionBus, this);
             this.VirtualFunctionBus.RegisterComponent(this.MoveComponent);

@@ -114,7 +114,7 @@ namespace AutomatedCar
             PolylineGeometry boundaryBox = this.GetBoundaryBox(typeID);
             car.Geometries.Add(boundaryBox);
             car.RawGeometries.Add(boundaryBox);
-            car.SetRoute();
+
             car.SetCoordinates();
             car.Start();
 
@@ -123,14 +123,14 @@ namespace AutomatedCar
 
         private void CreateNPCPerson(int x, int y, string filename, int typeID, World world)
         {
-            var person = new NpcPerson(x, y, filename);
-            PolylineGeometry boundaryBox = this.GetBoundaryBox(typeID);
-            person.Geometries.Add(boundaryBox);
-            person.RawGeometries.Add(boundaryBox);
-            person.SetRoute();
-            person.SetCoordinates();
-            person.Start();
-            world.AddObject(person);
+            //var person = new NpcPerson(x, y, filename);
+            //PolylineGeometry boundaryBox = this.GetBoundaryBox(typeID);
+            //person.Geometries.Add(boundaryBox);
+            //person.RawGeometries.Add(boundaryBox);
+            //person.SetRoute();
+            //person.SetCoordinates();
+            //person.Start();
+            //world.AddObject(person);
         }
 
         private AutomatedCar CreateControlledCar(int x, int y, int rotation, string filename)
