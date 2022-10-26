@@ -2,7 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace AutomatedCar.Models.Powertrain
+namespace AutomatedCar.SystemComponents.Powertrain
 {
     using System;
     using System.Collections.Generic;
@@ -107,6 +107,28 @@ namespace AutomatedCar.Models.Powertrain
             if (this.gear < 6)
             {
                 this.gear++;
+            }
+        }
+
+        /// <summary>
+        /// Switch state dawn.
+        /// </summary>
+        public void StateDown()
+        {
+            if (this.state != GearshiftState.P)
+            {
+                this.state--;
+            }
+        }
+
+        /// <summary>
+        /// Switch state up.
+        /// </summary>
+        public void StateUp()
+        {
+            if (this.state != GearshiftState.D)
+            {
+                this.state++;
             }
         }
     }

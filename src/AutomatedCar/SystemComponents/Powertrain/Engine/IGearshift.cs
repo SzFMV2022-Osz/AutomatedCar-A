@@ -2,7 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace AutomatedCar.Models.Powertrain
+namespace AutomatedCar.SystemComponents.Powertrain
 {
     using System;
     using System.Collections.Generic;
@@ -13,7 +13,7 @@ namespace AutomatedCar.Models.Powertrain
     /// <summary>
     /// GearShift interface.
     /// </summary>
-    internal interface IGearshift
+    public interface IGearshift
     {
         /// <summary>
         /// Returns next gear ratio.
@@ -54,5 +54,15 @@ namespace AutomatedCar.Models.Powertrain
         /// </summary>
         /// <returns>state.</returns>
         GearshiftState GetState();
+
+        /// <summary>
+        /// Switch state dawn.
+        /// </summary>
+        void StateDown();
+
+        /// <summary>
+        /// Switch state up.
+        /// </summary>
+        void StateUp();
     }
 }

@@ -2,15 +2,20 @@ namespace AutomatedCar
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Diagnostics;
     using System.IO;
     using System.Reflection;
+    using AutomatedCar.Helpers;
     using AutomatedCar.Models;
+    using AutomatedCar.Models.NPC;
+    using AutomatedCar.Models.Route;
     using AutomatedCar.ViewModels;
     using AutomatedCar.Views;
     using Avalonia;
     using Avalonia.Controls.ApplicationLifetimes;
     using Avalonia.Markup.Xaml;
     using Avalonia.Media;
+    using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
 
     public class App : Application
@@ -35,13 +40,40 @@ namespace AutomatedCar
         {
             var world = World.Instance;
 
-            // this.AddDummyCircleTo(world);
+            this.CreateNPCcar(325, 800, "car_1_blue.png", 1,  world);
+            this.CreateNPCPerson(225,800,"woman.png", 1, world);
 
             world.PopulateFromJSON($"AutomatedCar.Assets.test_world.json");
+            //world.PopulateFromJSON($"AutomatedCar.Assets.oval.json");
 
             this.AddControlledCarsTo(world);
+            //this.DrawPath(world);
 
             return world;
+        }
+
+        // TODO: It's temporary and testing purposes only. Should be deleted in final version.
+        private void DrawPath(World world)
+        {
+            StreamReader reader = new StreamReader(Assembly.GetExecutingAssembly()
+                    .GetManifestResourceStream("AutomatedCar.Assets.test_world.csv"));
+
+            string line;
+            while ((line = reader.ReadLine()) != null)
+            {
+                string[] coordinate = line.Split(';');
+                int x = int.Parse(coordinate[0]);
+                int y = int.Parse(coordinate[1]);
+                int speed = int.Parse(coordinate[2]);
+
+                var circle = new Circle(x, y, "circle.png", 2);
+                circle.Width = 4;
+                circle.Height = 4;
+                circle.ZIndex = 20;
+                circle.Rotation = 45;
+
+                world.AddObject(circle);
+            }
         }
 
         private PolylineGeometry GetControlledCarBoundaryBox()
@@ -58,28 +90,58 @@ namespace AutomatedCar
 
             return new PolylineGeometry(points, false);
         }
-
-        private void AddDummyCircleTo(World world)
+        
+        private PolylineGeometry GetBoundaryBox(int id)
         {
-            var circle = new Circle(200, 200, "circle.png", 20);
+            StreamReader reader = new StreamReader(Assembly.GetExecutingAssembly()
+    .GetManifestResourceStream($"AutomatedCar.Assets.worldobject_polygons.json"));
+            string json_text = reader.ReadToEnd();
+            dynamic stuff = JObject.Parse(json_text);
+            var points = new List<Point>();
             
-            circle.Width = 40;
-            circle.Height = 40;
-            circle.ZIndex = 20;
-            circle.Rotation = 45;
+            foreach (var i in stuff["objects"][id]["polys"][0]["points"])
+            {
+                points.Add(new Point(i[0].ToObject<int>(), i[1].ToObject<int>()));
+            }
 
-            world.AddObject(circle);
+            return new PolylineGeometry(points, false);
+        }
+
+        private void CreateNPCcar(int x, int y, string filename, int typeID, World world)
+        {
+            Route route = Route.CreateFromJson("AutomatedCar.Assets.test_world.csv");
+            var car = new NpcCar(route, filename);
+            PolylineGeometry boundaryBox = this.GetBoundaryBox(typeID);
+            car.Geometries.Add(boundaryBox);
+            car.RawGeometries.Add(boundaryBox);
+
+            car.SetCoordinates();
+            car.Start();
+
+            world.AddObject(car);
+        }
+
+        private void CreateNPCPerson(int x, int y, string filename, int typeID, World world)
+        {
+            //var person = new NpcPerson(x, y, filename);
+            //PolylineGeometry boundaryBox = this.GetBoundaryBox(typeID);
+            //person.Geometries.Add(boundaryBox);
+            //person.RawGeometries.Add(boundaryBox);
+            //person.SetRoute();
+            //person.SetCoordinates();
+            //person.Start();
+            //world.AddObject(person);
         }
 
         private AutomatedCar CreateControlledCar(int x, int y, int rotation, string filename)
         {
             var controlledCar = new Models.AutomatedCar(x, y, filename);
-            
             controlledCar.Geometry = this.GetControlledCarBoundaryBox();
             controlledCar.RawGeometries.Add(controlledCar.Geometry);
             controlledCar.Geometries.Add(controlledCar.Geometry);
             controlledCar.RotationPoint = new System.Drawing.Point(54, 120);
             controlledCar.Rotation = rotation;
+            controlledCar.CarCollisionDetector = new SystemComponents.CarCollisionDetector(controlledCar.VirtualFunctionBus);
 
             controlledCar.Start();
 

@@ -1,15 +1,31 @@
 namespace AutomatedCar.Views
 {
+    using System;
+    using System.Reactive.Linq;
     using AutomatedCar.ViewModels;
     using Avalonia.Controls;
     using Avalonia.Input;
     using Avalonia.Markup.Xaml;
+    using Avalonia.ReactiveUI;
+    using ReactiveUI;
 
-    public class MainWindow : Window
+    public class MainWindow : ReactiveWindow<MainWindowViewModel>
     {
         public MainWindow()
         {
             this.InitializeComponent();
+            var popUpWindow = new PopUpWindow();
+            popUpWindow.Closing += (s, e) =>
+            {
+                ((Window)s).Hide();
+                e.Cancel = true;
+                Keyboard.Keys.Clear();
+            };
+            this.WhenActivated(x => x(ViewModel.WhenAnyValue(x => x.PopUp.ControlledCar.Car.VirtualFunctionBus.CollisionPacket.Collided).Where(x => x == true).Subscribe(x =>
+            {
+                popUpWindow.DataContext = ViewModel.PopUp;
+                popUpWindow.ShowDialog(this);
+            })));
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
@@ -98,6 +114,18 @@ namespace AutomatedCar.Views
 
         protected override void OnKeyUp(KeyEventArgs e)
         {
+            MainWindowViewModel viewModel = (MainWindowViewModel)this.DataContext;
+
+            if (e.Key == Key.Up || e.Key == Key.Down)
+            {
+                viewModel.CourseDisplay.OnKeyUp("Empty");
+            }
+
+            if (e.Key == Key.Left || e.Key == Key.Right)
+            {
+                viewModel.CourseDisplay.OnKeyUp("Center");
+            }
+
             Keyboard.Keys.Remove(e.Key);
             base.OnKeyUp(e);
         }

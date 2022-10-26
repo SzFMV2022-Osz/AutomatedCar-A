@@ -2,59 +2,124 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace AutomatedCar.Models.Powertrain
+namespace AutomatedCar.SystemComponents.Powertrain
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Numerics;
-    using System.Reflection.Metadata;
-    using System.Text;
-    using System.Threading.Tasks;
     using Vector = Avalonia.Vector;
 
     /// <summary>
     /// Steering.
     /// </summary>
-    internal class Steering
+    public class Steering : ISteering
     {
-        //atan(wheelBase / (turningCircle - carWidth)) = turningAngle
-        float wheelBase;
-        double steerAngle;
+        private const int TurningOffset = 5;
 
-        Vector carLocation;
-        double carHeading;
-        float carSpeed;
+        private int wheelBase;
+        private double steerAngle;
 
-        Vector frontWheel;
-        Vector backWheel;
+        private Vector carLocation;
+        private double carHeading;
+        private float carSpeed;
 
-        float dt;
+        private double rotation;
 
-        public Steering(double steerAngle, int x, int y, float carSpeed)
+        private Vector frontWheel;
+        private Vector backWheel;
+
+        private int reverseMultiplier;
+        private GearshiftState state;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Steering"/> class.
+        /// </summary>
+        /// <param name="x">X position of car.</param>
+        /// <param name="y">Y position of car.</param>
+        /// <param name="carSpeed">Speed of car.</param>
+        /// <param name="state">State of the gearshift.</param>
+        /// <param name="rotation">Rotation of the car.</param>
+        public Steering(int x, int y, float carSpeed, GearshiftState state, double rotation)
         {
-            this.wheelBase = 130f;
-            this.steerAngle = steerAngle;
+            this.wheelBase = 300;
+            this.steerAngle = 0;
             this.carLocation = new Vector(x, y);
             this.carSpeed = carSpeed;
+            this.carHeading = -1.5;
+            this.state = state;
+            this.rotation = rotation;
         }
 
-        public void findWheelLocations()
+        /// <summary>
+        /// Sets the turning direction to the left side.
+        /// </summary>
+        public void TurnLeft()
         {
-            frontWheel = carLocation + wheelBase / 2 * new Vector(Math.Cos(carHeading), Math.Sin(carHeading));
-            backWheel = carLocation - wheelBase / 2 * new Vector(Math.Cos(carHeading), Math.Sin(carHeading));
+            this.steerAngle = +TurningOffset;
         }
 
-        public void findNewWheelLocations()
+        /// <summary>
+        /// Turning right.
+        /// </summary>
+        public void TurnRight()
         {
-            backWheel += carSpeed * dt * new Vector(Math.Cos(carHeading), Math.Sin(carHeading));
-            frontWheel += carSpeed * dt * new Vector(Math.Cos(carHeading + steerAngle), Math.Sin(carHeading + steerAngle));
+            this.steerAngle = -TurningOffset;
         }
 
-        public void getNewHeading()
+        /// <summary>
+        /// Resets the wheel to a straight position.
+        /// </summary>
+        public void StraightenWheel()
         {
-            carLocation = (frontWheel + backWheel) / 2;
-            carHeading = Math.Atan2(frontWheel.Y - backWheel.Y, frontWheel.X - backWheel.X);
+            if (this.steerAngle < 0)
+            {
+                this.steerAngle += TurningOffset;
+            }
+            else if (this.steerAngle > 0)
+            {
+                this.steerAngle -= TurningOffset;
+            }
+        }
+
+        /// <summary>
+        /// Calculates the rotation of the car.
+        /// </summary>
+        public void GetRotation()
+        {
+            this.FindWheelLocations();
+            this.FindNewWheelLocations();
+            this.GetNewHeading();
+
+            this.rotation = ((this.carHeading * 180) / Math.PI) + 87;
+        }
+
+        private void FindWheelLocations()
+        {
+            this.frontWheel = this.carLocation + (this.wheelBase / 2 * new Vector(Math.Cos(this.carHeading), Math.Sin(this.carHeading)));
+            this.backWheel = this.carLocation - (this.wheelBase / 2 * new Vector(Math.Cos(this.carHeading), Math.Sin(this.carHeading)));
+        }
+
+        private void FindNewWheelLocations()
+        {
+            this.SetReverseMultiplier();
+            this.backWheel += this.carSpeed * new Vector(Math.Cos(this.carHeading), Math.Sin(this.carHeading)) * this.reverseMultiplier;
+            this.frontWheel += this.carSpeed * new Vector(Math.Cos(this.carHeading + this.steerAngle), Math.Sin(this.carHeading + this.steerAngle)) * this.reverseMultiplier;
+        }
+
+        private void GetNewHeading()
+        {
+            this.carLocation = (this.frontWheel + this.backWheel) / 2;
+            this.carHeading = Math.Atan2(this.frontWheel.Y - this.backWheel.Y, this.frontWheel.X - this.backWheel.X);
+        }
+
+        private void SetReverseMultiplier()
+        {
+            if (this.state == GearshiftState.R)
+            {
+                this.reverseMultiplier = -1;
+            }
+            else
+            {
+                this.reverseMultiplier = 1;
+            }
         }
     }
 }

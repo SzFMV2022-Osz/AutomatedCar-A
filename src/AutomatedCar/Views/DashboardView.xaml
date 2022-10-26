@@ -65,7 +65,72 @@
                                 <TextBlock Grid.Row="5" Grid.Column="0">Distance Y:</TextBlock>
                                 <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding VirtualFunctionBus.DummyPacket.DistanceY}"/>
                             </Grid>
-                        </StackPanel>
+							<Border BorderThickness="0.5" BorderBrush="White" CornerRadius="3,3,3,3" Margin="0,5,0,0">
+									<DockPanel MaxHeight="130">
+									<ScrollViewer VerticalScrollBarVisibility="Auto">
+										<StackPanel>
+									<Label Content="Detected items by radar:"></Label>
+									<Label Content="Closest in lane:"></Label>
+									<Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
+										<Label Grid.Column="0" Content="X:"></Label>
+										<Label Grid.Column="1" Content="{Binding Car.VirtualFunctionBus.RadarPacket.ClosestInLane.X}"></Label>
+										<Label Grid.Column="2" Content="Y:"></Label>
+										<Label Grid.Column="3" Content="{Binding Car.VirtualFunctionBus.RadarPacket.ClosestInLane.Y}"></Label>
+										<Label Grid.Column="4" Content="Type:"></Label>
+										<Label Grid.Column="5" Content="{Binding Car.VirtualFunctionBus.RadarPacket.ClosestInLane.WorldObjectType}"></Label>
+									</Grid>
+									<Label Content="Closest:"></Label>
+									<Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
+										<Label Grid.Column="0" Content="X:"></Label>
+										<Label Grid.Column="1" Content="{Binding Car.VirtualFunctionBus.RadarPacket.Closest.X}"></Label>
+										<Label Grid.Column="2" Content="Y:"></Label>
+										<Label Grid.Column="3" Content="{Binding Car.VirtualFunctionBus.RadarPacket.Closest.Y}"></Label>
+										<Label Grid.Column="4" Content="Type:"></Label>
+										<Label Grid.Column="5" Content="{Binding Car.VirtualFunctionBus.RadarPacket.Closest.WorldObjectType}"></Label>
+									</Grid>
+									<Label Content="All objects:"></Label>
+									<ItemsControl Items="{Binding Car.VirtualFunctionBus.RadarPacket.RelevantWorldObjs}">
+										<ItemsControl.ItemTemplate>
+											<DataTemplate>
+												<Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowDefinitions="Auto">
+													<Label Grid.Column="0" Content="X:"></Label>
+													<Label Grid.Column="1" Content="{Binding X}"></Label>
+													<Label Grid.Column="2" Content="Y:"></Label>
+													<Label Grid.Column="3" Content="{Binding Y}"></Label>
+													<Label Grid.Column="4" Content="Type:"></Label>
+													<Label Grid.Column="5" Content="{Binding WorldObjectType}"></Label>
+												</Grid>
+											</DataTemplate>
+										</ItemsControl.ItemTemplate>
+									</ItemsControl>
+										</StackPanel>
+									</ScrollViewer>
+									</DockPanel>
+							</Border>
+							<Border BorderThickness="0.5" BorderBrush="White" CornerRadius="3,3,3,3" Margin="0,5,0,0">
+								<DockPanel MaxHeight="130">
+									<ScrollViewer VerticalScrollBarVisibility="Auto">
+										<StackPanel>
+											<Label Content="Detected items by camera:"></Label>
+											<ItemsControl Items="{Binding Car.VirtualFunctionBus.CameraPacket.RelevantWorldObjs}">
+												<ItemsControl.ItemTemplate>
+													<DataTemplate>
+														<Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowDefinitions="Auto">
+															<Label Grid.Column="0" Content="X:"></Label>
+															<Label Grid.Column="1" Content="{Binding X}"></Label>
+															<Label Grid.Column="2" Content="Y:"></Label>
+															<Label Grid.Column="3" Content="{Binding Y}"></Label>
+															<Label Grid.Column="4" Content="Type:"></Label>
+															<Label Grid.Column="5" Content="{Binding WorldObjectType}"></Label>
+														</Grid>
+													</DataTemplate>
+												</ItemsControl.ItemTemplate>
+											</ItemsControl>
+										</StackPanel>
+									</ScrollViewer>
+									</DockPanel>
+							</Border>
+						</StackPanel>
                     </DataTemplate>
                 </ContentControl.ContentTemplate>
             </ContentControl>

@@ -1,22 +1,35 @@
 namespace AutomatedCar.Models
 {
     using Avalonia.Media;
+    using global::AutomatedCar.SystemComponents;
     using global::AutomatedCar.SystemComponents.Packets;
-    using SystemComponents;
+    using global::AutomatedCar.SystemComponents.Powertrain;
+    using global::AutomatedCar.SystemComponents.Sensors;
 
     public class AutomatedCar : Car
     {
         private VirtualFunctionBus virtualFunctionBus;
 
+        private Sensor radarSensor;
+        
+        private Sensor cameraSensor;
+        
+        private PowertrainManager powertrainManager;
+
         public AutomatedCar(int x, int y, string filename)
             : base(x, y, filename)
         {
             this.virtualFunctionBus = new VirtualFunctionBus();
-            this.virtualFunctionBus.CarCoordinatesPacket = new CarCoordinatesPacket(x, y);
+            this.radarSensor = new Radar(this.virtualFunctionBus);
+            this.cameraSensor = new Camera(this.virtualFunctionBus);
             this.ZIndex = 10;
+
+            this.powertrainManager = new PowertrainManager(this.virtualFunctionBus);
         }
 
         public VirtualFunctionBus VirtualFunctionBus { get => this.virtualFunctionBus; }
+
+        public CarCollisionDetector CarCollisionDetector { get; set; }
 
         public int Revolution { get; set; }
 
