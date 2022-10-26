@@ -19,7 +19,7 @@
             virtualFunctionBus.PowertrainPacket = this.powertrainPacket;
             this.gearshift = new Gearshift();
             this.engine = new Engine(this.gearshift);
-            this.steering = new Steering(0,0,0,0);
+            this.steering = new Steering(0,0,0,GearshiftState.P,0);
 
             ControlMessenger.SteeringEventHandler += OnSteering;
             ControlMessenger.PedalEventHandler += OnPedal;
@@ -31,10 +31,13 @@
             switch (eventArgs.Steering)
             {
                 case SteeringState.Left:
+                    this.steering.TurnLeft();
                     break;
                 case SteeringState.Right:
+                    this.steering.TurnRight();
                     break;
                 case SteeringState.Center:
+                    this.steering.StraightenWheel();
                     break;
             }
         }
