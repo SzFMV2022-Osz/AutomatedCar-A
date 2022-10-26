@@ -11,9 +11,9 @@ namespace AutomatedCar.SystemComponents
 
         public ISensorPacket RadarPacket { get; set; }
 
-        public IReadOnlyCollisionPacket CollisionPacket { get; set; }
+        public ISensorPacket CameraPacket { get; set; }
 
-        public ICarCoordinatesPacket CarCoordinatesPacket { get; set; }
+        public IReadOnlyCollisionPacket CollisionPacket { get; set; }
 
         public void RegisterComponent(SystemComponent component)
         {
