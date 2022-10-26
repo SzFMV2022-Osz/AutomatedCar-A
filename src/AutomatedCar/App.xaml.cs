@@ -2,16 +2,20 @@ namespace AutomatedCar
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Diagnostics;
     using System.IO;
     using System.Reflection;
+    using AutomatedCar.Helpers;
     using AutomatedCar.Models;
     using AutomatedCar.Models.NPC;
+    using AutomatedCar.Models.Route;
     using AutomatedCar.ViewModels;
     using AutomatedCar.Views;
     using Avalonia;
     using Avalonia.Controls.ApplicationLifetimes;
     using Avalonia.Markup.Xaml;
     using Avalonia.Media;
+    using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
 
     public class App : Application
@@ -40,10 +44,36 @@ namespace AutomatedCar
             this.CreateNPCPerson(225,800,"woman.png", 1, world);
 
             world.PopulateFromJSON($"AutomatedCar.Assets.test_world.json");
+            //world.PopulateFromJSON($"AutomatedCar.Assets.oval.json");
 
             this.AddControlledCarsTo(world);
+            //this.DrawPath(world);
 
             return world;
+        }
+
+        // TODO: It's temporary and testing purposes only. Should be deleted in final version.
+        private void DrawPath(World world)
+        {
+            StreamReader reader = new StreamReader(Assembly.GetExecutingAssembly()
+                    .GetManifestResourceStream("AutomatedCar.Assets.test_world.csv"));
+
+            string line;
+            while ((line = reader.ReadLine()) != null)
+            {
+                string[] coordinate = line.Split(';');
+                int x = int.Parse(coordinate[0]);
+                int y = int.Parse(coordinate[1]);
+                int speed = int.Parse(coordinate[2]);
+
+                var circle = new Circle(x, y, "circle.png", 2);
+                circle.Width = 4;
+                circle.Height = 4;
+                circle.ZIndex = 20;
+                circle.Rotation = 45;
+
+                world.AddObject(circle);
+            }
         }
 
         private PolylineGeometry GetControlledCarBoundaryBox()
@@ -79,7 +109,8 @@ namespace AutomatedCar
 
         private void CreateNPCcar(int x, int y, string filename, int typeID, World world)
         {
-            var car = new NpcCar(x, y, filename);
+            Route route = Route.CreateFromJson("AutomatedCar.Assets.test_world.csv");
+            var car = new NpcCar(route, filename);
             PolylineGeometry boundaryBox = this.GetBoundaryBox(typeID);
             car.Geometries.Add(boundaryBox);
             car.RawGeometries.Add(boundaryBox);
