@@ -7,21 +7,12 @@
 
     public class SensorPacket : ReactiveObject, ISensorPacket
     {
-        private AvaloniaList<WorldObject> relevantWorldObjs;
+        private List<WorldObject> relevantWorldObjs;
 
-        public SensorPacket()
-        {
-            this.relevantWorldObjs = new AvaloniaList<WorldObject>();
-        }
-
-        public AvaloniaList<WorldObject> RelevantWorldObjs
+        public List<WorldObject> RelevantWorldObjs
         {
             get => this.relevantWorldObjs;
-            set
-            {
-                this.relevantWorldObjs.Clear();
-                this.RaiseAndSetIfChanged(ref this.relevantWorldObjs, value, nameof(this.RelevantWorldObjs));
-            }
+            set => this.RaiseAndSetIfChanged(ref this.relevantWorldObjs, value);
         }
     }
 }

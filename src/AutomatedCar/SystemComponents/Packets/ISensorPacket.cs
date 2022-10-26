@@ -6,6 +6,6 @@
 
     public interface ISensorPacket
     {
-        AvaloniaList<WorldObject> RelevantWorldObjs { get; set; }
+        List<WorldObject> RelevantWorldObjs { get; set; }
     }
 }
