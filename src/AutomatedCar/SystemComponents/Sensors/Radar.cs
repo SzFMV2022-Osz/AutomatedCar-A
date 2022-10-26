@@ -30,6 +30,7 @@
 
             // positioning sensor on the car
             this.vision = SensorVision.CalculateVision(this.dist, this.deg, new Point(0, 0));
+            this.virtualFunctionBus.RadarPacket = new RadarPacket();
 
         }
 
@@ -52,15 +53,13 @@
 
         protected override void SaveWorldObjectsToPacket()
         {
-            IRadarPacket packet = new RadarPacket();
-
             var list = this.FilterRelevantWorldObjects();
             list = this.OrderByDistance(list);
 
-            packet.RelevantWorldObjs = list;
+            this.virtualFunctionBus.RadarPacket.RelevantWorldObjs = list;
 
-            packet.Closest = this.NearestWorldObject(list);
-            packet.ClosestInLane = this.ClosestInLane(list);
+            this.virtualFunctionBus.RadarPacket.Closest = this.NearestWorldObject(list);
+            this.virtualFunctionBus.RadarPacket.ClosestInLane = this.ClosestInLane(list);
             /*
             Trace.WriteLine(packet.RelevantWorldObjs.Count);
             packet.RelevantWorldObjs.ForEach(x => Trace.Write(x.X + "," + x.Y + " " + x.Filename + "; "));
@@ -71,8 +70,6 @@
             Trace.WriteLine("CLOSEST IN LANE:");
             Trace.WriteLine(packet.ClosestInLane == null ? "no closest" : packet.ClosestInLane.Filename + ", " + packet.ClosestInLane.X + ", " + packet.ClosestInLane.Y);
             */
-
-            this.virtualFunctionBus.RadarPacket = packet;
 
         }
 
