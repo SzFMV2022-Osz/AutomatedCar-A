@@ -50,7 +50,7 @@
             Orientation o3 = GetOrientation(line2Start, line2End, line1Start);
             Orientation o4 = GetOrientation(line2Start, line2End, line1End);
 
-            bool orientationsDiffer = !o1.Equals(o2) && !o3.Equals(o4); 
+            bool orientationsDiffer = !o1.Equals(o2) && !o3.Equals(o4);
 
             if (orientationsDiffer)
             {
@@ -100,11 +100,11 @@
 
             for (int sourceIdx = 1; sourceIdx < sourceWithFirstElement.Count; sourceIdx++)
             {
-                Tuple<Point, Point> sourceLine = new (sourceWithFirstElement[sourceIdx - 1], sourceWithFirstElement[sourceIdx]);
+                Tuple<Point, Point> sourceLine = new(sourceWithFirstElement[sourceIdx - 1], sourceWithFirstElement[sourceIdx]);
                 for (int destIdx = 1; destIdx < destinationWithFirstElement.Count; destIdx++)
                 {
                     Tuple<Point, Point> destinationLine =
-                        new (destinationWithFirstElement[destIdx - 1], destinationWithFirstElement[destIdx]);
+                        new(destinationWithFirstElement[destIdx - 1], destinationWithFirstElement[destIdx]);
 
                     // Common endpoints will automatically be added to intersectionCounter at the end.
                     // We don't want to double dip.
@@ -211,6 +211,19 @@
             geom = RotateBoundingBox(geom, obj.Rotation);
             geom = TranslateGeometry(geom, obj.X, obj.Y);
             return geom;
+        }
+
+        public static List<PolylineGeometry> TransformRoadRawGeometry(WorldObject obj)
+        {
+            List<PolylineGeometry> geoms = new List<PolylineGeometry>();
+            foreach (var rawGeometry in obj.RawGeometries)
+            {
+                var geom = TranslateGeometry(rawGeometry, -obj.RotationPoint.X, -obj.RotationPoint.Y);
+                geom = RotateBoundingBox(geom, obj.Rotation);
+                geom = TranslateGeometry(geom, obj.X, obj.Y);
+                geoms.Add(geom);
+            }
+            return geoms;
         }
     }
 }
