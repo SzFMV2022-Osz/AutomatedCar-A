@@ -14,36 +14,66 @@
 
     public class Radar : Sensor
     {
+        private double deg;
+        private int dist;
+        private int distInGame;
+
         public Radar(VirtualFunctionBus virtualFunctionBus)
             : base(virtualFunctionBus)
         {
-            double deg = 60;
-            int dist = 200;
+            this.deg = 60;
+            this.dist = 200;
+            this.distInGame = 50 * this.dist;
 
-            this.vision = SensorVision.CalculateVision(dist, deg, new Point(0, 0));
-            virtualFunctionBus.RadarPacket = new SensorPacket();
+            // finding car's width
+            //var carWith = this.GetAutomatedCar().RawGeometries[0].Points.Max(x => x.X);
+
+            // positioning sensor on the car
+            this.vision = SensorVision.CalculateVision(this.dist, this.deg, new Point(0, 0));
+
         }
 
         public override void Process()
         {
+            if (World.Instance.controlledCars.Count == 0)
+            {
+                return;
+            }
+
             this.SaveWorldObjectsToPacket();
         }
 
         protected override List<WorldObject> FilterRelevantWorldObjects()
         {
-            return this.GetWorldObjects().Where(x => this.IsRelevant(x)).ToList();
+            var list = this.GetWorldObjects().Where(x => this.IsRelevant(x)).ToList();
+            return list;
+
         }
 
         protected override void SaveWorldObjectsToPacket()
         {
-            var filtered = this.FilterRelevantWorldObjects();
+            IRadarPacket packet = new RadarPacket();
 
+            var list = this.FilterRelevantWorldObjects();
+            list = this.OrderByDistance(list);
+
+            packet.RelevantWorldObjs = list;
+
+            packet.Closest = this.NearestWorldObject(list);
+            packet.ClosestInLane = this.ClosestInLane(list);
             /*
-            Trace.WriteLine(filtered.Count);
-            filtered.ForEach(x => Trace.Write(x.X + "," + x.Y + " " + x.Filename + "; "));
+            Trace.WriteLine(packet.RelevantWorldObjs.Count);
+            packet.RelevantWorldObjs.ForEach(x => Trace.Write(x.X + "," + x.Y + " " + x.Filename + "; "));
             Trace.WriteLine(" ");
+
+            Trace.WriteLine("CLOSEST: ");
+            Trace.WriteLine(packet.Closest == null ? "no closest" : packet.Closest.Filename + "," + packet.Closest.X + ", " + packet.Closest.Y);
+            Trace.WriteLine("CLOSEST IN LANE:");
+            Trace.WriteLine(packet.ClosestInLane == null ? "no closest" : packet.ClosestInLane.Filename + ", " + packet.ClosestInLane.X + ", " + packet.ClosestInLane.Y);
             */
-            this.virtualFunctionBus.RadarPacket.RelevantWorldObjs = filtered;
+
+            this.virtualFunctionBus.RadarPacket = packet;
+
         }
 
         private bool IsRelevant(WorldObject obj)
@@ -71,6 +101,73 @@
             }
 
             return isInTriangle;
+        }
+
+        private List<WorldObject> OrderByDistance(List<WorldObject> list)
+        {
+            var sensorPos = this.GetROI().Item3;
+
+            // distance = sqrt((x2-x1)^2+(y2-y1)^2)
+            return list.OrderBy(obj => Math.Sqrt(Math.Pow(obj.X - sensorPos.X, 2) + Math.Pow(obj.Y - sensorPos.Y, 2))).ToList();
+        }
+
+        private WorldObject ClosestInLane(List<WorldObject> relevantList)
+        {
+            if (relevantList.Count == 0)
+            {
+                return null;
+            }
+
+            var car = this.GetAutomatedCar();
+            var carPos = new Point(car.X, car.Y);
+            var roi = this.GetROI();
+
+            var carWidth = this.GetAutomatedCar().RawGeometries[0].Points.Max(x => x.X);
+
+            Point relativePoint = new Point(carWidth, -this.distInGame);
+            Point relativeNextPoint = CollisionDetection.RotatePoint(relativePoint, car.Rotation);
+
+            Rect rect = new Rect(car.X, car.Y, relativeNextPoint.X, relativeNextPoint.Y);
+
+            PolylineGeometry poly = new PolylineGeometry();
+            poly.Points.Add(rect.TopLeft);
+            poly.Points.Add(rect.TopRight);
+            poly.Points.Add(rect.BottomLeft);
+            poly.Points.Add(rect.BottomRight);
+
+            double closestDist = double.MaxValue;
+            WorldObject closest = relevantList[0];
+            for (int i = 0; i < relevantList.Count; ++i)
+            {
+                if (!CollisionDetection.BoundingBoxesCollide(poly, CollisionDetection.TransformRawGeometry(closest), 1))
+                {
+                    continue;
+                }
+
+                double calculated = Math.Sqrt(Math.Pow(roi.Item3.X - relevantList[i].X, 2) + Math.Pow(roi.Item3.Y - relevantList[i].Y, 2));
+                if (calculated < closestDist)
+                {
+                    closestDist = calculated;
+                    closest = relevantList[i];
+                }
+            }
+
+            if (closestDist == double.MaxValue)
+            {
+                return null;
+            }
+
+            return closest;
+        }
+
+        private WorldObject NearestWorldObject(List<WorldObject> list)
+        {
+            if (list.Count == 0)
+            {
+                return null;
+            }
+
+            return list[0];
         }
     }
 }

@@ -36,7 +36,7 @@
             int gameDist = 50 * dist;
 
             int x = (int)(gameDist * Math.Tan(rad));
-            int y = dist;
+            int y = gameDist;
 
             return new SensorVision
             {
