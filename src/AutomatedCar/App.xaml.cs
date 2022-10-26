@@ -20,6 +20,9 @@ namespace AutomatedCar
 
     public class App : Application
     {
+        private static readonly string OVAL = "oval";
+        private static readonly string TEST_WORLD = "test_world";
+
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
@@ -29,22 +32,25 @@ namespace AutomatedCar
         {
             if (this.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                var world = this.CreateWorld();
+                var world = this.CreateWorld(OVAL);
                 desktop.MainWindow = new MainWindow { DataContext = new MainWindowViewModel(world) };
             }
 
             base.OnFrameworkInitializationCompleted();
         }
 
-        public World CreateWorld()
+        public World CreateWorld(string map)
         {
             var world = World.Instance;
 
-            this.CreateNPCcar(325, 800, "car_1_blue.png", 1,  world);
-            this.CreateNPCPerson(225,800,"woman.png", 1, world);
+            this.CreateNPCcar(325, 800, "car_1_blue.png", 1,  world, map);
 
-            world.PopulateFromJSON($"AutomatedCar.Assets.test_world.json");
-            //world.PopulateFromJSON($"AutomatedCar.Assets.oval.json");
+            if (map == TEST_WORLD)
+            {
+                this.CreateNPCPerson(1, world);
+            }
+
+            world.PopulateFromJSON($"AutomatedCar.Assets.{map}.json");
 
             this.AddControlledCarsTo(world);
             //this.DrawPath(world);
@@ -107,9 +113,9 @@ namespace AutomatedCar
             return new PolylineGeometry(points, false);
         }
 
-        private void CreateNPCcar(int x, int y, string filename, int typeID, World world)
+        private void CreateNPCcar(int x, int y, string filename, int typeID, World world, string map)
         {
-            Route route = Route.CreateFromJson("AutomatedCar.Assets.test_world.csv");
+            Route route = Route.CreateFromJson($"AutomatedCar.Assets.{map}.csv");
             var car = new NpcCar(route, filename);
             PolylineGeometry boundaryBox = this.GetBoundaryBox(typeID);
             car.Geometries.Add(boundaryBox);
@@ -121,16 +127,18 @@ namespace AutomatedCar
             world.AddObject(car);
         }
 
-        private void CreateNPCPerson(int x, int y, string filename, int typeID, World world)
+        private void CreateNPCPerson(int typeID, World world)
         {
-            //var person = new NpcPerson(x, y, filename);
-            //PolylineGeometry boundaryBox = this.GetBoundaryBox(typeID);
-            //person.Geometries.Add(boundaryBox);
-            //person.RawGeometries.Add(boundaryBox);
-            //person.SetRoute();
-            //person.SetCoordinates();
-            //person.Start();
-            //world.AddObject(person);
+            Route route = Route.CreateFromJson($"AutomatedCar.Assets.pedestrian.csv");
+            var pedestrian = new NpcPerson(route, "woman.png");
+            PolylineGeometry boundaryBox = this.GetBoundaryBox(typeID);
+            pedestrian.Geometries.Add(boundaryBox);
+            pedestrian.RawGeometries.Add(boundaryBox);
+
+            pedestrian.SetCoordinates();
+            pedestrian.Start();
+
+            world.AddObject(pedestrian);
         }
 
         private AutomatedCar CreateControlledCar(int x, int y, int rotation, string filename)
