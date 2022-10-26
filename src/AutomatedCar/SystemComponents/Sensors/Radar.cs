@@ -21,6 +21,7 @@
             int dist = 200;
 
             this.vision = SensorVision.CalculateVision(dist, deg, new Point(0, 0));
+            virtualFunctionBus.RadarPacket = new SensorPacket();
         }
 
         public override void Process()
@@ -35,8 +36,6 @@
 
         protected override void SaveWorldObjectsToPacket()
         {
-            ISensorPacket packet = new SensorPacket();
-
             var filtered = this.FilterRelevantWorldObjects();
 
             /*
@@ -44,9 +43,7 @@
             filtered.ForEach(x => Trace.Write(x.X + "," + x.Y + " " + x.Filename + "; "));
             Trace.WriteLine(" ");
             */
-
-            packet.RelevantWorldObjs = filtered;
-            this.virtualFunctionBus.RadarPacket = packet;
+            this.virtualFunctionBus.RadarPacket.RelevantWorldObjs = filtered;
         }
 
         private bool IsRelevant(WorldObject obj)
