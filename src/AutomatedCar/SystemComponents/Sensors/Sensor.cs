@@ -43,11 +43,12 @@
         {
             var car = this.GetAutomatedCar();
             var carPos = new Point(car.X, car.Y);
+            var sensorOffset = new Point(0, -car.RotationPoint.Y);
 
             List<Point> points = new List<Point>();
-            points.Add(CollisionDetection.RotatePoint(this.vision.Left, car.Rotation) + carPos);
-            points.Add(CollisionDetection.RotatePoint(this.vision.Right, car.Rotation) + carPos);
-            points.Add(CollisionDetection.RotatePoint(this.vision.SensorPos, car.Rotation) + carPos);
+            points.Add(CollisionDetection.RotatePoint(this.vision.Left, car.Rotation) + carPos + sensorOffset);
+            points.Add(CollisionDetection.RotatePoint(this.vision.Right, car.Rotation) + carPos + sensorOffset);
+            points.Add(CollisionDetection.RotatePoint(this.vision.SensorPos, car.Rotation) + carPos + sensorOffset);
 
             return new Tuple<Point, Point, Point>(points[0], points[1], points[2]);
         }
