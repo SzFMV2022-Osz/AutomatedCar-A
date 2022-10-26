@@ -11,7 +11,9 @@ namespace AutomatedCar.Models
         private VirtualFunctionBus virtualFunctionBus;
 
         private Sensor radarSensor;
-
+        
+        private Sensor cameraSensor;
+        
         private PowertrainManager powertrainManager;
 
         public AutomatedCar(int x, int y, string filename)
@@ -19,8 +21,7 @@ namespace AutomatedCar.Models
         {
             this.virtualFunctionBus = new VirtualFunctionBus();
             this.radarSensor = new Radar(this.virtualFunctionBus);
-
-            this.virtualFunctionBus.CarCoordinatesPacket = new CarCoordinatesPacket(x, y);
+            this.cameraSensor = new Camera(this.virtualFunctionBus);
             this.ZIndex = 10;
 
             this.powertrainManager = new PowertrainManager(this.virtualFunctionBus);
