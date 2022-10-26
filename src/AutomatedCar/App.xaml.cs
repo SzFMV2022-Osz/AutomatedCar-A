@@ -40,7 +40,8 @@ namespace AutomatedCar
         {
             var world = World.Instance;
 
-            this.CreateNPCcar(325, 800, "car_3_black.png", world);
+            this.CreateNPCcar(325, 800, "car_1_blue.png", 1,  world);
+            this.CreateNPCPerson(225,800,"woman.png", 1, world);
 
             world.PopulateFromJSON($"AutomatedCar.Assets.test_world.json");
             //world.PopulateFromJSON($"AutomatedCar.Assets.oval.json");
@@ -89,15 +90,47 @@ namespace AutomatedCar
 
             return new PolylineGeometry(points, false);
         }
+        
+        private PolylineGeometry GetBoundaryBox(int id)
+        {
+            StreamReader reader = new StreamReader(Assembly.GetExecutingAssembly()
+    .GetManifestResourceStream($"AutomatedCar.Assets.worldobject_polygons.json"));
+            string json_text = reader.ReadToEnd();
+            dynamic stuff = JObject.Parse(json_text);
+            var points = new List<Point>();
+            
+            foreach (var i in stuff["objects"][id]["polys"][0]["points"])
+            {
+                points.Add(new Point(i[0].ToObject<int>(), i[1].ToObject<int>()));
+            }
 
-        private void CreateNPCcar(int x, int y, string filename, World world)
+            return new PolylineGeometry(points, false);
+        }
+
+        private void CreateNPCcar(int x, int y, string filename, int typeID, World world)
         {
             Route route = Route.CreateFromJson("AutomatedCar.Assets.test_world.csv");
             var car = new NpcCar(route, filename);
+            PolylineGeometry boundaryBox = this.GetBoundaryBox(typeID);
+            car.Geometries.Add(boundaryBox);
+            car.RawGeometries.Add(boundaryBox);
+            car.SetRoute();
             car.SetCoordinates();
             car.Start();
 
             world.AddObject(car);
+        }
+
+        private void CreateNPCPerson(int x, int y, string filename, int typeID, World world)
+        {
+            var person = new NpcPerson(x, y, filename);
+            PolylineGeometry boundaryBox = this.GetBoundaryBox(typeID);
+            person.Geometries.Add(boundaryBox);
+            person.RawGeometries.Add(boundaryBox);
+            person.SetRoute();
+            person.SetCoordinates();
+            person.Start();
+            world.AddObject(person);
         }
 
         private AutomatedCar CreateControlledCar(int x, int y, int rotation, string filename)
@@ -108,6 +141,7 @@ namespace AutomatedCar
             controlledCar.Geometries.Add(controlledCar.Geometry);
             controlledCar.RotationPoint = new System.Drawing.Point(54, 120);
             controlledCar.Rotation = rotation;
+            controlledCar.CarCollisionDetector = new SystemComponents.CarCollisionDetector(controlledCar.VirtualFunctionBus);
 
             controlledCar.Start();
 

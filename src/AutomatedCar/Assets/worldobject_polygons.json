@@ -1,6 +1,7 @@
 {
 "objects": [
   {
+    "id": 0,
     "type": "car_1_white",
     "polys": [
       {
@@ -80,6 +81,7 @@
     ]
   },
   {
+    "id": 1,
     "type": "car_1_blue",
     "polys": [
       {
@@ -159,6 +161,7 @@
     ]
   },
   {
+    "id": 2,
     "type": "car_1_red",
     "polys": [
       {
@@ -238,6 +241,7 @@
     ]
   },
   {
+    "id": 3,
     "type": "car_2_white",
     "polys": [
       {
@@ -297,6 +301,7 @@
     ]
   },
   {
+    "id": 4,
     "type": "car_2_red",
     "polys": [
       {
@@ -355,6 +360,7 @@
     ]
   },
   {
+    "id": 5,
     "type": "car_2_blue",
     "polys": [
       {
@@ -413,6 +419,7 @@
     ]
   },
   {
+    "id": 6,
     "type": "car_3_black",
     "polys": [
       {
@@ -462,6 +469,7 @@
     ]
   },
   {
+    "id": 7,
     "type": "road_2lane_90right",
     "polys": [
       {
@@ -539,6 +547,7 @@
     ]
   },
   {
+    "id": 8,
     "type": "road_2lane_90left",
     "polys": [
       {
@@ -616,6 +625,7 @@
     ]
   },
   {
+    "id": 9,
     "type": "road_2lane_45right",
     "polys": [
       {
@@ -666,6 +676,7 @@
     ]
   },
   {
+    "id": 10,
     "type": "road_2lane_45left",
     "polys": [
       {
@@ -716,6 +727,7 @@
     ]
   },
   {
+    "id": 11,
     "type": "road_2lane_6right",
     "polys": [
       {
@@ -793,6 +805,7 @@
     ]
   },
   {
+    "id": 12,
     "type": "road_2lane_6left",
     "polys": [
       {
@@ -870,6 +883,7 @@
     ]
   },
   {
+    "id": 13,
     "type": "road_2lane_straight",
     "polys": [
       {
@@ -896,6 +910,7 @@
     ]
   },
   {
+    "id": 14,
     "type": "road_2lane_crossroad_1",
     "polys": [
       {
@@ -1055,6 +1070,7 @@
     ]
   },
   {
+    "id": 15,
     "type": "road_2lane_crossroad_2",
     "polys": [
       {
@@ -1200,6 +1216,7 @@
     ]
   },
   {
+    "id": 16,
     "type": "road_2lane_rotary",
     "polys": [
       {
@@ -1501,6 +1518,7 @@
     ]
   },
   {
+    "id": 17,
     "type": "road_2lane_tjunctionleft",
     "polys": [
       {
@@ -1576,6 +1594,7 @@
     ]
   },
   {
+    "id": 18,
     "type": "road_2lane_tjunctionright",
     "polys": [
       {
@@ -1651,6 +1670,7 @@
     ]
   },
   {
+    "id": 19,
     "type": "parking_space_90",
     "polys": [
       {
@@ -1681,6 +1701,7 @@
     ]
   },
   {
+    "id": 20,
     "type": "parking_space_parallel",
     "polys": [
       {
@@ -1703,6 +1724,7 @@
     ]
   },
   {
+    "id": 21,
     "type": "garage",
     "polys": [
       {
@@ -1717,6 +1739,7 @@
     ]
   },
   {
+    "id": 22,
     "type": "tree",
     "polys": [
       {
@@ -1746,6 +1769,7 @@
     ]
   },
   {
+    "id": 23,
     "type": "roadsign_parking_right",
     "polys": [
       {
@@ -1775,6 +1799,7 @@
     ]
   },
   {
+    "id": 24,
     "type": "roadsign_priority_stop",
     "polys": [
       {
@@ -1804,6 +1829,7 @@
     ]
   },
   {
+    "id": 25,
     "type": "roadsign_speed_40",
     "polys": [
       {
@@ -1833,6 +1859,7 @@
     ]
   },
   {
+    "id": 26,
     "type": "roadsign_speed_50",
     "polys": [
       {
@@ -1862,6 +1889,7 @@
     ]
   },
   {
+    "id": 27,
     "type": "roadsign_speed_60",
     "polys": [
       {
@@ -1891,6 +1919,7 @@
     ]
   },
   {
+    "id": 28,
     "type": "bollard",
     "polys": [
       {
@@ -1920,6 +1949,7 @@
     ]
   },
   {
+    "id": 29,
     "type": "boundary",
     "polys": [
       {
@@ -1935,6 +1965,7 @@
     ]
   },
   {
+    "id": 30,
     "type": "man",
     "polys": [
       {
@@ -1964,6 +1995,7 @@
     ]
   },
   {
+    "id": 31,
     "type": "woman",
     "polys": [
       {
@@ -1993,6 +2025,7 @@
     ]
   },
   {
+    "id": 32,
     "type": "bicycle",
     "polys": [
       {

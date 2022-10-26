@@ -1,15 +1,15 @@
 ﻿namespace AutomatedCar.SystemComponents.Packets
 {
+    using AutomatedCar.Models;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
 
-    public interface ICarCoordinatesPacket
+    public interface IRadarPacket : ISensorPacket
     {
-        int X { get; set; }
-
-        int Y { get; set; }
+        WorldObject ClosestInLane { get; set; }
+        WorldObject Closest { get; set; }
     }
 }

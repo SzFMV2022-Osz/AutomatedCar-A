@@ -1,4 +1,8 @@
-﻿namespace AutomatedCar.Models.Powertrain
+﻿// <copyright file="Gearshift.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace AutomatedCar.SystemComponents.Powertrain
 {
     using System;
     using System.Collections.Generic;
@@ -11,9 +15,9 @@
     /// </summary>
     internal class Gearshift : IGearshift
     {
+        private readonly float[] ratios = { 0f, 2.66f, 1.78f, 1.3f, 1f, 0.74f, 0.5f };
         private GearshiftState state;
         private int gear;
-        private float[] ratios = { 0f, 2.66f, 1.78f, 1.3f, 1f, 0.74f, 0.5f };
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Gearshift"/> class.
@@ -103,6 +107,28 @@
             if (this.gear < 6)
             {
                 this.gear++;
+            }
+        }
+
+        /// <summary>
+        /// Switch state dawn.
+        /// </summary>
+        public void StateDown()
+        {
+            if (this.state != GearshiftState.P)
+            {
+                this.state--;
+            }
+        }
+
+        /// <summary>
+        /// Switch state up.
+        /// </summary>
+        public void StateUp()
+        {
+            if (this.state != GearshiftState.D)
+            {
+                this.state++;
             }
         }
     }
