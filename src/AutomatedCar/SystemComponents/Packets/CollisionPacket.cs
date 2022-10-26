@@ -3,12 +3,14 @@
     using AutomatedCar.Models;
     using ReactiveUI;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
 
     public class CollisionPacket : ReactiveObject, IReadOnlyCollisionPacket
     {
         private bool collided;
         private IEnumerable<WorldObject> collisionWithNPCs;
         private IEnumerable<WorldObject> collisionWithStaticObjects;
+        private ObservableCollection<WorldObject> collidedObjects;
 
         public bool Collided
         {
@@ -26,6 +28,12 @@
         {
             get => this.collisionWithStaticObjects;
             set => this.RaiseAndSetIfChanged(ref this.collisionWithStaticObjects, value);
+        }
+
+        public ObservableCollection<WorldObject> CollidedObjects
+        {
+            get => this.collidedObjects;
+            set => this.RaiseAndSetIfChanged(ref this.collidedObjects, value);
         }
     }
 }

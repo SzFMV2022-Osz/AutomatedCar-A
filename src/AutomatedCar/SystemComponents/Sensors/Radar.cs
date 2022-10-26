@@ -30,6 +30,7 @@
 
             // positioning sensor on the car
             this.vision = SensorVision.CalculateVision(this.dist, this.deg, new Point(0, 0));
+
         }
 
         public override void Process()
@@ -60,7 +61,6 @@
 
             packet.Closest = this.NearestWorldObject(list);
             packet.ClosestInLane = this.ClosestInLane(list);
-
             /*
             Trace.WriteLine(packet.RelevantWorldObjs.Count);
             packet.RelevantWorldObjs.ForEach(x => Trace.Write(x.X + "," + x.Y + " " + x.Filename + "; "));
@@ -73,6 +73,7 @@
             */
 
             this.virtualFunctionBus.RadarPacket = packet;
+
         }
 
         private bool IsRelevant(WorldObject obj)
