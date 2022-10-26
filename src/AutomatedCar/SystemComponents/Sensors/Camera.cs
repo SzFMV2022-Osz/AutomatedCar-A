@@ -12,7 +12,7 @@
 
     public class Camera : Sensor
     {
-        private WorldObject CameraViewField;
+        private WorldObject cameraViewField;
         private PolylineGeometry viewFieldGeometry;
 
         public Camera(VirtualFunctionBus virtualFunctionBus) : base(virtualFunctionBus)
@@ -30,28 +30,29 @@
                 x: car.RotationPoint.X,
                 y: car.Geometry.Bounds.Top + 50);
 
-            CameraViewField = new WorldObject(0, 0, string.Empty);
+            this.cameraViewField = new WorldObject(0, 0, string.Empty);
             var geometries = new Avalonia.Media.PolylineGeometry();
             geometries.Points.Add(vision.SensorPos + cameraPos);
             geometries.Points.Add(vision.Left + cameraPos);
             geometries.Points.Add(vision.Right + cameraPos);
 
-            CameraViewField.RawGeometries.Add(geometries);
-            CameraViewField.RotationPoint = car.RotationPoint;
+            this.cameraViewField.RawGeometries.Add(geometries);
+            this.cameraViewField.RotationPoint = car.RotationPoint;
         }
 
         public override void Process()
         {
-            if (CameraViewField is null)
+            if (cameraViewField is null)
             {
-                InitCameraViewField();
+                this.InitCameraViewField();
             }
 
             // Update camera view field
-            CameraViewField.X = World.Instance.ControlledCar.X;
-            CameraViewField.Y = World.Instance.ControlledCar.Y;
-            CameraViewField.Rotation = World.Instance.ControlledCar.Rotation;
-            this.viewFieldGeometry = Helpers.CollisionDetection.TransformRawGeometry(CameraViewField);
+            this.cameraViewField.X = World.Instance.ControlledCar.X;
+            this.cameraViewField.Y = World.Instance.ControlledCar.Y;
+            this.cameraViewField.Rotation = World.Instance.ControlledCar.Rotation;
+            this.viewFieldGeometry = Helpers.CollisionDetection.TransformRawGeometry(this.cameraViewField);
+
             this.SaveWorldObjectsToPacket();
         }
 
@@ -68,13 +69,30 @@
 
         private bool IsRelevant(WorldObject obj)
         {
-            var objPoly = CollisionDetection.TransformRawGeometry(obj);
-
             bool isInTriangle = false;
+            var objPolys = CollisionDetection.TransformRoadRawGeometry(obj);
+            var cameraTriangle = new Tuple<Point, Point, Point>(
+                this.viewFieldGeometry.Points[0],
+                this.viewFieldGeometry.Points[1],
+                this.viewFieldGeometry.Points[2]
+                );
 
-            foreach (var geom in CollisionDetection.TransformRoadRawGeometry(obj))
+            foreach (var objPoly in objPolys)
             {
-                isInTriangle |= CollisionDetection.BoundingBoxesCollide(viewFieldGeometry, geom, 1);
+                for (int i = 0; i < objPoly.Points.Count && !isInTriangle; ++i)
+                {
+                    isInTriangle = CollisionDetection.PointInTriangle(objPoly.Points[i], cameraTriangle);
+                }
+
+                if (!isInTriangle)
+                {
+                    isInTriangle = CollisionDetection.BoundingBoxesCollide(this.viewFieldGeometry, objPoly, 1);
+                }
+
+                if (isInTriangle)
+                {
+                    break; // :)
+                }
             }
 
             return isInTriangle;
@@ -87,7 +105,7 @@
 
         protected WorldObject NearestWorldObject()
         {
-            OrderByDistance();
+            this.OrderByDistance();
             return this.virtualFunctionBus.CameraPacket.RelevantWorldObjs.FirstOrDefault();
         }
 
