@@ -14,14 +14,14 @@ namespace AutomatedCar.SystemComponents.InputManager.InputHandler
         /// <summary>
         /// This is a controlMessenger instance.
         /// </summary>
-        private static ControlMessenger controlMessenger = new ControlMessenger();
+        public static ControlMessenger controlMessenger = new ControlMessenger();
 
         /// <summary>
         /// Send turning left input to powertrain.
         /// </summary>
         public static void TurnLeft()
         {
-            controlMessenger.Steering = Steering.Left;
+            controlMessenger.Steering = SteeringState.Left;
         }
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace AutomatedCar.SystemComponents.InputManager.InputHandler
         /// </summary>
         public static void TurnRight()
         {
-            controlMessenger.Steering = Steering.Right;
+            controlMessenger.Steering = SteeringState.Right;
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace AutomatedCar.SystemComponents.InputManager.InputHandler
         /// </summary>
         public static void TurnToCenter()
         {
-            controlMessenger.Steering = Steering.Center;
+            controlMessenger.Steering = SteeringState.Center;
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace AutomatedCar.SystemComponents.InputManager.InputHandler
         public static void ShiftDown()
         {
             controlMessenger.Gear = Gears.ShiftDown;
-            controlMessenger.Gear = Gears.Steady;
+            //controlMessenger.Gear = Gears.Steady;
         }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace AutomatedCar.SystemComponents.InputManager.InputHandler
         public static void ShiftUp()
         {
             controlMessenger.Gear = Gears.ShiftUp;
-            controlMessenger.Gear = Gears.Steady;
+            //controlMessenger.Gear = Gears.Steady;
         }
 
         /// <summary>

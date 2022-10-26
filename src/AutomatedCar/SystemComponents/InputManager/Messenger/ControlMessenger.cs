@@ -11,7 +11,7 @@ namespace AutomatedCar.SystemComponents.InputManager.Messenger
     /// </summary>
     public class ControlMessenger : IControlMessenger
     {
-        private Steering steering;
+        private SteeringState steering;
 
         private Pedals pedal;
 
@@ -35,7 +35,7 @@ namespace AutomatedCar.SystemComponents.InputManager.Messenger
         /// <summary>
         /// Gets or sets the position of steering wheel.
         /// </summary>
-        public Steering Steering
+        public SteeringState Steering
         {
             get
             {

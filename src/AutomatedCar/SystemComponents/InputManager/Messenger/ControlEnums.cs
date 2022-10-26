@@ -8,7 +8,7 @@ namespace AutomatedCar.SystemComponents.InputManager.Messenger
     /// <summary>
     /// Enum for the steering wheel.
     /// </summary>
-    public enum Steering
+    public enum SteeringState
     {
         /// <summary>
         /// Left position of the steering wheel

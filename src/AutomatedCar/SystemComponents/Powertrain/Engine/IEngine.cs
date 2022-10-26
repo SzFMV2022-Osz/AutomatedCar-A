@@ -13,7 +13,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
     /// <summary>
     /// Engine interface.
     /// </summary>
-    internal interface IEngine
+    public interface IEngine
     {
         /// <summary>
         /// Gets speed of the car (km/h).

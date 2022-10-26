@@ -7,7 +7,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
     /// <summary>
     /// Steering interface.
     /// </summary>
-    internal interface ISteering
+    public interface ISteering
     {
         /// <summary>
         /// Sets the turning direction to the left side.

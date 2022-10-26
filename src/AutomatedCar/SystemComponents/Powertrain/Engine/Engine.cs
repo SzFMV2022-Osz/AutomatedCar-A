@@ -13,7 +13,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
     /// <summary>
     /// Engine.
     /// </summary>
-    internal class Engine : IEngine
+    public class Engine : IEngine
     {
         private static readonly float Pi = (float)Math.PI;
         private readonly IGearshift gearshift;

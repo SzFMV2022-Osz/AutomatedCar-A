@@ -29,7 +29,7 @@ namespace AutomatedCar.SystemComponents.InputManager.Messenger
         /// <summary>
         /// Gets or sets the position of steering wheel.
         /// </summary>
-        Steering Steering { get; set; }
+        SteeringState Steering { get; set; }
 
         /// <summary>
         /// Gets or sets the position of pedals.
