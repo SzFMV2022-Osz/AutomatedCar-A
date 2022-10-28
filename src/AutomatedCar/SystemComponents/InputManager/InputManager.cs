@@ -37,6 +37,7 @@ namespace AutomatedCar.SystemComponents.InputManager
             if (Keyboard.IsKeyDown(Avalonia.Input.Key.Up))
             {
                 this.messenger.SendMessageToPowertrain(Models.PowerTrain.PedalStates.Throtle);
+                Keyboard.Keys.Remove(Avalonia.Input.Key.Up);
             }
             else if (Keyboard.IsKeyDown(Avalonia.Input.Key.Down))
             {
@@ -44,7 +45,7 @@ namespace AutomatedCar.SystemComponents.InputManager
             }
             else
             {
-                this.messenger.SendMessageToPowertrain(Models.PowerTrain.PedalStates.None);
+                //this.messenger.SendMessageToPowertrain(Models.PowerTrain.PedalStates.None);
             }
 
             if (Keyboard.IsKeyDown(Avalonia.Input.Key.Left))
@@ -63,6 +64,7 @@ namespace AutomatedCar.SystemComponents.InputManager
             if (Keyboard.IsKeyDown(Avalonia.Input.Key.PageUp))
             {
                 this.messenger.SendMessageToPowertrain(Models.PowerTrain.ShiftStates.ShiftStateNext);
+                Keyboard.Keys.Remove(Avalonia.Input.Key.PageUp);
             }
             else if (Keyboard.IsKeyDown(Avalonia.Input.Key.PageDown))
             {

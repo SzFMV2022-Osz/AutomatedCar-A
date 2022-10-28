@@ -55,6 +55,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
             this.maxrpm = maxrpm;
             this.minrpm = minrpm;
             this.cBreak = cBreak;
+            this.Velocity = 0;
         }
 
         /// <summary>
@@ -73,6 +74,12 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// <returns>driving force lenght.</returns>
         public float Accelerate()
         {
+            if (this.gearshift.GetGearRatio() == 0)
+            {
+                this.gearshift.ShiftUp();
+                this.rpm = this.minrpm;
+            }
+
             this.gasPedal += .01f;
             this.breakPedal -= .01f;
             this.ClampPedals();
@@ -87,6 +94,8 @@ namespace AutomatedCar.SystemComponents.Powertrain
                     this.rpm = this.GetRPM();
                 }
             }
+            else if (this.rpm < (this.minrpm)) { this.rpm = this.minrpm; }
+
 
             return this.LongitudinalForce();
         }
@@ -217,6 +226,8 @@ namespace AutomatedCar.SystemComponents.Powertrain
 
         private float DrivingForce()
         {
+            var a = this.GetTorque();
+
             return this.GetTorque() * this.gearshift.GetGearRatio() * this.diferential * this.transmissionefficiency / this.wheelradius;
         }
 
@@ -248,6 +259,9 @@ namespace AutomatedCar.SystemComponents.Powertrain
                     }
                     else
                     {
+                        float a = this.Frr();
+                        float b = this.DragForce();
+                        float c = this.DrivingForce();
                         temp = this.DrivingForce() + this.DragForce() + this.Frr();
                     }
 

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Threading.Tasks;
+    using AutomatedCar.Models.PowerTrain;
     using AutomatedCar.SystemComponents.InputManager;
 
     /// <summary>
@@ -13,8 +14,8 @@
 
         private ISteering steering;
 
-        private Task[] tasks = new Task[2];
-        private Task<float>[] tasksWithReturns = new Task<float>[3];
+        private Action[] tasks = new Action[2];
+        private Func<float>[] tasksWithReturns = new Func<float>[3];
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Powertrain"/> class.
@@ -25,11 +26,11 @@
             : base(vfb)
         {
             this.engine = new Engine(new Gearshift());
-            this.tasks[0] = new Task(new Action(this.engine.StateUp), TaskCreationOptions.LongRunning);
-            this.tasks[1] = new Task(new Action(this.engine.StateDown), TaskCreationOptions.LongRunning);
-            this.tasksWithReturns[0] = new Task<float>(new Func<float>(this.engine.Accelerate), TaskCreationOptions.LongRunning);
-            this.tasksWithReturns[1] = new Task<float>(new Func<float>(this.engine.Breaking), TaskCreationOptions.LongRunning);
-            this.tasksWithReturns[2] = new Task<float>(new Func<float>(this.engine.Lift), TaskCreationOptions.LongRunning);
+            this.tasks[0] = this.engine.StateUp;
+            this.tasks[1] = this.engine.StateDown;
+            this.tasksWithReturns[0] = this.engine.Accelerate;
+            this.tasksWithReturns[1] = this.engine.Breaking;
+            this.tasksWithReturns[2] = this.engine.Lift;
             messenger.OnPedalChanged += this.Messenger_OnPedalChanged;
             messenger.OnShiftStateChanged += this.Messenger_OnShiftStateChanged;
         }
@@ -39,35 +40,34 @@
         /// </summary>
         public override void Process()
         {
-            Task.WaitAll(this.tasks);
-            Task.WaitAll(this.tasksWithReturns);
+            //Task.WaitAll(this.tasksWithReturns);
         }
 
-        private void Messenger_OnShiftStateChanged(object sender, Models.PowerTrain.ShiftStates e)
+        private void Messenger_OnShiftStateChanged(object sender, ShiftStates e)
         {
-            if (e == Models.PowerTrain.ShiftStates.ShiftStateNext)
+            if (e == ShiftStates.ShiftStateNext)
             {
-                this.tasks[0].Start();
+                new Task(this.tasks[0], TaskCreationOptions.LongRunning).Start();
             }
             else
             {
-                this.tasks[1].Start();
+                new Task(this.tasks[0], TaskCreationOptions.LongRunning).Start();
             }
         }
 
-        private void Messenger_OnPedalChanged(object sender, Models.PowerTrain.PedalStates e)
+        private void Messenger_OnPedalChanged(object sender, PedalStates e)
         {
-            if (e == Models.PowerTrain.PedalStates.Throtle)
+            if (e == PedalStates.Throtle)
             {
-                this.tasksWithReturns[0].Start();
+                new Task<float>(this.tasksWithReturns[0], TaskCreationOptions.LongRunning).Start();
             }
-            else if (e == Models.PowerTrain.PedalStates.Break)
+            else if (e == PedalStates.Break)
             {
-                this.tasksWithReturns[1].Start();
+                new Task<float>(this.tasksWithReturns[1], TaskCreationOptions.LongRunning).Start();
             }
             else
             {
-                this.tasksWithReturns[2].Start();
+                new Task<float>(this.tasksWithReturns[2], TaskCreationOptions.LongRunning).Start();
             }
         }
     }

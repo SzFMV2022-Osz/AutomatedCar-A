@@ -126,7 +126,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// </summary>
         public void StateUp()
         {
-            if (this.state == GearshiftState.D)
+            if (this.state != GearshiftState.D)
             {
                 this.state++;
             }

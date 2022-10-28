@@ -4,18 +4,30 @@ namespace AutomatedCar.Models
     using global::AutomatedCar.SystemComponents.Sensors;
     using global::AutomatedCar.SystemComponents.Packets;
     using SystemComponents;
+    using SystemComponents.InputManager;
+    using SystemComponents.Powertrain;
 
     public class AutomatedCar : Car
     {
         private VirtualFunctionBus virtualFunctionBus;
 
         private Sensor radarSensor;
+        private Messenger messenger;
+        private Powertrain powertrain;
+        static int id = 0;
 
         public AutomatedCar(int x, int y, string filename)
             : base(x, y, filename)
         {
             this.virtualFunctionBus = new VirtualFunctionBus();
             this.radarSensor = new Radar(this.virtualFunctionBus);
+            if (id == 0)
+            {
+                this.messenger = new Messenger();
+                new InputManager(this.virtualFunctionBus, this.messenger);
+                this.powertrain = new Powertrain(this.virtualFunctionBus, this.messenger);
+                ++id;
+            }
 
             this.virtualFunctionBus.CarCoordinatesPacket = new CarCoordinatesPacket(x, y);
             this.ZIndex = 10;
