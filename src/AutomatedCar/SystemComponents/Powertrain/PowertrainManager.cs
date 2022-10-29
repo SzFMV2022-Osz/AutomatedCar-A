@@ -20,7 +20,7 @@
             virtualFunctionBus.PowertrainPacket = this.powertrainPacket;
             this.gearshift = new Gearshift();
             this.engine = new Engine(this.gearshift);
-            this.steering = new Steering(0,0,0,GearshiftState.P,0);
+            this.steering = new Steering();
 
             ControlMessenger.SteeringEventHandler += OnSteering;
             ControlMessenger.PedalEventHandler += OnPedal;
@@ -29,18 +29,26 @@
 
         public void OnSteering(object sender, ControlEventArgs eventArgs)
         {
+            this.steering.Seed(World.Instance.ControlledCar.X, World.Instance.ControlledCar.Y, World.Instance.ControlledCar.Rotation);
             switch (eventArgs.Steering)
             {
                 case SteeringState.Left:
-                    //this.steering.TurnLeft();
-                    World.Instance.ControlledCar.X -= 5;
+                    this.steering.CarSpeed = this.engine.Speed;
+                    this.steering.TurnLeft();
+                    this.steering.GetRotation();
+                    World.Instance.ControlledCar.Rotation = this.steering.Rotation;
                     break;
                 case SteeringState.Right:
-                    //this.steering.TurnRight();
-                    World.Instance.ControlledCar.X += 5;
+                    this.steering.CarSpeed = this.engine.Speed;
+                    this.steering.TurnRight();
+                    this.steering.GetRotation();
+                    World.Instance.ControlledCar.Rotation = this.steering.Rotation;
                     break;
                 case SteeringState.Center:
+                    this.steering.CarSpeed = this.engine.Speed;
                     this.steering.StraightenWheel();
+                    this.steering.GetRotation();
+                    World.Instance.ControlledCar.Rotation = this.steering.Rotation;
                     break;
             }
         }
@@ -71,9 +79,11 @@
             {
                 case Gears.ShiftUp:
                     this.engine.StateUp();
+                    this.steering.State += 1;
                     break;
                 case Gears.ShiftDown:
                     this.engine.StateDown();
+                    this.steering.State -= 1;
                     break;
             }
         }

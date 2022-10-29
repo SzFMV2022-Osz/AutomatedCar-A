@@ -12,14 +12,14 @@ namespace AutomatedCar.SystemComponents.Powertrain
     /// </summary>
     public class Steering : ISteering
     {
-        private const int TurningOffset = 5;
+        private const double TurningOffset = 5;
 
         private int wheelBase;
         private double steerAngle;
 
         private Vector carLocation;
         private double carHeading;
-        private float carSpeed;
+        private int carSpeed;
 
         private double rotation;
 
@@ -32,19 +32,47 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// <summary>
         /// Initializes a new instance of the <see cref="Steering"/> class.
         /// </summary>
-        /// <param name="x">X position of car.</param>
-        /// <param name="y">Y position of car.</param>
-        /// <param name="carSpeed">Speed of car.</param>
-        /// <param name="state">State of the gearshift.</param>
-        /// <param name="rotation">Rotation of the car.</param>
-        public Steering(int x, int y, float carSpeed, GearshiftState state, double rotation)
+        public Steering()
         {
             this.wheelBase = 300;
             this.steerAngle = 0;
-            this.carLocation = new Vector(x, y);
-            this.carSpeed = carSpeed;
             this.carHeading = -1.5;
-            this.state = state;
+        }
+
+        /// <summary>
+        /// Gets or sets the state of the Gearshift.
+        /// </summary>
+        public GearshiftState State
+        {
+            get { return this.state; }
+            set { this.state = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the speed of the Car.
+        /// </summary>
+        public int CarSpeed
+        {
+            get { return this.carSpeed; } set { this.carSpeed = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the rotation of the Car.
+        /// </summary>
+        public double Rotation
+        {
+            get { return this.rotation; } set { this.rotation = value; }
+        }
+
+        /// <summary>
+        /// Sets up some info coming from the controlled car.
+        /// </summary>
+        /// <param name="x">X position of car.</param>
+        /// <param name="y">Y position of car.</param>
+        /// <param name="rotation">Rotation of the car.</param>
+        public void Seed(int x, int y, double rotation)
+        {
+            this.carLocation = new Vector(x, y);
             this.rotation = rotation;
         }
 
@@ -53,7 +81,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// </summary>
         public void TurnLeft()
         {
-            this.steerAngle = +TurningOffset;
+            this.steerAngle = -TurningOffset;
         }
 
         /// <summary>
@@ -61,7 +89,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// </summary>
         public void TurnRight()
         {
-            this.steerAngle = -TurningOffset;
+            this.steerAngle = +TurningOffset;
         }
 
         /// <summary>
