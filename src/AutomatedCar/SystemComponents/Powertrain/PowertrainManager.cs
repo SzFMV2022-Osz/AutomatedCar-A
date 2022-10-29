@@ -1,6 +1,7 @@
 ﻿namespace AutomatedCar.SystemComponents.Powertrain
 {
     using System;
+    using AutomatedCar.Models;
     using AutomatedCar.SystemComponents.InputManager.InputHandler;
     using AutomatedCar.SystemComponents.InputManager.Messenger;
     using AutomatedCar.SystemComponents.Packets;
@@ -31,10 +32,12 @@
             switch (eventArgs.Steering)
             {
                 case SteeringState.Left:
-                    this.steering.TurnLeft();
+                    //this.steering.TurnLeft();
+                    World.Instance.ControlledCar.X -= 5;
                     break;
                 case SteeringState.Right:
-                    this.steering.TurnRight();
+                    //this.steering.TurnRight();
+                    World.Instance.ControlledCar.X += 5;
                     break;
                 case SteeringState.Center:
                     this.steering.StraightenWheel();
@@ -48,12 +51,16 @@
             {
                 case Pedals.Empty:
                     this.engine.Lift();
+                    World.Instance.ControlledCar.Y -= this.engine.Speed;
                     break;
                 case Pedals.Brake:
                     this.engine.Breaking();
+                    //World.Instance.ControlledCar.Y += 5;
                     break;
                 case Pedals.Gas:
                     this.engine.Accelerate();
+                    //World.Instance.ControlledCar.Y -= 5;
+                    World.Instance.ControlledCar.Y -= this.engine.Speed;
                     break;
             }
         }
