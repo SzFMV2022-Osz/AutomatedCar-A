@@ -4,18 +4,12 @@
 
 namespace AutomatedCar.SystemComponents.Powertrain
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-
     /// <summary>
     /// Gear shift.
     /// </summary>
     internal class Gearshift : IGearshift
     {
-        private readonly float[] ratios = { 0f, 2.66f, 1.78f, 1.3f, 1f, 0.74f, 0.5f };
+        private readonly float[] ratios = { 2.66f, 1.78f, 1.3f, 1f, 0.74f, 0.5f };
         private GearshiftState state;
         private int gear;
 
@@ -25,7 +19,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// </summary>
         public Gearshift()
         {
-            this.gear = 0;
+            this.gear = 1;
             this.state = GearshiftState.P;
         }
 
@@ -53,7 +47,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// <returns>ratio or -1f.</returns>
         public float NextGearRatio()
         {
-            if (this.gear == 6)
+            if (this.gear == (this.ratios.Length - 1))
             {
                 return -1f;
             }
@@ -104,7 +98,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// </summary>
         public void ShiftUp()
         {
-            if (this.gear < 6)
+            if (this.gear < (this.ratios.Length - 1))
             {
                 this.gear++;
             }
