@@ -29,6 +29,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
         private float rpm;
         private float gasPedal;
         private float breakPedal;
+        private float velocity;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Engine"/> class.
@@ -55,6 +56,8 @@ namespace AutomatedCar.SystemComponents.Powertrain
             this.maxrpm = maxrpm;
             this.minrpm = minrpm;
             this.cBreak = cBreak;
+            this.rpm = 1000;
+            this.velocity = 0;
         }
 
         /// <summary>
@@ -62,10 +65,10 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// </summary>
         public int Speed
         {
-            get { return (int)(this.Velocity * 3.6); }
+            get { return (int)(this.Velocity / 3.6); }
         }
 
-        private float Velocity { get; set; }
+        private float Velocity { get { return this.velocity; } set { this.velocity = value; } }
 
         /// <summary>
         /// Accelerate the car.
@@ -75,10 +78,10 @@ namespace AutomatedCar.SystemComponents.Powertrain
         {
             this.gasPedal += .01f;
             this.breakPedal -= .01f;
-            this.ClampPedals();
-            this.Velocity += this.ChangeVelocity(false) + this.ChangeVelocity(true);
+            this.ClampPedals();            
+            this.Velocity += this.ChangeVelocity(false) + this.ChangeVelocity(true);            
             this.rpm = this.GetRPM();
-
+            
             if (this.rpm.Equals(this.maxrpm))
             {
                 if (this.GetNextGearRPM() > this.minrpm)
@@ -155,7 +158,10 @@ namespace AutomatedCar.SystemComponents.Powertrain
 
         private int GetRPM()
         {
-            return (int)(this.GetWheelRotationRateBySpeed() * this.gearshift.GetGearRatio() * this.diferential * 60 / 2 * Pi);
+            ;
+            int test = (int)(this.GetWheelRotationRateBySpeed() * this.gearshift.GetGearRatio() * this.diferential * 60 / 2 * Pi);
+            ;
+            return test;
         }
 
         private int GetNextGearRPM()
@@ -175,6 +181,9 @@ namespace AutomatedCar.SystemComponents.Powertrain
 
         private float GetWheelRotationRateBySpeed()
         {
+            float test1 = this.wheelradius;
+            float test2 = this.Velocity;
+            ;
             return this.Velocity / this.wheelradius;
         }
 
