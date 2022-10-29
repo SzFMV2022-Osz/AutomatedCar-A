@@ -32,7 +32,7 @@ namespace AutomatedCar
         {
             if (this.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                var world = this.CreateWorld(OVAL);
+                var world = this.CreateWorld(TEST_WORLD);
                 desktop.MainWindow = new MainWindow { DataContext = new MainWindowViewModel(world) };
             }
 
