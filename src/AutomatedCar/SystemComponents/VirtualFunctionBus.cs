@@ -15,6 +15,12 @@ namespace AutomatedCar.SystemComponents
 
         public ICarCoordinatesPacket CarCoordinatesPacket { get; set; }
 
+        public IPowerTrainPacketForChangeSpeed PowerTrainPacketForSpeed { get; set; }
+
+        public IPowerTrainPacketForChangeGearshiftState PowerTrainPacketForGearshift { get; set; }
+
+        public IPowerTrainPacketForChangeSteering PowerTrainPacketForSteering { get; set; }
+
         public void RegisterComponent(SystemComponent component)
         {
             this.components.Add(component);

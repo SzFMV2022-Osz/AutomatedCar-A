@@ -1,4 +1,4 @@
-﻿// <copyright file="ShiftState.cs" company="PlaceholderCompany">
+﻿// <copyright file="ShifterStates.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 

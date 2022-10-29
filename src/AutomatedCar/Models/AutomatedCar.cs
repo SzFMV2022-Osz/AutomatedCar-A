@@ -24,7 +24,7 @@ namespace AutomatedCar.Models
             if (id == 0)
             {
                 this.messenger = new Messenger();
-                new InputManager(this.virtualFunctionBus, this.messenger);
+                new KeyboardInputManager(this.virtualFunctionBus, this.messenger);
                 this.powertrain = new Powertrain(this.virtualFunctionBus, this.messenger);
                 ++id;
             }

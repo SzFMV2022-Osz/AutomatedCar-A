@@ -1,4 +1,8 @@
-﻿namespace AutomatedCar.SystemComponents.Powertrain
+﻿// <copyright file="Powertrain.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace AutomatedCar.SystemComponents.Powertrain
 {
     using System;
     using System.Threading.Tasks;
@@ -40,7 +44,7 @@
         /// </summary>
         public override void Process()
         {
-            //Task.WaitAll(this.tasksWithReturns);
+            // Task.WaitAll(this.tasksWithReturns);
         }
 
         private void Messenger_OnShiftStateChanged(object sender, ShiftStates e)

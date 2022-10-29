@@ -4,19 +4,19 @@
 
 namespace AutomatedCar.SystemComponents.InputManager
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using System.Windows.Input;
+    using AutomatedCar.Models.PowerTrain.Packets;
 
     /// <summary>
     /// Input manager.
     /// </summary>
     internal class InputManager : SystemComponent
     {
-        private readonly IMessenger messenger;
+        /// <summary>
+        /// Messenger object reference.
+        /// </summary>
+#pragma warning disable SA1401 // Fields should be private
+        protected readonly IMessenger messenger;
+#pragma warning restore SA1401 // Fields should be private
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InputManager"/> class.
@@ -24,51 +24,59 @@ namespace AutomatedCar.SystemComponents.InputManager
         /// <param name="vsf">Virtual function bus.</param>
         /// <param name="messenger">IMessenger.</param>
         public InputManager(VirtualFunctionBus vsf, IMessenger messenger)
-            : base(vsf)
+                : base(vsf)
         {
             this.messenger = messenger;
         }
+
+        /// <summary>
+        /// Gets a value indicating whether gets speed overrided.
+        /// </summary>
+        protected bool IsSpeedOverrided { get; private set; }
+
+        /// <summary>
+        /// Gets a value indicating whether gets steering overrided.
+        /// </summary>
+        protected bool IsSteeringOverrided { get; private set; }
+
+        /// <summary>
+        /// Gets a value indicating whether gets gearshift overrided.
+        /// </summary>
+        protected bool IsGearshiftOverrided { get; private set; }
 
         /// <summary>
         /// Do process.
         /// </summary>
         public override void Process()
         {
-            if (Keyboard.IsKeyDown(Avalonia.Input.Key.Up))
+            this.IsGearshiftOverrided = false;
+            this.IsSteeringOverrided = false;
+            this.IsSpeedOverrided = false;
+
+            // This if can be simplified, if packet can use pedalstate insted of new Speedstate.
+            if (this.virtualFunctionBus.PowerTrainPacketForSpeed is not null)
             {
-                this.messenger.SendMessageToPowertrain(Models.PowerTrain.PedalStates.Throtle);
-                Keyboard.Keys.Remove(Avalonia.Input.Key.Up);
-            }
-            else if (Keyboard.IsKeyDown(Avalonia.Input.Key.Down))
-            {
-                this.messenger.SendMessageToPowertrain(Models.PowerTrain.PedalStates.Break);
-            }
-            else
-            {
-                //this.messenger.SendMessageToPowertrain(Models.PowerTrain.PedalStates.None);
+                this.IsSpeedOverrided = true;
+                if (this.virtualFunctionBus.PowerTrainPacketForSpeed.State == SpeedStates.SpeedUp)
+                {
+                    this.messenger.SendMessageToPowertrain(Models.PowerTrain.PedalStates.Throtle);
+                }
+                else if (this.virtualFunctionBus.PowerTrainPacketForSpeed.State == SpeedStates.Break)
+                {
+                    this.messenger.SendMessageToPowertrain(Models.PowerTrain.PedalStates.Break);
+                }
             }
 
-            if (Keyboard.IsKeyDown(Avalonia.Input.Key.Left))
+            if (this.virtualFunctionBus.PowerTrainPacketForSteering is not null)
             {
-                this.messenger.SendMessageToPowertrain(Models.PowerTrain.SteeringState.Left);
-            }
-            else if (Keyboard.IsKeyDown(Avalonia.Input.Key.Right))
-            {
-                this.messenger.SendMessageToPowertrain(Models.PowerTrain.SteeringState.Right);
-            }
-            else
-            {
-                this.messenger.SendMessageToPowertrain(Models.PowerTrain.SteeringState.Center);
+                this.IsSteeringOverrided = true;
+                this.messenger.SendMessageToPowertrain(this.virtualFunctionBus.PowerTrainPacketForSteering.Command);
             }
 
-            if (Keyboard.IsKeyDown(Avalonia.Input.Key.PageUp))
+            if (this.virtualFunctionBus.PowerTrainPacketForSpeed is not null)
             {
-                this.messenger.SendMessageToPowertrain(Models.PowerTrain.ShiftStates.ShiftStateNext);
-                Keyboard.Keys.Remove(Avalonia.Input.Key.PageUp);
-            }
-            else if (Keyboard.IsKeyDown(Avalonia.Input.Key.PageDown))
-            {
-                this.messenger.SendMessageToPowertrain(Models.PowerTrain.ShiftStates.ShiftStatePrew);
+                this.IsGearshiftOverrided = true;
+                this.messenger.SendMessageToPowertrain(this.virtualFunctionBus.PowerTrainPacketForGearshift.GearshiftCommand);
             }
         }
     }
