@@ -94,8 +94,10 @@ namespace AutomatedCar.SystemComponents.Powertrain
                     this.rpm = this.GetRPM();
                 }
             }
-            else if (this.rpm < (this.minrpm)) { this.rpm = this.minrpm; }
-
+            else if (this.rpm < this.minrpm)
+            {
+                this.rpm = this.minrpm;
+            }
 
             return this.LongitudinalForce();
         }
@@ -109,13 +111,21 @@ namespace AutomatedCar.SystemComponents.Powertrain
             this.rpm -= 0.25f; // enginebreak
             this.breakPedal -= .01f;
             this.gasPedal -= .01f;
+            this.ClampPedals();
             this.Velocity = (int)this.GetSpeedByWheelRotation() + this.ChangeVelocity(false) + this.ChangeVelocity(true);
             if (this.rpm < this.minrpm + 0.25f)
             {
                 if (this.GetPrewGearRPM() < this.maxrpm)
                 {
                     this.gearshift.ShiftDown();
-                    this.rpm = this.GetRPM();
+                    if (this.gearshift.GetGearRatio() == 0)
+                    {
+                        this.rpm = this.minrpm;
+                    }
+                    else
+                    {
+                        this.rpm = this.GetRPM();
+                    }
                 }
             }
 
@@ -139,7 +149,14 @@ namespace AutomatedCar.SystemComponents.Powertrain
                 if (this.GetPrewGearRPM() < this.maxrpm)
                 {
                     this.gearshift.ShiftDown();
-                    this.rpm = this.GetRPM();
+                    if (this.gearshift.GetGearRatio() == 0)
+                    {
+                        this.rpm = this.minrpm;
+                    }
+                    else
+                    {
+                        this.rpm = this.GetRPM();
+                    }
                 }
             }
 
