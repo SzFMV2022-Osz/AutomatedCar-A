@@ -32,7 +32,7 @@ namespace AutomatedCar.Models.PowerTrain
         {
             get
             {
-                return this.rpm;
+                return (int)this.rpm;
             }
 
             set

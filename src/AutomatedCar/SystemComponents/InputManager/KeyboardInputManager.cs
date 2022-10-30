@@ -41,7 +41,7 @@ namespace AutomatedCar.SystemComponents.InputManager
                 }
                 else
                 {
-                    this.messenger.SendMessageToPowertrain(Models.PowerTrain.PedalStates.None);
+                   this.messenger.SendMessageToPowertrain(Models.PowerTrain.PedalStates.None);
                 }
             }
 
@@ -66,10 +66,12 @@ namespace AutomatedCar.SystemComponents.InputManager
                 if (Keyboard.IsKeyDown(Avalonia.Input.Key.PageUp))
                 {
                     this.messenger.SendMessageToPowertrain(Models.PowerTrain.ShiftStates.ShiftStateNext);
+                    Keyboard.Keys.Remove(Avalonia.Input.Key.PageUp);
                 }
                 else if (Keyboard.IsKeyDown(Avalonia.Input.Key.PageDown))
                 {
                     this.messenger.SendMessageToPowertrain(Models.PowerTrain.ShiftStates.ShiftStatePrew);
+                    Keyboard.Keys.Remove(Avalonia.Input.Key.Down);
                 }
             }
         }

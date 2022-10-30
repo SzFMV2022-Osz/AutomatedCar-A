@@ -28,6 +28,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
         private readonly float maxrpm;
         private readonly float minrpm;
         private float rpm;
+        private float velocity;
         private float gasPedal;
         private float breakPedal;
 
@@ -64,7 +65,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// </summary>
         public int Speed
         {
-            get { return (int)(this.Velocity * 3.6); }
+            get { return (int)(Math.Abs(this.Velocity) * 3.6); }
         }
 
         /// <summary>
@@ -102,8 +103,9 @@ namespace AutomatedCar.SystemComponents.Powertrain
             }
         }
 
-        private float Velocity { get; set; }
+        private float Velocity { get { return this.velocity; } set { this.velocity = value; } }
 
+        private bool afteracc = false;
         /// <summary>
         /// Accelerate the car.
         /// </summary>
@@ -122,13 +124,17 @@ namespace AutomatedCar.SystemComponents.Powertrain
             this.Velocity += this.ChangeVelocity(false) + this.ChangeVelocity(true);
             this.rpm = this.GetRPM();
 
-            if (this.rpm.Equals(this.maxrpm))
+            if (this.rpm > this.maxrpm - 100)
             {
                 if (this.GetNextGearRPM() > this.minrpm)
                 {
                     this.gearshift.ShiftUp();
                     this.rpm = this.GetRPM();
                 }
+            }
+            else if (this.rpm > this.maxrpm)
+            {
+                this.rpm = this.maxrpm;
             }
             else if (this.rpm < this.minrpm)
             {
@@ -144,12 +150,23 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// <returns>driving force lenght.</returns>
         public float Lift()
         {
-            this.rpm -= 0.0025f; // enginebreak
-            this.breakPedal -= .001f;
-            this.gasPedal -= .001f;
+            this.rpm -= 250f; // enginebreak
+            this.breakPedal -= .01f;
+            this.gasPedal -= .01f;
             this.ClampPedals();
-            this.Velocity = this.ChangeVelocity(false) + this.ChangeVelocity(true);
-            if (this.rpm < this.minrpm + 0.0025f)
+            var a = this.ChangeVelocity(false) + this.ChangeVelocity(true);
+
+            if (this.gearshift.GetState() == GearshiftState.D)
+            {
+                this.Velocity += a;
+            }
+            else if (this.gearshift.GetState() == GearshiftState.R)
+            {
+                this.Velocity -= a;
+            }
+
+            this.rpm = this.GetRPM();
+            if (this.rpm < this.minrpm + 250f)
             {
                 if (this.GetPrewGearRPM() < this.maxrpm)
                 {
@@ -157,6 +174,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
                     if (this.gearshift.GetGearRatio() == 0)
                     {
                         this.rpm = this.minrpm;
+                        this.Velocity = 0;
                     }
                     else
                     {
@@ -164,8 +182,23 @@ namespace AutomatedCar.SystemComponents.Powertrain
                     }
                 }
             }
+            else if (this.rpm > this.maxrpm)
+            {
+                this.rpm = this.maxrpm;
+            }
 
-            return this.LongitudinalForce(true);
+            var b = this.LongitudinalForce();
+
+            if (this.gearshift.GetState() == GearshiftState.D)
+            {
+                return Math.Abs(this.LongitudinalForce());
+            }
+            else if (this.gearshift.GetState() == GearshiftState.R)
+            {
+                return -1 * Math.Abs(this.LongitudinalForce());
+            }
+
+            return this.LongitudinalForce();
         }
 
         /// <summary>
@@ -237,7 +270,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
 
         private float GetWheelRotationRateBySpeed()
         {
-            return this.Velocity / this.wheelradius;
+            return Math.Abs(this.Velocity) / this.wheelradius;
         }
 
         private float GetSpeedByWheelRotation()
@@ -298,7 +331,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
                     }
                     else
                     {
-                        temp = this.DrivingForce() + this.DragForce() + this.Frr();
+                        temp = this.DrivingForce() - this.DragForce() + this.Frr();
                     }
 
                     temp *= -1;
@@ -315,7 +348,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
                         float a = this.Frr();
                         float b = this.DragForce();
                         float c = this.DrivingForce();
-                        temp = this.DrivingForce() + this.DragForce() + this.Frr();
+                        temp = this.DrivingForce() - this.DragForce() + this.Frr();
                     }
 
                     break;
@@ -346,7 +379,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
 
         private float LookupHpCurve(float rpm)
         {
-            if (rpm >= 1000 && rpm <= 5000)
+            if (rpm >= 1000 && rpm <= 100000)
             {
                 return (0.06875f * rpm) - 18.75f;
             }

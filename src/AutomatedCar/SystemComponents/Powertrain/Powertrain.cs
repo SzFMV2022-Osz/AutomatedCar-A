@@ -22,6 +22,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
         private Action[] tasks = new Action[2];
         private Func<float>[] tasksWithReturns = new Func<float>[3];
         private Task<float> drivingforce;
+        private Task shift;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Powertrain"/> class.
@@ -46,6 +47,11 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// </summary>
         public override void Process()
         {
+            if (this.shift is not null && !this.shift.IsCompleted)
+            {
+                this.shift.Wait();
+            }
+
             if (this.drivingforce is not null && !this.drivingforce.IsCompleted)
             {
                 this.drivingforce.Wait();
@@ -60,12 +66,14 @@ namespace AutomatedCar.SystemComponents.Powertrain
         {
             if (e == ShiftStates.ShiftStateNext)
             {
-                new Task(this.tasks[0], TaskCreationOptions.LongRunning).Start();
+                this.shift = new Task(this.tasks[0], TaskCreationOptions.LongRunning);
             }
             else
             {
-                new Task(this.tasks[0], TaskCreationOptions.LongRunning).Start();
+                this.shift = new Task(this.tasks[1], TaskCreationOptions.LongRunning);
             }
+
+            this.shift.Start();
         }
 
         private void Messenger_OnPedalChanged(object sender, PedalStates e)

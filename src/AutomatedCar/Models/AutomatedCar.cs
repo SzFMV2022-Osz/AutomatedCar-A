@@ -29,16 +29,18 @@ namespace AutomatedCar.Models
             if (id == 0)
             {
                 new KeyboardInputManager(this.virtualFunctionBus, this.messenger);
+                this.powertrain = new Powertrain(this.virtualFunctionBus, this.messenger);
+                new Locator(this.virtualFunctionBus, this);
                 new Dasboard(this.VirtualFunctionBus, this.Dasboard);
                 ++id;
             }
             else
             {
                 new InputManager(this.virtualFunctionBus, this.messenger);
+                this.powertrain = new Powertrain(this.virtualFunctionBus, this.messenger);
+                new Locator(this.virtualFunctionBus, this);
             }
 
-            this.powertrain = new Powertrain(this.virtualFunctionBus, this.messenger);
-            new Locator(this.virtualFunctionBus, this);
             this.virtualFunctionBus.CarCoordinatesPacket = new CarCoordinatesPacket(x, y);
             this.ZIndex = 10;
         }
