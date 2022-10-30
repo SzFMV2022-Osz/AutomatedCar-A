@@ -22,6 +22,7 @@ namespace AutomatedCar.SystemComponents.InputManager.InputHandler
         {
             this.InputPacket = new InputPacket();
             virtualFunctionBus.InputPacket = this.InputPacket;
+            this.CurrentGearState = Gears.Steady;
 
             ControlMessenger.Instance.SteeringEventHandler += this.OnSteering;
             ControlMessenger.Instance.PedalEventHandler += this.OnPedal;
@@ -34,6 +35,21 @@ namespace AutomatedCar.SystemComponents.InputManager.InputHandler
         public InputPacket InputPacket { get; set; }
 
         /// <summary>
+        /// Gets or sets the next value for the InputPacket.
+        /// </summary>
+        private Gears CurrentGearState { get; set; }
+
+        /// <summary>
+        /// Gets or sets the next value for the InputPacket.
+        /// </summary>
+        private SteeringState CurrentSteeringState { get; set; }
+
+        /// <summary>
+        /// Gets or sets the next value for the InputPacket.
+        /// </summary>
+        private Pedals CurrendPedalState { get; set; }
+
+        /// <summary>
         /// Sets the packet for steering.
         /// </summary>
         /// <param name="sender">Object.</param>
@@ -43,13 +59,13 @@ namespace AutomatedCar.SystemComponents.InputManager.InputHandler
             switch (eventArgs.Steering)
             {
                 case SteeringState.Left:
-                    this.InputPacket.SteeringState = SteeringState.Left;
+                    this.CurrentSteeringState = SteeringState.Left;
                     break;
                 case SteeringState.Right:
-                    this.InputPacket.SteeringState = SteeringState.Right;
+                    this.CurrentSteeringState = SteeringState.Right;
                     break;
                 case SteeringState.Center:
-                    this.InputPacket.SteeringState = SteeringState.Center;
+                    this.CurrentSteeringState = SteeringState.Center;
                     break;
             }
         }
@@ -64,13 +80,13 @@ namespace AutomatedCar.SystemComponents.InputManager.InputHandler
             switch (eventArgs.Pedal)
             {
                 case Pedals.Gas:
-                    this.InputPacket.PedalState = Pedals.Gas;
+                    this.CurrendPedalState = Pedals.Gas;
                     break;
                 case Pedals.Empty:
-                    this.InputPacket.PedalState = Pedals.Empty;
+                    this.CurrendPedalState = Pedals.Empty;
                     break;
                 case Pedals.Brake:
-                    this.InputPacket.PedalState = Pedals.Brake;
+                    this.CurrendPedalState = Pedals.Brake;
                     break;
             }
         }
@@ -85,26 +101,29 @@ namespace AutomatedCar.SystemComponents.InputManager.InputHandler
             switch (eventArgs.Gear)
             {
                 case Gears.ShiftUp:
-                    this.InputPacket.GearState = Gears.ShiftUp;
+                    this.CurrentGearState = Gears.ShiftUp;
                     break;
                 case Gears.ShiftDown:
-                    this.InputPacket.GearState = Gears.ShiftDown;
+                    this.CurrentGearState = Gears.ShiftDown;
                     break;
                 case Gears.Steady:
-                    this.InputPacket.GearState = Gears.Steady;
+                    this.CurrentGearState = Gears.Steady;
                     break;
             }
+        }
+
+        /// <inheritdoc/>
+        public override void Process()
+        {
+            this.InputPacket.IsGearStateJustChanged = this.IsGearStateJustChanged(this.CurrentGearState);
+            this.InputPacket.GearState = this.CurrentGearState;
+            this.InputPacket.PedalState = this.CurrendPedalState;
+            this.InputPacket.SteeringState = this.CurrentSteeringState;
         }
 
         private bool IsGearStateJustChanged(Gears newGearState)
         {
             return this.InputPacket.GearState != newGearState;
-        }
-
-        public override void Process()
-        {
-            // IsGearStateJustChanged (todo)
-
         }
     }
 }

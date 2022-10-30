@@ -24,8 +24,6 @@
             this.steering = new Steering();
         }
 
-        
-
         public override void Process()
         {
             Debug.WriteLine(this.virtualFunctionBus.InputPacket.ToString());
