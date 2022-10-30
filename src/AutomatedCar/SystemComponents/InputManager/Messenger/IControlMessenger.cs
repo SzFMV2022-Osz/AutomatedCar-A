@@ -14,31 +14,34 @@ namespace AutomatedCar.SystemComponents.InputManager.Messenger
         /// <summary>
         /// Event for the steering.
         /// </summary>
-        static event EventHandler<ControlEventArgs> SteeringEventHandler;
+        event EventHandler<ControlEventArgs> SteeringEventHandler;
 
         /// <summary>
         /// Event for the pedals.
         /// </summary>
-        static event EventHandler<ControlEventArgs> PedalsEventHandler;
+        event EventHandler<ControlEventArgs> PedalEventHandler;
 
         /// <summary>
         /// Event for the gears.
         /// </summary>
-        static event EventHandler<ControlEventArgs> GearsEventHandler;
+        event EventHandler<ControlEventArgs> GearboxEventHandler;
 
         /// <summary>
-        /// Gets or sets the position of steering wheel.
+        /// Fires the event for steering wheel state change.
         /// </summary>
-        SteeringState Steering { get; set; }
+        /// <param name="steeringState">Gets a steeringtate for the steering wheel.</param>
+        public void FireSteeringEvent(SteeringState steeringState);
 
         /// <summary>
-        /// Gets or sets the position of pedals.
+        /// Fires the event for steering wheel state change.
         /// </summary>
-        Pedals Pedal { get; set; }
+        /// <param name="pedalState">Gets a steeringtate for the steering wheel.</param>
+        public void FirePedalEvent(Pedals pedalState);
 
         /// <summary>
-        /// Gets or sets the position of the transmission gearshift.
+        /// Fires the event for steering wheel state change.
         /// </summary>
-        Gears Gear { get; set; }
+        /// <param name="gearState">Gets a steeringtate for the steering wheel.</param>
+        public void FireGearboxEvent(Gears gearState);
     }
 }

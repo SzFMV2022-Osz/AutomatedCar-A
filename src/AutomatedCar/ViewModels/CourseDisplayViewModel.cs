@@ -49,37 +49,37 @@ namespace AutomatedCar.ViewModels
         public void KeyUp()
         {
             // World.Instance.ControlledCar.Y -= 5;
-
+            ControlMessenger.Instance.FirePedalEvent(Pedals.Gas);
         }
 
         public void KeyDown()
         {
             // World.Instance.ControlledCar.Y += 5;
-            Manager.BrakePedal();
+            ControlMessenger.Instance.FirePedalEvent(Pedals.Brake);
         }
 
         public void KeyLeft()
         {
             // World.Instance.ControlledCar.X -= 5;
-            Manager.TurnLeft();
+            ControlMessenger.Instance.FireSteeringEvent(SteeringState.Left);
         }
 
         public void KeyRight()
         {
             // World.Instance.ControlledCar.X += 5;
-            Manager.TurnRight();
+            ControlMessenger.Instance.FireSteeringEvent(SteeringState.Right);
         }
 
         public void PageUp()
         {
             // World.Instance.ControlledCar.Rotation += 5;
-            Manager.ShiftUp();
+            ControlMessenger.Instance.FireGearboxEvent(Gears.ShiftUp);
         }
 
         public void PageDown()
         {
             // World.Instance.ControlledCar.Rotation -= 5;
-            Manager.ShiftDown();
+            ControlMessenger.Instance.FireGearboxEvent(Gears.ShiftDown);
         }
 
         public void ToggleDebug()
@@ -111,7 +111,17 @@ namespace AutomatedCar.ViewModels
         {
             if (key == Key.Up || key == Key.Down)
             {
-                
+                ControlMessenger.Instance.FirePedalEvent(Pedals.Empty);
+            }
+
+            if (key == Key.Left || key == Key.Right)
+            {
+                ControlMessenger.Instance.FireSteeringEvent(SteeringState.Center);
+            }
+
+            if (key == Key.PageUp || key == Key.PageDown)
+            {
+                ControlMessenger.Instance.FireGearboxEvent(Gears.Steady);
             }
         }
 

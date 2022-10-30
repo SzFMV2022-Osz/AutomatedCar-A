@@ -1,29 +1,43 @@
-﻿namespace AutomatedCar.SystemComponents.InputManager.InputHandler
+﻿// <copyright file="InputManager.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace AutomatedCar.SystemComponents.InputManager.InputHandler
 {
-    using AutomatedCar.Models;
     using AutomatedCar.SystemComponents.InputManager.Messenger;
     using AutomatedCar.SystemComponents.Packets;
-    using Avalonia.Input;
 
+    /// <summary>
+    /// InputManager manages the input packets for the powertrain.
+    /// </summary>
     public class InputManager : SystemComponent
     {
-        public InputPacket InputPacket { get; set; }
-
-        public InputManager(VirtualFunctionBus virtualFunctionBus) : base(virtualFunctionBus)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InputManager"/> class.
+        /// Constructor for the InputManager, which gives a virtualFunctionBus instance to the base system components constructor.
+        /// </summary>
+        /// <param name="virtualFunctionBus">A virtualFunctionBus instance.</param>
+        public InputManager(VirtualFunctionBus virtualFunctionBus)
+            : base(virtualFunctionBus)
         {
             this.InputPacket = new InputPacket();
             virtualFunctionBus.InputPacket = this.InputPacket;
 
-            ControlMessenger.Instance.SteeringEventHandler += OnSteering;
-            ControlMessenger.Instance.PedalEventHandler += OnPedal;
-            ControlMessenger.Instance.GearboxEventHandler += OnGearbox;
+            ControlMessenger.Instance.SteeringEventHandler += this.OnSteering;
+            ControlMessenger.Instance.PedalEventHandler += this.OnPedal;
+            ControlMessenger.Instance.GearboxEventHandler += this.OnGearbox;
         }
 
-        private bool IsGearStateJustChanged(Gears newGearState)
-        {
-            return InputPacket.GearState != newGearState;
-        }
+        /// <summary>
+        /// Gets or sets a packet for the powertrain.
+        /// </summary>
+        public InputPacket InputPacket { get; set; }
 
+        /// <summary>
+        /// Sets the packet for steering.
+        /// </summary>
+        /// <param name="sender">Object.</param>
+        /// <param name="eventArgs">Custom event args.</param>
         public void OnSteering(object sender, ControlEventArgs eventArgs)
         {
             switch (eventArgs.Steering)
@@ -39,7 +53,12 @@
                     break;
             }
         }
-       
+
+        /// <summary>
+        /// Sets the packet for pedals.
+        /// </summary>
+        /// <param name="sender">Object.</param>
+        /// <param name="eventArgs">Custom event args.</param>
         public void OnPedal(object sender, ControlEventArgs eventArgs)
         {
             switch (eventArgs.Pedal)
@@ -56,6 +75,11 @@
             }
         }
 
+        /// <summary>
+        /// Sets the packet for gearbox.
+        /// </summary>
+        /// <param name="sender">Object.</param>
+        /// <param name="eventArgs">Custom event args.</param>
         public void OnGearbox(object sender, ControlEventArgs eventArgs)
         {
             switch (eventArgs.Gear)
@@ -72,7 +96,11 @@
             }
         }
 
-        
+        private bool IsGearStateJustChanged(Gears newGearState)
+        {
+            return this.InputPacket.GearState != newGearState;
+        }
+
         public override void Process()
         {
             // IsGearStateJustChanged (todo)
