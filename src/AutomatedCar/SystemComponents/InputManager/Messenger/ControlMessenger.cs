@@ -11,6 +11,26 @@ namespace AutomatedCar.SystemComponents.InputManager.Messenger
     /// </summary>
     public class ControlMessenger : IControlMessenger
     {
+        private static readonly object cm_lock = new object();
+
+        private static ControlMessenger instance = null;
+
+        public static ControlMessenger Instance
+        {
+            get
+            {
+                lock (cm_lock)
+                {
+                    if (instance == null)
+                    {
+                        instance = new ControlMessenger();
+                    }
+
+                    return instance;
+                }
+            }
+        }
+
         private SteeringState steering;
 
         private Pedals pedal;
@@ -20,17 +40,17 @@ namespace AutomatedCar.SystemComponents.InputManager.Messenger
         /// <summary>
         /// Event for the steering.
         /// </summary>
-        public static event EventHandler<ControlEventArgs> SteeringEventHandler;
+        public event EventHandler<ControlEventArgs> SteeringEventHandler;
 
         /// <summary>
         /// Event for the pedals.
         /// </summary>
-        public static event EventHandler<ControlEventArgs> PedalEventHandler;
+        public event EventHandler<ControlEventArgs> PedalEventHandler;
 
         /// <summary>
         /// Event for the gearbox.
         /// </summary>
-        public static event EventHandler<ControlEventArgs> GearboxEventHandler;
+        public event EventHandler<ControlEventArgs> GearboxEventHandler;
 
         /// <summary>
         /// Gets or sets the position of steering wheel.
