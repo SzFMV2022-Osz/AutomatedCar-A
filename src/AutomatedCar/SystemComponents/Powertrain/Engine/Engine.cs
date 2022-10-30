@@ -105,7 +105,6 @@ namespace AutomatedCar.SystemComponents.Powertrain
 
         private float Velocity { get { return this.velocity; } set { this.velocity = value; } }
 
-        private bool afteracc = false;
         /// <summary>
         /// Accelerate the car.
         /// </summary>
@@ -270,7 +269,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
 
         private float GetWheelRotationRateBySpeed()
         {
-            return Math.Abs(this.Velocity) / this.wheelradius;
+            return Math.Abs(this.Velocity) / (this.wheelradius * 2f);
         }
 
         private float GetSpeedByWheelRotation()
@@ -379,7 +378,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
 
         private float LookupHpCurve(float rpm)
         {
-            if (rpm >= 1000 && rpm <= 100000)
+            if (rpm >= 1000 && rpm <= 5000)
             {
                 return (0.06875f * rpm) - 18.75f;
             }

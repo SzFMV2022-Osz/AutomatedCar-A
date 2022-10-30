@@ -7,21 +7,49 @@ namespace AutomatedCar.SystemComponents.Powertrain
     /// <summary>
     /// Steering interface.
     /// </summary>
-    internal interface ISteering
+    public interface ISteering
     {
         /// <summary>
-        /// Finds the location of the wheels.
+        /// Gets or sets the state of the Gearshift.
         /// </summary>
-        void FindNewWheelLocations();
+        int CarSpeed { get; set; }
 
         /// <summary>
-        /// Calculates the new wheel locations.
+        /// Gets or sets the state of the Gearshift.
         /// </summary>
-        void FindWheelLocations();
+        double Rotation { get; set; }
 
         /// <summary>
-        /// Calculates the new heading of the car.
+        /// Gets or sets the state of the Gearshift.
         /// </summary>
-        void GetNewHeading();
+        GearshiftState State { get; set; }
+
+        /// <summary>
+        /// Sets up some info coming from the controlled car.
+        /// </summary>
+        /// <param name="x">X position of car.</param>
+        /// <param name="y">Y position of car.</param>
+        /// <param name="rotation">Rotation of the car.</param>
+        void Seed(int x, int y, double rotation);
+
+        /// <summary>
+        /// Sets the turning direction to the left side.
+        /// </summary>
+        void TurnLeft();
+
+        /// <summary>
+        /// Sets the turning direction to the right side.
+        /// </summary>
+        void TurnRight();
+
+        /// <summary>
+        /// Resets the wheel to a straight position.
+        /// </summary>
+        void StraightenWheel();
+
+        /// <summary>
+        /// Calculates the rotation of the car.
+        /// </summary>
+        void GetRotation();
     }
 }
