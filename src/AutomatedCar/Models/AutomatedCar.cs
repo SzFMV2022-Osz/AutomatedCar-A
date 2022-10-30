@@ -2,8 +2,7 @@ namespace AutomatedCar.Models
 {
     using Avalonia.Media;
     using global::AutomatedCar.SystemComponents;
-    using global::AutomatedCar.SystemComponents.InputManager;
-    using global::AutomatedCar.SystemComponents.Packets;
+    using global::AutomatedCar.SystemComponents.InputManager.InputHandler;
     using global::AutomatedCar.SystemComponents.Powertrain;
     using global::AutomatedCar.SystemComponents.Sensors;
 

@@ -13,6 +13,7 @@ namespace AutomatedCar.ViewModels
     using Models;
     using System;
     using Visualization;
+    using Avalonia.Input;
 
     public class CourseDisplayViewModel : ViewModelBase
     {
@@ -48,7 +49,7 @@ namespace AutomatedCar.ViewModels
         public void KeyUp()
         {
             // World.Instance.ControlledCar.Y -= 5;
-            Manager.GasPedal();
+
         }
 
         public void KeyDown()
@@ -106,15 +107,11 @@ namespace AutomatedCar.ViewModels
             // World.Instance.DebugStatus.Rotate = !World.Instance.DebugStatus.Rotate;
         }
 
-        public void OnKeyUp(string inputStopped)
+        public void OnKeyUp(Key key)
         {
-            if (inputStopped == nameof(SteeringState.Center))
+            if (key == Key.Up || key == Key.Down)
             {
-                Manager.TurnToCenter();
-            }
-            else if (inputStopped == nameof(Pedals.Empty))
-            {
-                Manager.Empty();
+                
             }
         }
 

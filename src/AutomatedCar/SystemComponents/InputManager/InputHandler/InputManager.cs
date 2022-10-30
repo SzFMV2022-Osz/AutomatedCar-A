@@ -1,4 +1,4 @@
-﻿namespace AutomatedCar.SystemComponents.InputManager
+﻿namespace AutomatedCar.SystemComponents.InputManager.InputHandler
 {
     using AutomatedCar.Models;
     using AutomatedCar.SystemComponents.InputManager.Messenger;
@@ -21,7 +21,7 @@
 
         private bool IsGearStateJustChanged(Gears newGearState)
         {
-            return this.InputPacket.GearState != newGearState;
+            return InputPacket.GearState != newGearState;
         }
 
         public void OnSteering(object sender, ControlEventArgs eventArgs)
