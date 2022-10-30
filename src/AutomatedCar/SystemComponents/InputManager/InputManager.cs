@@ -26,7 +26,7 @@
             {
                 this.InputPacket.SteeringState = SteeringState.Left;
             }
-            else if (Keyboard.IsKeyDown(Key.Left))
+            else if (Keyboard.IsKeyDown(Key.Right))
             {
                 this.InputPacket.SteeringState = SteeringState.Right;
             }
