@@ -1,6 +1,7 @@
 ﻿namespace AutomatedCar.SystemComponents.Powertrain
 {
     using System;
+    using System.Diagnostics;
     using AutomatedCar.Models;
     using AutomatedCar.SystemComponents.InputManager.InputHandler;
     using AutomatedCar.SystemComponents.InputManager.Messenger;
@@ -21,10 +22,6 @@
             this.gearshift = new Gearshift();
             this.engine = new Engine(this.gearshift);
             this.steering = new Steering();
-
-            ControlMessenger.SteeringEventHandler += OnSteering;
-            ControlMessenger.PedalEventHandler += OnPedal;
-            ControlMessenger.GearboxEventHandler += OnGearbox;
         }
 
         public void OnSteering(object sender, ControlEventArgs eventArgs)
@@ -90,6 +87,7 @@
 
         public override void Process()
         {
+            Debug.WriteLine(this.virtualFunctionBus.InputPacket.ToString());
         }
     }
 }
