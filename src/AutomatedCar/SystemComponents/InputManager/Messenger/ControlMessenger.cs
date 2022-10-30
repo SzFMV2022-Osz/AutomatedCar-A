@@ -4,7 +4,6 @@
 
 namespace AutomatedCar.SystemComponents.InputManager.Messenger
 {
-    using Newtonsoft.Json.Linq;
     using System;
 
     /// <summary>

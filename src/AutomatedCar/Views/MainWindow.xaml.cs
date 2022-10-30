@@ -24,7 +24,7 @@ namespace AutomatedCar.Views
             this.WhenActivated(x => x(ViewModel.WhenAnyValue(x => x.PopUp.ControlledCar.Car.VirtualFunctionBus.CollisionPacket.Collided).Where(x => x == true).Subscribe(x =>
             {
                 popUpWindow.DataContext = ViewModel.PopUp;
-                popUpWindow.ShowDialog(this);
+                //popUpWindow.ShowDialog(this);
             })));
         }
 

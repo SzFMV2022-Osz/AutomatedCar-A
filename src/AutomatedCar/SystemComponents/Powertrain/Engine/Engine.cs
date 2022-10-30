@@ -5,10 +5,6 @@
 namespace AutomatedCar.SystemComponents.Powertrain
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
 
     /// <summary>
     /// Engine.
@@ -68,20 +64,42 @@ namespace AutomatedCar.SystemComponents.Powertrain
             get { return (int)(this.Velocity / 3.6); }
         }
 
-        private float Velocity { get { return this.velocity; } set { this.velocity = value; } }
+        /// <summary>
+        /// Gets the state of the gearbox. Only for debug purposes.
+        /// </summary>
+        public GearshiftState GetGearshiftState
+        {
+            get
+            {
+                return this.gearshift.GetState();
+            }
+        }
+
+        private float Velocity
+        {
+            get
+            {
+                return this.velocity;
+            }
+
+            set
+            {
+                this.velocity = value;
+            }
+        }
 
         /// <summary>
-        /// Accelerate the car.
+        /// Accelerates the car by adjusting gas and brake pedals, also calculates the velocity.
         /// </summary>
         /// <returns>driving force lenght.</returns>
         public float Accelerate()
         {
             this.gasPedal += .01f;
             this.breakPedal -= .01f;
-            this.ClampPedals();            
-            this.Velocity += this.ChangeVelocity(false) + this.ChangeVelocity(true);            
+            this.ClampPedals();
+            this.Velocity += this.ChangeVelocity(false) + this.ChangeVelocity(true);
             this.rpm = this.GetRPM();
-            
+
             if (this.rpm.Equals(this.maxrpm))
             {
                 if (this.GetNextGearRPM() > this.minrpm)
@@ -95,14 +113,14 @@ namespace AutomatedCar.SystemComponents.Powertrain
         }
 
         /// <summary>
-        /// Slows the car with enginebreak.
+        /// Slows down the car by the engine brake.
         /// </summary>
         /// <returns>driving force lenght.</returns>
         public float Lift()
         {
-            this.rpm -= 0.25f; // enginebreak
-            this.breakPedal -= .01f;
-            this.gasPedal -= .01f;
+            this.rpm -= 0.75f; // enginebreak
+            this.breakPedal -= .25f;
+            this.gasPedal -= .25f;
             this.Velocity = (int)this.GetSpeedByWheelRotation() + this.ChangeVelocity(false) + this.ChangeVelocity(true);
             if (this.rpm < this.minrpm + 0.25f)
             {
@@ -117,7 +135,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
         }
 
         /// <summary>
-        /// Slows the car with breaks.
+        /// Slows down the car by adjusting the gas and brake pedals, also calculates the new velocity.
         /// </summary>
         /// <returns>driving force lenght.</returns>
         public float Breaking()
@@ -141,7 +159,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
         }
 
         /// <summary>
-        /// Switch state up.
+        /// Puts the gearbox state into a lower level.
         /// </summary>
         public void StateDown()
         {
@@ -149,7 +167,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
         }
 
         /// <summary>
-        /// Switch state dawn.
+        /// Puts the gearbox state into a upper level.
         /// </summary>
         public void StateUp()
         {
@@ -158,10 +176,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
 
         private int GetRPM()
         {
-            ;
-            int test = (int)(this.GetWheelRotationRateBySpeed() * this.gearshift.GetGearRatio() * this.diferential * 60 / 2 * Pi);
-            ;
-            return test;
+            return (int)(this.GetWheelRotationRateBySpeed() * this.gearshift.GetGearRatio() * this.diferential * 60 / 2 * Pi);
         }
 
         private int GetNextGearRPM()
@@ -181,10 +196,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
 
         private float GetWheelRotationRateBySpeed()
         {
-            float test1 = this.wheelradius;
-            float test2 = this.Velocity;
-            ;
-            return this.Velocity / this.wheelradius;
+            return Math.Abs(this.Velocity / this.wheelradius);
         }
 
         private float GetSpeedByWheelRotation()

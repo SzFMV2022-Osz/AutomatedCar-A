@@ -23,6 +23,8 @@ namespace AutomatedCar.SystemComponents.InputManager.InputHandler
             this.InputPacket = new InputPacket();
             virtualFunctionBus.InputPacket = this.InputPacket;
             this.CurrentGearState = Gears.Steady;
+            this.CurrendPedalState = Pedals.Empty;
+            this.CurrentSteeringState = SteeringState.Center;
 
             ControlMessenger.Instance.SteeringEventHandler += this.OnSteering;
             ControlMessenger.Instance.PedalEventHandler += this.OnPedal;

@@ -21,6 +21,11 @@ namespace AutomatedCar.SystemComponents.Powertrain
         int Speed { get; }
 
         /// <summary>
+        /// Gets the state of the gearbox. Only for debug purposes.
+        /// </summary>
+        GearshiftState GetGearshiftState { get; }
+
+        /// <summary>
         /// Accelerate the car.
         /// </summary>
         /// <returns>driving force lenght.</returns>
