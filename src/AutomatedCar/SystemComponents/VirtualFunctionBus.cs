@@ -21,6 +21,10 @@ namespace AutomatedCar.SystemComponents
 
         public IPowerTrainPacketForChangeSteering PowerTrainPacketForSteering { get; set; }
 
+        public IMoveObject MoveObject { get; set; }
+
+        public IDasboardPacket DasboardPacket { get; set; }
+
         public void RegisterComponent(SystemComponent component)
         {
             this.components.Add(component);

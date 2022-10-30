@@ -8,6 +8,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
     using System.Threading.Tasks;
     using AutomatedCar.Models.PowerTrain;
     using AutomatedCar.SystemComponents.InputManager;
+    using AutomatedCar.SystemComponents.Packets;
 
     /// <summary>
     /// Powertrain.
@@ -20,6 +21,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
 
         private Action[] tasks = new Action[2];
         private Func<float>[] tasksWithReturns = new Func<float>[3];
+        private Task<float> drivingforce;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Powertrain"/> class.
@@ -44,6 +46,13 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// </summary>
         public override void Process()
         {
+            if (this.drivingforce is not null && !this.drivingforce.IsCompleted)
+            {
+                this.drivingforce.Wait();
+                this.virtualFunctionBus.MoveObject = new MoveObject(new Avalonia.Vector(0, -.1 * this.drivingforce.Result));
+                this.virtualFunctionBus.DasboardPacket = new DasboardPacket(this.engine.RPM, this.engine.Speed, this.engine.Throtle, this.engine.Break, this.engine.GearShiftState);
+            }
+
             // Task.WaitAll(this.tasksWithReturns);
         }
 
@@ -63,16 +72,18 @@ namespace AutomatedCar.SystemComponents.Powertrain
         {
             if (e == PedalStates.Throtle)
             {
-                new Task<float>(this.tasksWithReturns[0], TaskCreationOptions.LongRunning).Start();
+                this.drivingforce = new Task<float>(this.tasksWithReturns[0], TaskCreationOptions.LongRunning);
             }
             else if (e == PedalStates.Break)
             {
-                new Task<float>(this.tasksWithReturns[1], TaskCreationOptions.LongRunning).Start();
+                this.drivingforce = new Task<float>(this.tasksWithReturns[1], TaskCreationOptions.LongRunning);
             }
-            else
+            else if (e == PedalStates.None)
             {
-                new Task<float>(this.tasksWithReturns[2], TaskCreationOptions.LongRunning).Start();
+                this.drivingforce = new Task<float>(this.tasksWithReturns[2], TaskCreationOptions.LongRunning);
             }
+
+            this.drivingforce.Start();
         }
     }
 }

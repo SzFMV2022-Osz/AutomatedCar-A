@@ -21,6 +21,26 @@ namespace AutomatedCar.SystemComponents.Powertrain
         int Speed { get; }
 
         /// <summary>
+        /// Gets Rpm.
+        /// </summary>
+        float RPM { get; }
+
+        /// <summary>
+        /// Gets gearshift state.
+        /// </summary>
+        string GearShiftState { get; }
+
+        /// <summary>
+        /// Gets throtle pedal %.
+        /// </summary>
+        float Throtle { get; }
+
+        /// <summary>
+        /// Gets break pedal %.
+        /// </summary>
+        float Break { get; }
+
+        /// <summary>
         /// Accelerate the car.
         /// </summary>
         /// <returns>driving force lenght.</returns>

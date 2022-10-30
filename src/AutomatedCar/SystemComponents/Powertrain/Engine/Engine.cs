@@ -4,6 +4,7 @@
 
 namespace AutomatedCar.SystemComponents.Powertrain
 {
+    using Newtonsoft.Json.Linq;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -66,6 +67,41 @@ namespace AutomatedCar.SystemComponents.Powertrain
             get { return (int)(this.Velocity * 3.6); }
         }
 
+        /// <summary>
+        /// Gets rpm.
+        /// </summary>
+        public float RPM
+        {
+            get { return this.rpm; }
+        }
+
+        /// <summary>
+        /// Gets gearshift state.
+        /// </summary>
+        public string GearShiftState
+        {
+            get { return Enum.GetName(typeof(GearshiftState), this.gearshift.GetState()); }
+        }
+
+        /// <summary>
+        /// Gets throtle pedal %.
+        /// </summary>
+        public float Throtle
+        {
+            get { return this.gasPedal; }
+        }
+
+        /// <summary>
+        /// Gets break pedal %.
+        /// </summary>
+        public float Break
+        {
+            get
+            {
+                return this.breakPedal;
+            }
+        }
+
         private float Velocity { get; set; }
 
         /// <summary>
@@ -80,8 +116,8 @@ namespace AutomatedCar.SystemComponents.Powertrain
                 this.rpm = this.minrpm;
             }
 
-            this.gasPedal += .01f;
-            this.breakPedal -= .01f;
+            this.gasPedal += .001f;
+            this.breakPedal -= .001f;
             this.ClampPedals();
             this.Velocity += this.ChangeVelocity(false) + this.ChangeVelocity(true);
             this.rpm = this.GetRPM();
@@ -108,12 +144,12 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// <returns>driving force lenght.</returns>
         public float Lift()
         {
-            this.rpm -= 0.25f; // enginebreak
-            this.breakPedal -= .01f;
-            this.gasPedal -= .01f;
+            this.rpm -= 0.0025f; // enginebreak
+            this.breakPedal -= .001f;
+            this.gasPedal -= .001f;
             this.ClampPedals();
-            this.Velocity = (int)this.GetSpeedByWheelRotation() + this.ChangeVelocity(false) + this.ChangeVelocity(true);
-            if (this.rpm < this.minrpm + 0.25f)
+            this.Velocity = this.ChangeVelocity(false) + this.ChangeVelocity(true);
+            if (this.rpm < this.minrpm + 0.0025f)
             {
                 if (this.GetPrewGearRPM() < this.maxrpm)
                 {
@@ -138,8 +174,8 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// <returns>driving force lenght.</returns>
         public float Breaking()
         {
-            this.breakPedal += .01f;
-            this.gasPedal -= .01f;
+            this.breakPedal += .001f;
+            this.gasPedal -= .001f;
             this.ClampPedals();
             this.Velocity += this.ChangeVelocity(false) + this.ChangeVelocity(true);
             this.rpm = this.GetRPM();
