@@ -44,8 +44,11 @@ namespace AutomatedCar.SystemComponents.Powertrain
             switch (this.virtualFunctionBus.InputPacket.PedalState)
             {
                 case Pedals.Gas:
-                    this.engine.Accelerate();
-                    World.Instance.ControlledCar.Y -= this.engine.GetSpeed;
+                    if (this.engine.GetGearshiftState == GearshiftState.D || this.engine.GetGearshiftState == GearshiftState.R)
+                    {
+                        this.engine.Accelerate();
+                        World.Instance.ControlledCar.Y -= this.engine.GetSpeed;
+                    }
 
                     this.powertrainPacket.CurrentSpeed = this.engine.GetSpeed;
                     this.powertrainPacket.Rpm = this.engine.GetRPMValue;
@@ -53,8 +56,11 @@ namespace AutomatedCar.SystemComponents.Powertrain
                     this.powertrainPacket.CurrentBrakeValue = this.engine.GetBrakeValue;
                     break;
                 case Pedals.Brake:
-                    this.engine.Braking();
-                    World.Instance.ControlledCar.Y -= this.engine.GetSpeed;
+                    if (this.engine.GetGearshiftState == GearshiftState.D || this.engine.GetGearshiftState == GearshiftState.R)
+                    {
+                        this.engine.Braking();
+                        World.Instance.ControlledCar.Y -= this.engine.GetSpeed;
+                    }
 
                     this.powertrainPacket.CurrentSpeed = this.engine.GetSpeed;
                     this.powertrainPacket.Rpm = this.engine.GetRPMValue;

@@ -5,6 +5,7 @@
 namespace AutomatedCar.SystemComponents.Powertrain
 {
     using System;
+    using System.Diagnostics;
 
     /// <summary>
     /// Engine.
@@ -285,6 +286,10 @@ namespace AutomatedCar.SystemComponents.Powertrain
                     if (isbraking)
                     {
                         temp = this.BrakingForce() + this.DragForce() + this.Frr();
+                        if(brakePedal > 0)
+                        {
+                            Debug.WriteLine("Brake pedal percentage: " + brakePedal);
+                        }
                     }
                     else
                     {
