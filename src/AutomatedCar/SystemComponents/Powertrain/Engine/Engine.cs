@@ -19,12 +19,12 @@ namespace AutomatedCar.SystemComponents.Powertrain
         private readonly float dragCoefficient;
         private readonly float diferential;
         private readonly float transmissionefficiency;
-        private readonly float cBreak;
+        private readonly float cBrake;
         private readonly float maxrpm;
         private readonly float minrpm;
         private float rpm;
         private float gasPedal;
-        private float breakPedal;
+        private float brakePedal;
         private float velocity;
 
         /// <summary>
@@ -39,8 +39,8 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// <param name="wheelradius">Wheelradious.</param>
         /// <param name="maxrpm">Maximum rpm.</param>
         /// <param name="minrpm">Minimum rpm.</param>
-        /// <param name="cBreak">Max break force rpm.</param>
-        public Engine(IGearshift gearshift, int mass = 1800, float dragCoefficient = 0.30f, float frontArea = 2.2f, float diferential = 3.42f, float transmissionefficiency = 0.7f, float wheelradius = 0.34f, float maxrpm = 6000, int minrpm = 1000, int cBreak = 100)
+        /// <param name="cbrake">Max brake force rpm.</param>
+        public Engine(IGearshift gearshift, int mass = 1800, float dragCoefficient = 0.30f, float frontArea = 2.2f, float diferential = 3.42f, float transmissionefficiency = 0.7f, float wheelradius = 0.34f, float maxrpm = 6000, int minrpm = 1000, int cbrake = 100)
         {
             this.gearshift = gearshift;
             this.mass = mass;
@@ -51,7 +51,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
             this.wheelradius = wheelradius;
             this.maxrpm = maxrpm;
             this.minrpm = minrpm;
-            this.cBreak = cBreak;
+            this.cBrake = cbrake;
             this.rpm = 1000;
             this.velocity = 0;
         }
@@ -59,9 +59,20 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// <summary>
         /// Gets speed of the car.
         /// </summary>
-        public int Speed
+        public int GetSpeed
         {
             get { return (int)(this.Velocity / 3.6); }
+        }
+
+        /// <summary>
+        /// Gets RPM of the car.
+        /// </summary>
+        public int GetRPMValue
+        {
+            get
+            {
+                return (int)this.rpm;
+            }
         }
 
         /// <summary>
@@ -72,6 +83,28 @@ namespace AutomatedCar.SystemComponents.Powertrain
             get
             {
                 return this.gearshift.GetState();
+            }
+        }
+
+        /// <summary>
+        /// Gets the percentage value of the throttle.
+        /// </summary>
+        public int GetThrottleValue
+        {
+            get
+            {
+                return (int)this.gasPedal;
+            }
+        }
+
+        /// <summary>
+        /// Gets the percentage value of the brake.
+        /// </summary>
+        public int GetBrakeValue
+        {
+            get
+            {
+                return (int)0;
             }
         }
 
@@ -95,7 +128,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
         public float Accelerate()
         {
             this.gasPedal += .01f;
-            this.breakPedal -= .01f;
+            this.brakePedal -= .01f;
             this.ClampPedals();
             this.Velocity += this.ChangeVelocity(false) + this.ChangeVelocity(true);
             this.rpm = this.GetRPM();
@@ -118,8 +151,8 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// <returns>driving force lenght.</returns>
         public float Lift()
         {
-            this.rpm -= 0.75f; // enginebreak
-            this.breakPedal -= .25f;
+            this.rpm -= 0.75f; // enginebrake
+            this.brakePedal -= .25f;
             this.gasPedal -= .25f;
             this.Velocity = (int)this.GetSpeedByWheelRotation() + this.ChangeVelocity(false) + this.ChangeVelocity(true);
             if (this.rpm < this.minrpm + 0.25f)
@@ -138,9 +171,9 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// Slows down the car by adjusting the gas and brake pedals, also calculates the new velocity.
         /// </summary>
         /// <returns>driving force lenght.</returns>
-        public float Breaking()
+        public float Braking()
         {
-            this.breakPedal += .01f;
+            this.brakePedal += .01f;
             this.gasPedal -= .01f;
             this.ClampPedals();
             this.Velocity += this.ChangeVelocity(false) + this.ChangeVelocity(true);
@@ -241,7 +274,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
             return this.GetTorque() * this.gearshift.GetGearRatio() * this.diferential * this.transmissionefficiency / this.wheelradius;
         }
 
-        private float LongitudinalForce(bool isbreaking = false)
+        private float LongitudinalForce(bool isbraking = false)
         {
             float temp = 0.0f;
             switch (this.gearshift.GetState())
@@ -249,9 +282,9 @@ namespace AutomatedCar.SystemComponents.Powertrain
                 case GearshiftState.P:
                     break;
                 case GearshiftState.R:
-                    if (isbreaking)
+                    if (isbraking)
                     {
-                        temp = this.BreakingForce() + this.DragForce() + this.Frr();
+                        temp = this.BrakingForce() + this.DragForce() + this.Frr();
                     }
                     else
                     {
@@ -263,9 +296,9 @@ namespace AutomatedCar.SystemComponents.Powertrain
                 case GearshiftState.N:
                     break;
                 case GearshiftState.D:
-                    if (isbreaking)
+                    if (isbraking)
                     {
-                        temp = this.BreakingForce() + this.DragForce() + this.Frr();
+                        temp = this.BrakingForce() + this.DragForce() + this.Frr();
                     }
                     else
                     {
@@ -278,9 +311,9 @@ namespace AutomatedCar.SystemComponents.Powertrain
             return temp;
         }
 
-        private float BreakingForce()
+        private float BrakingForce()
         {
-            return this.cBreak * this.breakPedal * -1;
+            return this.cBrake * this.brakePedal * -1;
         }
 
         private float ChangeVelocity(bool isbreaking)
@@ -330,13 +363,13 @@ namespace AutomatedCar.SystemComponents.Powertrain
                 this.gasPedal = 0;
             }
 
-            if (this.breakPedal > 1.0f)
+            if (this.brakePedal > 1.0f)
             {
-                this.breakPedal = 1.0f;
+                this.brakePedal = 1.0f;
             }
-            else if (this.breakPedal < 0.0f)
+            else if (this.brakePedal < 0.0f)
             {
-                this.breakPedal = 0;
+                this.brakePedal = 0;
             }
         }
     }

@@ -45,17 +45,32 @@ namespace AutomatedCar.SystemComponents.Powertrain
             {
                 case Pedals.Gas:
                     this.engine.Accelerate();
-                    World.Instance.ControlledCar.Y -= this.engine.Speed;
+                    World.Instance.ControlledCar.Y -= this.engine.GetSpeed;
+
+                    this.powertrainPacket.CurrentSpeed = this.engine.GetSpeed;
+                    this.powertrainPacket.Rpm = this.engine.GetRPMValue;
+                    this.powertrainPacket.CurrentThrottleValue = this.engine.GetThrottleValue;
+                    this.powertrainPacket.CurrentBrakeValue = this.engine.GetBrakeValue;
                     break;
                 case Pedals.Brake:
-                    this.engine.Breaking();
-                    World.Instance.ControlledCar.Y -= this.engine.Speed;
+                    this.engine.Braking();
+                    World.Instance.ControlledCar.Y -= this.engine.GetSpeed;
+
+                    this.powertrainPacket.CurrentSpeed = this.engine.GetSpeed;
+                    this.powertrainPacket.Rpm = this.engine.GetRPMValue;
+                    this.powertrainPacket.CurrentThrottleValue = this.engine.GetThrottleValue;
+                    this.powertrainPacket.CurrentBrakeValue = this.engine.GetBrakeValue;
                     break;
                 case Pedals.Empty:
-                    if (this.engine.Speed > 0 || this.engine.Speed < 0)
+                    if (this.engine.GetSpeed > 0 || this.engine.GetSpeed < 0)
                     {
                         this.engine.Lift();
-                        World.Instance.ControlledCar.Y -= this.engine.Speed;
+                        World.Instance.ControlledCar.Y -= this.engine.GetSpeed;
+
+                        this.powertrainPacket.CurrentSpeed = this.engine.GetSpeed;
+                        this.powertrainPacket.Rpm = this.engine.GetRPMValue;
+                        this.powertrainPacket.CurrentThrottleValue = this.engine.GetThrottleValue;
+                        this.powertrainPacket.CurrentBrakeValue = this.engine.GetBrakeValue;
                     }
 
                     break;
@@ -67,16 +82,37 @@ namespace AutomatedCar.SystemComponents.Powertrain
                 {
                     case Gears.ShiftUp:
                         this.engine.StateUp();
+                        this.powertrainPacket.CurrentGear = this.engine.GetGearshiftState;
                         break;
                     case Gears.ShiftDown:
                         this.engine.StateDown();
+                        this.powertrainPacket.CurrentGear = this.engine.GetGearshiftState;
                         break;
                     case Gears.Steady:
                         break;
                 }
             }
 
-            Debug.WriteLine(this.engine.Speed);
+            switch (this.virtualFunctionBus.InputPacket.SteeringState)
+            {
+                case SteeringState.Left:
+                    this.steering.TurnLeft();
+                    this.powertrainPacket.Steering = this.virtualFunctionBus.InputPacket.SteeringState;
+                    this.powertrainPacket.RotationAngle = this.steering.Rotation;
+                    break;
+                case SteeringState.Right:
+                    this.steering.TurnRight();
+                    this.powertrainPacket.Steering = this.virtualFunctionBus.InputPacket.SteeringState;
+                    this.powertrainPacket.RotationAngle = this.steering.Rotation;
+                    break;
+                case SteeringState.Center:
+                    this.steering.StraightenWheel();
+                    this.powertrainPacket.Steering = this.virtualFunctionBus.InputPacket.SteeringState;
+                    this.powertrainPacket.RotationAngle = this.steering.Rotation;
+                    break;
+            }
+
+            Debug.WriteLine(this.engine.GetSpeed);
             Debug.WriteLine(this.engine.GetGearshiftState);
         }
     }
