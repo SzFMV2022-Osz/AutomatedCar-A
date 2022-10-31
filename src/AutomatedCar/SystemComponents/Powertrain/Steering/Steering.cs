@@ -81,7 +81,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// </summary>
         public void TurnLeft()
         {
-            this.steerAngle = -TurningOffset;
+            this.steerAngle = TurningOffset;
         }
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// </summary>
         public void TurnRight()
         {
-            this.steerAngle = +TurningOffset;
+            this.steerAngle = -TurningOffset;
         }
 
         /// <summary>
