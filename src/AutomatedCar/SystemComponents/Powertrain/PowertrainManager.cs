@@ -112,7 +112,6 @@ namespace AutomatedCar.SystemComponents.Powertrain
                     this.steering.GetRotation();
                     World.Instance.ControlledCar.Rotation = this.steering.Rotation;
                     World.Instance.ControlledCar.X = (int)this.steering.CarLocation.X;
-                    World.Instance.ControlledCar.Y = (int)this.steering.CarLocation.Y;
                     this.powertrainPacket.Steering = this.virtualFunctionBus.InputPacket.SteeringState;
                     this.powertrainPacket.RotationAngle = this.steering.Rotation;
                     break;
@@ -121,7 +120,6 @@ namespace AutomatedCar.SystemComponents.Powertrain
                     this.steering.GetRotation();
                     World.Instance.ControlledCar.Rotation = this.steering.Rotation;
                     World.Instance.ControlledCar.X = (int)this.steering.CarLocation.X;
-                    World.Instance.ControlledCar.Y = (int)this.steering.CarLocation.Y;
                     this.powertrainPacket.Steering = this.virtualFunctionBus.InputPacket.SteeringState;
                     this.powertrainPacket.RotationAngle = this.steering.Rotation;
                     break;
@@ -130,7 +128,6 @@ namespace AutomatedCar.SystemComponents.Powertrain
                     this.steering.GetRotation();
                     World.Instance.ControlledCar.Rotation = this.steering.Rotation;
                     World.Instance.ControlledCar.X = (int)this.steering.CarLocation.X;
-                    World.Instance.ControlledCar.Y = (int)this.steering.CarLocation.Y;
                     this.powertrainPacket.Steering = this.virtualFunctionBus.InputPacket.SteeringState;
                     this.powertrainPacket.RotationAngle = this.steering.Rotation;
                     break;
