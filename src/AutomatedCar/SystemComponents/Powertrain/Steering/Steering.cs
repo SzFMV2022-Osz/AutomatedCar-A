@@ -137,8 +137,8 @@ namespace AutomatedCar.SystemComponents.Powertrain
         private void FindNewWheelLocations()
         {
             double scaling = this.GetScaleDownValue(this.carSpeed);
-            this.backWheel += this.carSpeed * scaling * 1.5 * new Vector(Math.Cos(this.carHeading), Math.Sin(this.carHeading));
-            this.frontWheel += this.carSpeed * scaling * 1.5 * new Vector(Math.Cos(this.carHeading + this.steerAngle), Math.Sin(this.carHeading + this.steerAngle));
+            this.backWheel += this.carSpeed * scaling * 3 * new Vector(Math.Cos(this.carHeading), Math.Sin(this.carHeading));
+            this.frontWheel += this.carSpeed * scaling * 3 * new Vector(Math.Cos(this.carHeading + this.steerAngle), Math.Sin(this.carHeading + this.steerAngle));
         }
 
         private void GetNewHeading()
