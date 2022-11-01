@@ -40,6 +40,15 @@ namespace AutomatedCar.SystemComponents.Powertrain
         }
 
         /// <summary>
+        /// Gets or sets the location of the Car.
+        /// </summary>
+        public Vector CarLocation
+        {
+            get { return this.carLocation; }
+            set { this.carLocation = value; }
+        }
+
+        /// <summary>
         /// Gets or sets the state of the Gearshift.
         /// </summary>
         public GearshiftState State
@@ -128,8 +137,8 @@ namespace AutomatedCar.SystemComponents.Powertrain
         private void FindNewWheelLocations()
         {
             this.SetReverseMultiplier();
-            this.backWheel += this.carSpeed * new Vector(Math.Cos(this.carHeading), Math.Sin(this.carHeading)) * this.reverseMultiplier;
-            this.frontWheel += this.carSpeed * new Vector(Math.Cos(this.carHeading + this.steerAngle), Math.Sin(this.carHeading + this.steerAngle)) * this.reverseMultiplier;
+            this.backWheel += this.carSpeed * 3 * new Vector(Math.Cos(this.carHeading), Math.Sin(this.carHeading)) * this.reverseMultiplier;
+            this.frontWheel += this.carSpeed * 3 * new Vector(Math.Cos(this.carHeading + this.steerAngle), Math.Sin(this.carHeading + this.steerAngle)) * this.reverseMultiplier;
         }
 
         private void GetNewHeading()

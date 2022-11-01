@@ -4,18 +4,25 @@
 
 namespace AutomatedCar.SystemComponents.Powertrain
 {
+    using Vector = Avalonia.Vector;
+
     /// <summary>
     /// Steering interface.
     /// </summary>
     public interface ISteering
     {
         /// <summary>
-        /// Gets or sets the state of the Gearshift.
+        /// Gets or sets the location of the Car.
+        /// </summary>
+        Vector CarLocation { get; set; }
+
+        /// <summary>
+        /// Gets or sets the speed of the Car.
         /// </summary>
         int CarSpeed { get; set; }
 
         /// <summary>
-        /// Gets or sets the state of the Gearshift.
+        /// Gets or sets the rotation of the Car.
         /// </summary>
         double Rotation { get; set; }
 
