@@ -27,11 +27,6 @@ namespace AutomatedCar.SystemComponents.Powertrain
         double Rotation { get; set; }
 
         /// <summary>
-        /// Gets or sets the state of the Gearshift.
-        /// </summary>
-        GearshiftState State { get; set; }
-
-        /// <summary>
         /// Sets up some info coming from the controlled car.
         /// </summary>
         /// <param name="x">X position of car.</param>

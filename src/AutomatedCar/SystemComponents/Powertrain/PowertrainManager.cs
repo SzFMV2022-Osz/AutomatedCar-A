@@ -48,7 +48,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
                     {
                         this.engine.Accelerate();
                         this.steering.CarSpeed = this.engine.GetSpeed;
-                        World.Instance.ControlledCar.Y -= this.engine.GetSpeed;
+                        //World.Instance.ControlledCar.Y -= this.engine.GetSpeed;
                     }
 
                     this.powertrainPacket.CurrentSpeed = this.engine.GetSpeed;
@@ -61,7 +61,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
                     {
                         this.engine.Braking();
                         this.steering.CarSpeed = this.engine.GetSpeed;
-                        World.Instance.ControlledCar.Y -= this.engine.GetSpeed;
+                        //World.Instance.ControlledCar.Y -= this.engine.GetSpeed;
                     }
 
                     this.powertrainPacket.CurrentSpeed = this.engine.GetSpeed;
@@ -74,7 +74,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
                     {
                         this.engine.Lift();
                         this.steering.CarSpeed = this.engine.GetSpeed;
-                        World.Instance.ControlledCar.Y -= this.engine.GetSpeed;
+                        //World.Instance.ControlledCar.Y -= this.engine.GetSpeed;
 
                         this.powertrainPacket.CurrentSpeed = this.engine.GetSpeed;
                         this.powertrainPacket.Rpm = this.engine.GetRPMValue;
@@ -91,12 +91,10 @@ namespace AutomatedCar.SystemComponents.Powertrain
                 {
                     case Gears.ShiftUp:
                         this.engine.StateUp();
-                        this.steering.State = this.engine.GetGearshiftState;
                         this.powertrainPacket.CurrentGear = this.engine.GetGearshiftState;
                         break;
                     case Gears.ShiftDown:
                         this.engine.StateDown();
-                        this.steering.State = this.engine.GetGearshiftState;
                         this.powertrainPacket.CurrentGear = this.engine.GetGearshiftState;
                         break;
                     case Gears.Steady:
@@ -112,6 +110,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
                     this.steering.GetRotation();
                     World.Instance.ControlledCar.Rotation = this.steering.Rotation;
                     World.Instance.ControlledCar.X = (int)this.steering.CarLocation.X;
+                    World.Instance.ControlledCar.Y = (int)this.steering.CarLocation.Y;
                     this.powertrainPacket.Steering = this.virtualFunctionBus.InputPacket.SteeringState;
                     this.powertrainPacket.RotationAngle = this.steering.Rotation;
                     break;
@@ -120,14 +119,15 @@ namespace AutomatedCar.SystemComponents.Powertrain
                     this.steering.GetRotation();
                     World.Instance.ControlledCar.Rotation = this.steering.Rotation;
                     World.Instance.ControlledCar.X = (int)this.steering.CarLocation.X;
+                    World.Instance.ControlledCar.Y = (int)this.steering.CarLocation.Y;
                     this.powertrainPacket.Steering = this.virtualFunctionBus.InputPacket.SteeringState;
                     this.powertrainPacket.RotationAngle = this.steering.Rotation;
                     break;
                 case SteeringState.Center:
                     this.steering.StraightenWheel();
                     this.steering.GetRotation();
-                    World.Instance.ControlledCar.Rotation = this.steering.Rotation;
                     World.Instance.ControlledCar.X = (int)this.steering.CarLocation.X;
+                    World.Instance.ControlledCar.Y = (int)this.steering.CarLocation.Y;
                     this.powertrainPacket.Steering = this.virtualFunctionBus.InputPacket.SteeringState;
                     this.powertrainPacket.RotationAngle = this.steering.Rotation;
                     break;
