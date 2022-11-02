@@ -30,7 +30,7 @@ namespace AutomatedCar.SystemComponents.Packets
         /// <summary>
         /// Gets or sets the current gearbox state. Values: P,R,N,D.
         /// </summary>
-        GearshiftState CurrentGear { get; set; }
+        string CurrentGear { get; set; }
 
         /// <summary>
         /// Gets or sets the current revolution of the engine.
