@@ -19,7 +19,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// </summary>
         public Gearshift()
         {
-            this.gear = 1;
+            this.gear = 0;
             this.state = GearshiftState.P;
         }
 
