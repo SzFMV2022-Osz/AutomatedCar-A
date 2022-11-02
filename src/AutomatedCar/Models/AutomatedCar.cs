@@ -2,7 +2,7 @@ namespace AutomatedCar.Models
 {
     using Avalonia.Media;
     using global::AutomatedCar.SystemComponents;
-    using global::AutomatedCar.SystemComponents.Packets;
+    using global::AutomatedCar.SystemComponents.InputManager.InputHandler;
     using global::AutomatedCar.SystemComponents.Powertrain;
     using global::AutomatedCar.SystemComponents.Sensors;
 
@@ -16,6 +16,8 @@ namespace AutomatedCar.Models
         
         private PowertrainManager powertrainManager;
 
+        private InputManager inputManager;
+
         public AutomatedCar(int x, int y, string filename)
             : base(x, y, filename)
         {
@@ -23,7 +25,7 @@ namespace AutomatedCar.Models
             this.radarSensor = new Radar(this.virtualFunctionBus);
             this.cameraSensor = new Camera(this.virtualFunctionBus);
             this.ZIndex = 10;
-
+            this.inputManager = new InputManager(this.virtualFunctionBus);
             this.powertrainManager = new PowertrainManager(this.virtualFunctionBus);
         }
 

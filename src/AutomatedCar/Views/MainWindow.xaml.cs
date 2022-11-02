@@ -24,7 +24,7 @@ namespace AutomatedCar.Views
             this.WhenActivated(x => x(ViewModel.WhenAnyValue(x => x.PopUp.ControlledCar.Car.VirtualFunctionBus.CollisionPacket.Collided).Where(x => x == true).Subscribe(x =>
             {
                 popUpWindow.DataContext = ViewModel.PopUp;
-                popUpWindow.ShowDialog(this);
+                //popUpWindow.ShowDialog(this);
             })));
         }
 
@@ -116,15 +116,7 @@ namespace AutomatedCar.Views
         {
             MainWindowViewModel viewModel = (MainWindowViewModel)this.DataContext;
 
-            if (e.Key == Key.Up || e.Key == Key.Down)
-            {
-                viewModel.CourseDisplay.OnKeyUp("Empty");
-            }
-
-            if (e.Key == Key.Left || e.Key == Key.Right)
-            {
-                viewModel.CourseDisplay.OnKeyUp("Center");
-            }
+            viewModel.CourseDisplay.OnKeyUp(e.Key);
 
             Keyboard.Keys.Remove(e.Key);
             base.OnKeyUp(e);

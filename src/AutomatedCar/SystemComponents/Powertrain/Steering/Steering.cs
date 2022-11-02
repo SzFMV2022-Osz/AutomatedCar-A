@@ -5,6 +5,8 @@
 namespace AutomatedCar.SystemComponents.Powertrain
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using Vector = Avalonia.Vector;
 
     /// <summary>
@@ -12,39 +14,76 @@ namespace AutomatedCar.SystemComponents.Powertrain
     /// </summary>
     public class Steering : ISteering
     {
-        private const int TurningOffset = 5;
+        private const double TurningOffset = 5;
+
+        private static readonly Dictionary<int, double> ScalingValueLookupTable = new Dictionary<int, double>()
+        {
+                { 20, 1.0 },
+                { 30, 0.9 },
+                { 40, 0.8 },
+                { 50, 0.7 },
+                { 60, 0.6 },
+                { 75, 0.5 },
+                { 100, 0.4 },
+        };
 
         private int wheelBase;
         private double steerAngle;
 
         private Vector carLocation;
         private double carHeading;
-        private float carSpeed;
+        private int carSpeed;
 
         private double rotation;
 
         private Vector frontWheel;
         private Vector backWheel;
 
-        private int reverseMultiplier;
-        private GearshiftState state;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Steering"/> class.
         /// </summary>
+        public Steering()
+        {
+            this.wheelBase = 250;
+            this.steerAngle = 0;
+            this.carHeading = -1.5;
+        }
+
+        /// <summary>
+        /// Gets or sets the location of the Car.
+        /// </summary>
+        public Vector CarLocation
+        {
+            get { return this.carLocation; }
+            set { this.carLocation = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the speed of the Car.
+        /// </summary>
+        public int CarSpeed
+        {
+            get { return this.carSpeed; }
+            set { this.carSpeed = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the rotation of the Car.
+        /// </summary>
+        public double Rotation
+        {
+            get { return this.rotation; } set { this.rotation = value; }
+        }
+
+        /// <summary>
+        /// Sets up some info coming from the controlled car.
+        /// </summary>
         /// <param name="x">X position of car.</param>
         /// <param name="y">Y position of car.</param>
-        /// <param name="carSpeed">Speed of car.</param>
-        /// <param name="state">State of the gearshift.</param>
         /// <param name="rotation">Rotation of the car.</param>
-        public Steering(int x, int y, float carSpeed, GearshiftState state, double rotation)
+        public void Seed(int x, int y, double rotation)
         {
-            this.wheelBase = 300;
-            this.steerAngle = 0;
             this.carLocation = new Vector(x, y);
-            this.carSpeed = carSpeed;
-            this.carHeading = -1.5;
-            this.state = state;
             this.rotation = rotation;
         }
 
@@ -53,7 +92,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// </summary>
         public void TurnLeft()
         {
-            this.steerAngle = +TurningOffset;
+            this.steerAngle = TurningOffset;
         }
 
         /// <summary>
@@ -99,9 +138,9 @@ namespace AutomatedCar.SystemComponents.Powertrain
 
         private void FindNewWheelLocations()
         {
-            this.SetReverseMultiplier();
-            this.backWheel += this.carSpeed * new Vector(Math.Cos(this.carHeading), Math.Sin(this.carHeading)) * this.reverseMultiplier;
-            this.frontWheel += this.carSpeed * new Vector(Math.Cos(this.carHeading + this.steerAngle), Math.Sin(this.carHeading + this.steerAngle)) * this.reverseMultiplier;
+            double scaling = this.GetScaleDownValue(this.carSpeed);
+            this.backWheel += this.carSpeed * scaling * 3 * new Vector(Math.Cos(this.carHeading), Math.Sin(this.carHeading));
+            this.frontWheel += this.carSpeed * scaling * 3 * new Vector(Math.Cos(this.carHeading + this.steerAngle), Math.Sin(this.carHeading + this.steerAngle));
         }
 
         private void GetNewHeading()
@@ -110,16 +149,10 @@ namespace AutomatedCar.SystemComponents.Powertrain
             this.carHeading = Math.Atan2(this.frontWheel.Y - this.backWheel.Y, this.frontWheel.X - this.backWheel.X);
         }
 
-        private void SetReverseMultiplier()
+        private double GetScaleDownValue(int speed)
         {
-            if (this.state == GearshiftState.R)
-            {
-                this.reverseMultiplier = -1;
-            }
-            else
-            {
-                this.reverseMultiplier = 1;
-            }
+            int rounded_speed = ScalingValueLookupTable.Keys.ToList().OrderBy(x => Math.Abs(speed - x)).First();
+            return ScalingValueLookupTable[rounded_speed];
         }
     }
 }

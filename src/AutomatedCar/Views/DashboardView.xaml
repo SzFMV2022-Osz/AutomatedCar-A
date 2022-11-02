@@ -28,29 +28,29 @@
                         <StackPanel>
                             <TextBlock Text="F1: Help"/>
                             <Grid ColumnDefinitions="2*,2*" RowDefinitions="50,15">
-                                <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Revolution}" FontSize="40" TextAlignment="Center"/>
+								<TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Car.VirtualFunctionBus.PowertrainPacket.Rpm}" FontSize="40" TextAlignment="Center"/>
                                 <TextBlock Grid.Row="1" Grid.Column="0" TextAlignment="Center">rpm</TextBlock>
-                                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Velocity}" FontSize="40" TextAlignment="Center"/>
+                                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Car.VirtualFunctionBus.PowertrainPacket.CurrentSpeed}" FontSize="40" TextAlignment="Center"/>
                                 <TextBlock Grid.Row="1" Grid.Column="1" TextAlignment="Center">km/h</TextBlock>
                             </Grid>
                             <Separator Height="15"></Separator>
                             <Grid ColumnDefinitions="2*,6*,2*" RowDefinitions="30,15">
-                                <TextBlock Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Text="L" FontSize="20" TextAlignment="Center" VerticalAlignment="Center"/>
-                                <TextBlock Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Text="R" FontSize="20" TextAlignment="Center" VerticalAlignment="Center"/>
-                                <TextBlock Grid.Row="0" Grid.Column="1" Text="N" FontSize="20" TextAlignment="Center"/>
+                                <TextBlock Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Text="{Binding Car.VirtualFunctionBus.PowertrainPacket.Left}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Text="{Binding Car.VirtualFunctionBus.PowertrainPacket.Right}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Car.VirtualFunctionBus.PowertrainPacket.CurrentGear}" FontSize="20" TextAlignment="Center"/>
                                 <TextBlock Grid.Row="1" Grid.Column="1" Text="Gear" TextAlignment="Center"/>
                             </Grid>
                             <Separator Height="15"></Separator>
                             <TextBlock Text="Throttle"/>
-                            <ProgressBar Value="50"></ProgressBar>
+                            <ProgressBar Name="ThrottleBar" Minimum="0" Maximum="1" HorizontalAlignment="Center" VerticalAlignment="Center" Value="{Binding Car.VirtualFunctionBus.PowertrainPacket.CurrentThrottleValue}"></ProgressBar>
                             <TextBlock Text="Brake"/>
-                            <ProgressBar Value="50"></ProgressBar>
+                            <ProgressBar Minimum="0" Maximum="1" HorizontalAlignment="Center" VerticalAlignment="Center" Value="{Binding Car.VirtualFunctionBus.PowertrainPacket.CurrentBrakeValue}"></ProgressBar>
                             <Separator Height="12"></Separator>
-                            <Image
-                                Width="90" Height="90"
-                                Source="resm:AutomatedCar.Assets.steering-wheel.png?assembly=AutomatedCar"
-                                RenderTransformOrigin="{Binding RotationPoint, Converter={x:Static visualization:RenderTransformOriginTransformer.Instance}}">
-                            </Image>
+                          <Image
+                              Width="90" Height="90"
+                              RenderTransformOrigin="{Binding RotationPoint, Converter={x:Static visualization:RenderTransformOriginTransformer.Instance}}"
+                              Source="resm:AutomatedCar.Assets.steering-wheel.png?assembly=AutomatedCar">
+                          </Image>
                             <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
                                 <TextBlock Grid.Row="0" Grid.Column="0">X:</TextBlock>
                                 <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding X}"/>
