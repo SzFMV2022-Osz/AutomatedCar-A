@@ -24,6 +24,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
                 { 50, 0.7 },
                 { 60, 0.6 },
                 { 75, 0.5 },
+                { 100, 0.4 },
         };
 
         private int wheelBase;
@@ -43,7 +44,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// </summary>
         public Steering()
         {
-            this.wheelBase = 300;
+            this.wheelBase = 250;
             this.steerAngle = 0;
             this.carHeading = -1.5;
         }
@@ -62,7 +63,8 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// </summary>
         public int CarSpeed
         {
-            get { return this.carSpeed; } set { this.carSpeed = value; }
+            get { return this.carSpeed; }
+            set { this.carSpeed = value; }
         }
 
         /// <summary>
