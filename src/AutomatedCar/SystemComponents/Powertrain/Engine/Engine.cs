@@ -177,7 +177,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
             this.brakePedal += .01f;
             this.gasPedal -= .01f;
             this.ClampPedals();
-            this.Velocity += this.ChangeVelocity(false) + this.ChangeVelocity(true);
+            this.Velocity = (int)this.GetSpeedByWheelRotation() + this.ChangeVelocity(false) + this.ChangeVelocity(true);
             this.rpm = this.GetRPM();
 
             if (this.rpm < this.minrpm)
@@ -210,7 +210,15 @@ namespace AutomatedCar.SystemComponents.Powertrain
 
         private int GetRPM()
         {
-            return (int)(this.GetWheelRotationRateBySpeed() * this.gearshift.GetGearRatio() * this.diferential * 60 / 2 * Pi);
+            int rpm = (int)(this.GetWheelRotationRateBySpeed() * this.gearshift.GetGearRatio() * this.diferential * 60 / 2 * Pi);
+            if (rpm > this.maxrpm)
+            {
+                return (int)this.maxrpm;
+            }
+            else
+            {
+                return rpm;
+            }
         }
 
         private int GetNextGearRPM()
@@ -286,10 +294,6 @@ namespace AutomatedCar.SystemComponents.Powertrain
                     if (isbraking)
                     {
                         temp = this.BrakingForce() + this.DragForce() + this.Frr();
-                        if(brakePedal > 0)
-                        {
-                            Debug.WriteLine("Brake pedal percentage: " + brakePedal);
-                        }
                     }
                     else
                     {
