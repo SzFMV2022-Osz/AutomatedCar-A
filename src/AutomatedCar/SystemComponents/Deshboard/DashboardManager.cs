@@ -24,7 +24,7 @@
 
         public int CurrentSpeed { get; set; }
         public int CurrentBrakeValue { get; set; }
-        public int CurrentThrottleValue { get; set; }
+        //public int CurrentThrottleValue { get; set; }
         public double RotationAngle { get; set; }
         public string CurrentGear { get; set; }
         public string Steering { get; set; }
@@ -37,13 +37,13 @@
 
         public override void Process()
         {
-            Rpm = this.virtualFunctionBus.PowertrainPacket.Rpm;
+            /*Rpm = this.virtualFunctionBus.PowertrainPacket.Rpm;
             CurrentSpeed = this.virtualFunctionBus.PowertrainPacket.CurrentSpeed;
             CurrentBrakeValue = this.virtualFunctionBus.PowertrainPacket.CurrentBrakeValue;
             CurrentThrottleValue = this.virtualFunctionBus.PowertrainPacket.CurrentThrottleValue;
             RotationAngle = this.virtualFunctionBus.PowertrainPacket.RotationAngle;
             CurrentGear = this.virtualFunctionBus.PowertrainPacket.CurrentGear.ToString();
-            Steering = this.virtualFunctionBus.PowertrainPacket.Steering.ToString();
+            //Steering = this.virtualFunctionBus.PowertrainPacket.Steering.ToString();*/
         }
     }
 }

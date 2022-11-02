@@ -33,12 +33,12 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// <summary>
         /// Gets the percentage value of the throttle.
         /// </summary>
-        int GetThrottleValue { get; }
+        float GetThrottleValue { get; }
 
         /// <summary>
         /// Gets the percentage value of the brake.
         /// </summary>
-        int GetBrakeValue { get; }
+        float GetBrakeValue { get; }
 
         /// <summary>
         /// Accelerate the car.

@@ -143,8 +143,10 @@ namespace AutomatedCar.SystemComponents.Powertrain
                     World.Instance.ControlledCar.Rotation = this.steering.Rotation;
                     World.Instance.ControlledCar.X = (int)this.steering.CarLocation.X;
                     World.Instance.ControlledCar.Y = (int)this.steering.CarLocation.Y;
-                    this.virtualFunctionBus.PowertrainPacket.Steering = this.virtualFunctionBus.InputPacket.SteeringState;
+                    //this.virtualFunctionBus.PowertrainPacket.Steering = this.virtualFunctionBus.InputPacket.SteeringState;
                     this.virtualFunctionBus.PowertrainPacket.RotationAngle = this.steering.Rotation;
+                    this.virtualFunctionBus.PowertrainPacket.Left = "L";
+                    this.virtualFunctionBus.PowertrainPacket.Right = string.Empty;
                     break;
                 case SteeringState.Right:
                     this.steering.TurnRight();
@@ -152,16 +154,20 @@ namespace AutomatedCar.SystemComponents.Powertrain
                     World.Instance.ControlledCar.Rotation = this.steering.Rotation;
                     World.Instance.ControlledCar.X = (int)this.steering.CarLocation.X;
                     World.Instance.ControlledCar.Y = (int)this.steering.CarLocation.Y;
-                    this.virtualFunctionBus.PowertrainPacket.Steering = this.virtualFunctionBus.InputPacket.SteeringState;
+                    //this.virtualFunctionBus.PowertrainPacket.Steering = this.virtualFunctionBus.InputPacket.SteeringState;
                     this.virtualFunctionBus.PowertrainPacket.RotationAngle = this.steering.Rotation;
+                    this.virtualFunctionBus.PowertrainPacket.Left = string.Empty;
+                    this.virtualFunctionBus.PowertrainPacket.Right = "R";
                     break;
                 case SteeringState.Center:
                     this.steering.StraightenWheel();
                     this.steering.GetRotation();
                     World.Instance.ControlledCar.X = (int)this.steering.CarLocation.X;
                     World.Instance.ControlledCar.Y = (int)this.steering.CarLocation.Y;
-                    this.virtualFunctionBus.PowertrainPacket.Steering = this.virtualFunctionBus.InputPacket.SteeringState;
+                    //this.virtualFunctionBus.PowertrainPacket.Steering = this.virtualFunctionBus.InputPacket.SteeringState;
                     this.virtualFunctionBus.PowertrainPacket.RotationAngle = this.steering.Rotation;
+                    this.virtualFunctionBus.PowertrainPacket.Left = string.Empty;
+                    this.virtualFunctionBus.PowertrainPacket.Right = string.Empty;
                     break;
             }
 

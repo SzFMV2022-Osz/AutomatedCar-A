@@ -14,18 +14,20 @@ namespace AutomatedCar.SystemComponents.Packets
     /// </summary>
     public class PowertrainPacket : ReactiveObject, IPowertrainPacket
     {
-        private int currentThrottleValue;
-        private int currentBrakeValue;
+        private float currentThrottleValue;
+        private float currentBrakeValue;
         private int currentSpeed;
         private string currentGear;
         private int rpm;
-        private SteeringState steeringState;
+        //private SteeringState steeringState;
         private double rotationAngle;
+        private string left;
+        private string right;
 
         /// <summary>
         /// Gets or sets the percentage of the gas pedal.
         /// </summary>
-        public int CurrentThrottleValue
+        public float CurrentThrottleValue
         {
             get
             {
@@ -38,7 +40,7 @@ namespace AutomatedCar.SystemComponents.Packets
         /// <summary>
         /// Gets or sets the percentage of the brake pedal.
         /// </summary>
-        public int CurrentBrakeValue
+        public float CurrentBrakeValue
         {
             get
             {
@@ -85,9 +87,30 @@ namespace AutomatedCar.SystemComponents.Packets
         }
 
         /// <summary>
-        /// Gets or sets the current steering state. Values: Left, Right, Center.
+        /// Gets or sets a value indicating whether the car is steered to the right or not.
         /// </summary>
-        public SteeringState Steering { get; set; }
+        public string Left
+        {
+            get
+            {
+                return this.left;
+            }
+
+            set => this.RaiseAndSetIfChanged(ref this.left, value);
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the car is steered to the right or not.
+        /// </summary>
+        public string Right
+        {
+            get
+            {
+                return this.right;
+            }
+
+            set => this.RaiseAndSetIfChanged(ref this.right, value);
+        }
 
         /// <summary>
         /// Gets or sets the rotation of the steering wheel.

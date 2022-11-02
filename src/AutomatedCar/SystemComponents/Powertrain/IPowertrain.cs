@@ -13,7 +13,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
     /// <summary>
     /// Powertrain.
     /// </summary>
-    internal interface IPowertrain
+    public interface IPowertrain
     {
     }
 }

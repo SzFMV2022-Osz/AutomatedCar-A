@@ -90,22 +90,22 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// <summary>
         /// Gets the percentage value of the throttle.
         /// </summary>
-        public int GetThrottleValue
+        public float GetThrottleValue
         {
             get
             {
-                return (int)this.gasPedal;
+                return this.gasPedal;
             }
         }
 
         /// <summary>
         /// Gets the percentage value of the brake.
         /// </summary>
-        public int GetBrakeValue
+        public float GetBrakeValue
         {
             get
             {
-                return (int)0;
+                return brakePedal;
             }
         }
 

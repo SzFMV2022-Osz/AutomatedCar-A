@@ -15,12 +15,12 @@ namespace AutomatedCar.SystemComponents.Packets
         /// <summary>
         /// Gets or sets the percentage of the gas pedal.
         /// </summary>
-        int CurrentThrottleValue { get; set; }
+        float CurrentThrottleValue { get; set; }
 
         /// <summary>
         /// Gets or sets the percentage of the brake pedal.
         /// </summary>
-        int CurrentBrakeValue { get; set; }
+        float CurrentBrakeValue { get; set; }
 
         /// <summary>
         /// Gets or sets the current speed of the car in Km/h.
@@ -38,9 +38,14 @@ namespace AutomatedCar.SystemComponents.Packets
         int Rpm { get; set; }
 
         /// <summary>
-        /// Gets or sets the current steering state. Values: Left, Right, Center.
+        /// Gets or sets a value indicating whether the car is steered to the left or not.
         /// </summary>
-        SteeringState Steering { get; set; }
+        string Left { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the car is steered to the right or not.
+        /// </summary>
+        string Right { get; set; }
 
         /// <summary>
         /// Gets or sets the rotation of the steering wheel.
