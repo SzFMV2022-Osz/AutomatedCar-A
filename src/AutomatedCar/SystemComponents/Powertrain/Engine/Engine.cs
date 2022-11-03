@@ -69,6 +69,14 @@ namespace AutomatedCar.SystemComponents.Powertrain
         }
 
         /// <summary>
+        /// Gets speed(+/-) of the car.
+        /// </summary>
+        public int SignSpeed
+        {
+            get { return (int)(this.Velocity * 3.6); }
+        }
+
+        /// <summary>
         /// Gets rpm.
         /// </summary>
         public float RPM
@@ -103,7 +111,11 @@ namespace AutomatedCar.SystemComponents.Powertrain
             }
         }
 
-        private float Velocity { get { return this.velocity; } set { this.velocity = value; } }
+        private float Velocity
+        {
+            get { return this.velocity; }
+            set { this.velocity = value; }
+        }
 
         /// <summary>
         /// Accelerate the car.
@@ -111,6 +123,24 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// <returns>driving force lenght.</returns>
         public float Accelerate()
         {
+            var temp = this.LongitudinalForce();
+
+            if (this.gearshift.GetState() == GearshiftState.D)
+            {
+                if (temp < 0)
+                {
+                    return 0;
+                }
+            }
+            else
+            {
+                if (temp > 0)
+                {
+                    return 0;
+                }
+            }
+
+
             if (this.gearshift.GetGearRatio() == 0)
             {
                 this.gearshift.ShiftUp();
@@ -123,7 +153,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
             this.Velocity += this.ChangeVelocity(false) + this.ChangeVelocity(true);
             this.rpm = this.GetRPM();
 
-            if (this.rpm > this.maxrpm - 100)
+            if (this.rpm > 3000 && this.rpm < this.maxrpm)
             {
                 if (this.GetNextGearRPM() > this.minrpm)
                 {
@@ -186,8 +216,6 @@ namespace AutomatedCar.SystemComponents.Powertrain
                 this.rpm = this.maxrpm;
             }
 
-            var b = this.LongitudinalForce();
-
             if (this.gearshift.GetState() == GearshiftState.D)
             {
                 return Math.Abs(this.LongitudinalForce());
@@ -209,7 +237,33 @@ namespace AutomatedCar.SystemComponents.Powertrain
             this.breakPedal += .001f;
             this.gasPedal -= .001f;
             this.ClampPedals();
-            this.Velocity += this.ChangeVelocity(false) + this.ChangeVelocity(true);
+            if (this.gearshift.GetState() == GearshiftState.R)
+            {
+                var a = -this.ChangeVelocity(false);
+                if (a < 0)
+                {
+                    this.velocity = 0;
+                    this.rpm = this.minrpm;
+                    return 0;
+                }
+
+                var b = -this.ChangeVelocity(true);
+                this.Velocity += a + b;
+            }
+            else
+            {
+                var a = this.ChangeVelocity(false);
+                var b = this.ChangeVelocity(true);
+                if (-b > a) //nagyobb a fékerő mint a előre ható erő
+                {
+                    this.velocity = 0;
+                    this.rpm = this.minrpm;
+                    return 0;
+                }
+
+                this.Velocity += a - b;
+            }
+
             this.rpm = this.GetRPM();
 
             if (this.rpm < this.minrpm)
@@ -326,7 +380,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
                 case GearshiftState.R:
                     if (isbreaking)
                     {
-                        temp = this.BreakingForce() + this.DragForce() + this.Frr();
+                        temp = -this.BreakingForce() + this.DragForce() + this.Frr();
                     }
                     else
                     {
@@ -340,13 +394,10 @@ namespace AutomatedCar.SystemComponents.Powertrain
                 case GearshiftState.D:
                     if (isbreaking)
                     {
-                        temp = this.BreakingForce() + this.DragForce() + this.Frr();
+                        temp = -this.BreakingForce() + this.DragForce() + this.Frr();
                     }
                     else
                     {
-                        float a = this.Frr();
-                        float b = this.DragForce();
-                        float c = this.DrivingForce();
                         temp = this.DrivingForce() - this.DragForce() + this.Frr();
                     }
 

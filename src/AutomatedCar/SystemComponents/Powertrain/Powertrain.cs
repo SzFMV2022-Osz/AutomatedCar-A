@@ -19,10 +19,11 @@ namespace AutomatedCar.SystemComponents.Powertrain
 
         private ISteering steering;
 
-        private Action[] tasks = new Action[2];
+        private Action[] tasks = new Action[5];
         private Func<float>[] tasksWithReturns = new Func<float>[3];
         private Task<float> drivingforce;
         private Task shift;
+        private Task steeringtask;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Powertrain"/> class.
@@ -33,13 +34,18 @@ namespace AutomatedCar.SystemComponents.Powertrain
             : base(vfb)
         {
             this.engine = new Engine(new Gearshift());
+            this.steering = new Steering();
             this.tasks[0] = this.engine.StateUp;
             this.tasks[1] = this.engine.StateDown;
+            this.tasks[2] = this.steering.TurnLeft;
+            this.tasks[3] = this.steering.TurnRight;
+            this.tasks[4] = this.steering.StraightenWheel;
             this.tasksWithReturns[0] = this.engine.Accelerate;
             this.tasksWithReturns[1] = this.engine.Breaking;
             this.tasksWithReturns[2] = this.engine.Lift;
             messenger.OnPedalChanged += this.Messenger_OnPedalChanged;
             messenger.OnShiftStateChanged += this.Messenger_OnShiftStateChanged;
+            messenger.OnSteeringChanged += this.Messenger_OnSteeringChanged;
         }
 
         /// <summary>
@@ -55,11 +61,9 @@ namespace AutomatedCar.SystemComponents.Powertrain
             if (this.drivingforce is not null && !this.drivingforce.IsCompleted)
             {
                 this.drivingforce.Wait();
-                this.virtualFunctionBus.MoveObject = new MoveObject(new Avalonia.Vector(0, -.1 * this.drivingforce.Result));
+                this.virtualFunctionBus.MoveObject = new MoveObject(new Avalonia.Vector(0 * (-this.engine.SignSpeed), -this.engine.SignSpeed), 0);
                 this.virtualFunctionBus.DasboardPacket = new DasboardPacket(this.engine.RPM, this.engine.Speed, this.engine.Throtle, this.engine.Break, this.engine.GearShiftState);
             }
-
-            // Task.WaitAll(this.tasksWithReturns);
         }
 
         private void Messenger_OnShiftStateChanged(object sender, ShiftStates e)
@@ -92,6 +96,22 @@ namespace AutomatedCar.SystemComponents.Powertrain
             }
 
             this.drivingforce.Start();
+        }
+
+        private void Messenger_OnSteeringChanged(object sender, SteeringState e)
+        {
+            if (e == SteeringState.Left)
+            {
+                this.steeringtask = new Task(this.tasks[2]);
+            }
+            else if (e == SteeringState.Right)
+            {
+                this.steeringtask = new Task(this.tasks[3]);
+            }
+            else
+            {
+                this.steeringtask = new Task(this.tasks[4]);
+            }
         }
     }
 }

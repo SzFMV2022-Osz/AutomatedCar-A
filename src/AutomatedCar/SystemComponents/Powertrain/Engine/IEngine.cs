@@ -21,6 +21,11 @@ namespace AutomatedCar.SystemComponents.Powertrain
         int Speed { get; }
 
         /// <summary>
+        /// Gets speed(+/-) of the car.
+        /// </summary>
+        public int SignSpeed { get; }
+
+        /// <summary>
         /// Gets Rpm.
         /// </summary>
         float RPM { get; }

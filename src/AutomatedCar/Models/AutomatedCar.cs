@@ -41,7 +41,7 @@ namespace AutomatedCar.Models
                 new Locator(this.virtualFunctionBus, this);
             }
 
-            this.virtualFunctionBus.CarCoordinatesPacket = new CarCoordinatesPacket(x, y);
+            this.virtualFunctionBus.CarCoordinatesPacket = new CarCoordinatesPacket(x, y, this.Rotation);
             this.ZIndex = 10;
         }
 

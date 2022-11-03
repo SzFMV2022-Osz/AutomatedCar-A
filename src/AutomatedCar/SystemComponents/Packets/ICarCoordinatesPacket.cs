@@ -11,5 +11,6 @@
         int X { get; set; }
 
         int Y { get; set; }
+        double Rotation { get; set; }
     }
 }

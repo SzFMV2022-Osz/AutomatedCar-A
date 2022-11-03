@@ -13,6 +13,8 @@
 
         private int y;
 
+        private double rotation;
+
         public int X 
         { 
             get => this.x;
@@ -25,10 +27,17 @@
             set => this.RaiseAndSetIfChanged(ref this.y, value);
         }
 
-        public CarCoordinatesPacket(int x, int y)
+        public double Rotation
+        {
+            get => this.rotation;
+            set => this.RaiseAndSetIfChanged(ref this.rotation, value);
+        }
+
+        public CarCoordinatesPacket(int x, int y, double rotation)
         {
             X = x;
             Y = y;
+            this.Rotation = rotation;
         }
     }
 }

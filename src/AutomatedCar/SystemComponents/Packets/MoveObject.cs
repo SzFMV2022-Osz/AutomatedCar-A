@@ -15,14 +15,21 @@ namespace AutomatedCar.SystemComponents.Packets
         /// Initializes a new instance of the <see cref="MoveObject"/> class.
         /// </summary>
         /// <param name="vector">Vector to move.</param>
-        public MoveObject(Vector vector)
+        /// <param name="rotation">new rotaion.</param>
+        public MoveObject(Vector vector, double rotation)
         {
             this.Vector = vector;
+            this.Rotation = rotation;
         }
 
         /// <summary>
         /// Gets vector to move.
         /// </summary>
         public Vector Vector { get; private set; }
+
+        /// <summary>
+        /// Gets rotation.
+        /// </summary>
+        public double Rotation { get; private set; }
     }
 }

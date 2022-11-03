@@ -40,6 +40,10 @@ namespace AutomatedCar.SystemComponents.Locator
                 Vector vector = this.virtualFunctionBus.MoveObject.Vector;
                 this.ObjectToMove.X += (int)vector.X;
                 this.ObjectToMove.Y += (int)vector.Y;
+                this.ObjectToMove.Rotation = this.virtualFunctionBus.MoveObject.Rotation;
+                this.virtualFunctionBus.CarCoordinatesPacket.X = this.ObjectToMove.X;
+                this.virtualFunctionBus.CarCoordinatesPacket.Y = this.ObjectToMove.Y;
+                this.virtualFunctionBus.CarCoordinatesPacket.Rotation = this.ObjectToMove.Rotation;
             }
         }
     }

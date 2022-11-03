@@ -15,5 +15,10 @@ namespace AutomatedCar.SystemComponents.Packets
         /// Gets vector to move.
         /// </summary>
         public Vector Vector { get; }
+
+        /// <summary>
+        /// Gets rotation.
+        /// </summary>
+        public double Rotation { get; }
     }
 }
