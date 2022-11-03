@@ -7,7 +7,6 @@ namespace AutomatedCar.SystemComponents.Powertrain
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Vector = Avalonia.Vector;
 
     /// <summary>
     /// Steering.
@@ -30,21 +29,29 @@ namespace AutomatedCar.SystemComponents.Powertrain
         private int wheelBase;
         private double steerAngle;
 
-        private Vector carLocation;
+        //private Vector carLocation;
+        private double carLocationX;
+        private double carLocationY;
+
         private double carHeading;
         private int carSpeed;
 
         private double rotation;
 
-        private Vector frontWheel;
-        private Vector backWheel;
+        //private Vector frontWheel;
+        //private Vector backWheel;
+
+        private double frontWheelX;
+        private double backWheelX;
+        private double frontWheelY;
+        private double backWheelY;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Steering"/> class.
         /// </summary>
         public Steering()
         {
-            this.wheelBase = 250;
+            this.wheelBase = 150;
             this.steerAngle = 0;
             this.carHeading = -1.5;
         }
@@ -52,11 +59,11 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// <summary>
         /// Gets or sets the location of the Car.
         /// </summary>
-        public Vector CarLocation
+        /*public Vector CarLocation
         {
             get { return this.carLocation; }
             set { this.carLocation = value; }
-        }
+        }*/
 
         /// <summary>
         /// Gets or sets the speed of the Car.
@@ -75,6 +82,9 @@ namespace AutomatedCar.SystemComponents.Powertrain
             get { return this.rotation; } set { this.rotation = value; }
         }
 
+        public double CarLocationX { get { return this.carLocationX; } set { this.carLocationX = value; } }
+        public double CarLocationY { get { return this.carLocationY; } set { this.carLocationY = value; } }
+
         /// <summary>
         /// Sets up some info coming from the controlled car.
         /// </summary>
@@ -83,7 +93,9 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// <param name="rotation">Rotation of the car.</param>
         public void Seed(int x, int y, double rotation)
         {
-            this.carLocation = new Vector(x, y);
+            //this.carLocation = new Vector(x, y);
+            this.carLocationX = x;
+            this.carLocationY = y;
             this.rotation = rotation;
         }
 
@@ -132,21 +144,30 @@ namespace AutomatedCar.SystemComponents.Powertrain
 
         private void FindWheelLocations()
         {
-            this.frontWheel = this.carLocation + (this.wheelBase / 2 * new Vector(Math.Cos(this.carHeading), Math.Sin(this.carHeading)));
-            this.backWheel = this.carLocation - (this.wheelBase / 2 * new Vector(Math.Cos(this.carHeading), Math.Sin(this.carHeading)));
+            /*this.frontWheel = this.carLocation + (this.wheelBase / 2 * new Vector(Math.Cos(this.carHeading), Math.Sin(this.carHeading)));
+            this.backWheel = this.carLocation - (this.wheelBase / 2 * new Vector(Math.Cos(this.carHeading), Math.Sin(this.carHeading)));*/
+            this.frontWheelX = this.carLocationX + (wheelBase / 2 * Math.Cos(carHeading));
+            this.frontWheelY = this.carLocationY + (wheelBase / 2 * Math.Sin(carHeading));
+            this.backWheelX = this.carLocationX - (wheelBase / 2 * Math.Cos(carHeading));
+            this.backWheelY = this.carLocationY - (wheelBase / 2 * Math.Sin(carHeading));
         }
 
         private void FindNewWheelLocations()
         {
             double scaling = this.GetScaleDownValue(this.carSpeed);
-            this.backWheel += this.carSpeed * scaling * 3 * new Vector(Math.Cos(this.carHeading), Math.Sin(this.carHeading));
-            this.frontWheel += this.carSpeed * scaling * 3 * new Vector(Math.Cos(this.carHeading + this.steerAngle), Math.Sin(this.carHeading + this.steerAngle));
+            /*this.backWheel += this.carSpeed * scaling * 2 * new Vector(Math.Cos(this.carHeading), Math.Sin(this.carHeading));
+            this.frontWheel += this.carSpeed * scaling * 2 * new Vector(Math.Cos(this.carHeading + this.steerAngle), Math.Sin(this.carHeading + this.steerAngle));*/
+            frontWheelX += this.carSpeed * scaling * 0.3 * Math.Cos(carHeading + steerAngle) * 1;
+            frontWheelY += this.carSpeed * scaling * 0.3 * Math.Sin(carHeading + steerAngle) * 1;
+            backWheelX += this.carSpeed * scaling * 0.3 * Math.Cos(carHeading) * 1;
+            backWheelY += this.carSpeed * scaling * 0.3 * Math.Sin(carHeading) * 1;
         }
 
         private void GetNewHeading()
         {
-            this.carLocation = (this.frontWheel + this.backWheel) / 2;
-            this.carHeading = Math.Atan2(this.frontWheel.Y - this.backWheel.Y, this.frontWheel.X - this.backWheel.X);
+            //this.carLocation = (this.frontWheel + this.backWheel) / 2;
+            carHeading = Math.Atan2(frontWheelY - backWheelY, frontWheelX - backWheelX);
+            //this.carHeading = Math.Atan2(this.frontWheel.Y - this.backWheel.Y, this.frontWheel.X - this.backWheel.X);
         }
 
         private double GetScaleDownValue(int speed)

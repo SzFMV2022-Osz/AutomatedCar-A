@@ -4,125 +4,86 @@
 
 namespace AutomatedCar.SystemComponents.Powertrain
 {
+    using System;
+
+    public enum Shifting { Down, None, Up }
+
     /// <summary>
     /// Gear shift.
     /// </summary>
     internal class Gearshift : IGearshift
     {
-        private readonly float[] ratios = { 2.66f, 1.78f, 1.3f, 1f, 0.74f, 0.5f };
         private GearshiftState state;
-        private int gear;
+        private int currentInternalGear;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Gearshift"/> class.
-        /// Gear shift constuctor.
-        /// </summary>
+        public Shifting InnerShiftingStatus { get; set; } = Shifting.None;
+
         public Gearshift()
         {
-            this.gear = 0;
             this.state = GearshiftState.P;
+            this.currentInternalGear = 0;
         }
 
-        /// <summary>
-        /// Returns gear ratio.
-        /// </summary>
-        /// <returns>ratio.</returns>
-        public float GetGearRatio()
+        public GearshiftState State
         {
-            return this.ratios[this.gear];
+            get => this.state;
+
+            set => this.state = value;
         }
 
-        /// <summary>
-        /// Returns state.
-        /// </summary>
-        /// <returns>state.</returns>
-        public GearshiftState GetState()
+        public int CurrentInternalGear
         {
-            return this.state;
+            get => this.currentInternalGear;
+            set => this.currentInternalGear = value;
         }
 
-        /// <summary>
-        /// Returns next gear ratio.
-        /// </summary>
-        /// <returns>ratio or -1f.</returns>
-        public float NextGearRatio()
+        public void StateUp(int velocity, int speed)
         {
-            if (this.gear == (this.ratios.Length - 1))
+            if (state != GearshiftState.D)
             {
-                return -1f;
-            }
-            else
-            {
-                return this.ratios[this.gear + 1];
+                if ((velocity <= 0 && state == GearshiftState.N) || speed == 0 || state == GearshiftState.R)
+                {
+                    State += 1;
+
+                    if (state == GearshiftState.D)
+                    {
+                        CurrentInternalGear = 1;
+                    }
+                }
             }
         }
 
-        /// <summary>
-        /// Returns previous gear ratio.
-        /// </summary>
-        /// <returns>ratio or -1f.</returns>
-        public float PreviousGearRatio()
+        public void StateDown(int velocity, int speed)
         {
-            if (this.gear == 0)
+            if (state != GearshiftState.P)
             {
-                return -1f;
-            }
-            else
-            {
-                return this.ratios[this.gear - 1];
+                if ((velocity >= 0 && state == GearshiftState.N) || speed == 0 || state == GearshiftState.D)
+                {
+                    State -= 1;
+
+                    if (state == GearshiftState.N)
+                    {
+                        CurrentInternalGear = 0;
+                    }
+                }
             }
         }
 
-        /// <summary>
-        /// Sets gear shift state.
-        /// </summary>
-        /// <param name="state">state.</param>
-        public void SetState(GearshiftState state)
-        {
-            this.state = state;
-        }
-
-        /// <summary>
-        /// Shifts down.
-        /// </summary>
         public void ShiftDown()
         {
-            if (this.gear > 0)
+            if (state == GearshiftState.D && currentInternalGear > 0 || state == GearshiftState.N)
             {
-                this.gear--;
+                CurrentInternalGear = Math.Max(currentInternalGear - 1, 1);
+                InnerShiftingStatus = Shifting.Down;
             }
         }
 
-        /// <summary>
-        /// Shifts up.
-        /// </summary>
         public void ShiftUp()
         {
-            if (this.gear < (this.ratios.Length - 1))
+            if (state == GearshiftState.D && currentInternalGear < 4)
             {
-                this.gear++;
-            }
-        }
-
-        /// <summary>
-        /// Switch state dawn.
-        /// </summary>
-        public void StateDown()
-        {
-            if (this.state != GearshiftState.P)
-            {
-                this.state--;
-            }
-        }
-
-        /// <summary>
-        /// Switch state up.
-        /// </summary>
-        public void StateUp()
-        {
-            if (this.state != GearshiftState.D)
-            {
-                this.state++;
+                CurrentInternalGear = Math.Min(currentInternalGear + 1, 4);
+                InnerShiftingStatus = Shifting.Up;
             }
         }
     }

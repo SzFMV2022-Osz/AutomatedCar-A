@@ -4,7 +4,6 @@
 
 namespace AutomatedCar.SystemComponents.Powertrain
 {
-    using Vector = Avalonia.Vector;
 
     /// <summary>
     /// Steering interface.
@@ -14,7 +13,11 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// <summary>
         /// Gets or sets the location of the Car.
         /// </summary>
-        Vector CarLocation { get; set; }
+        //Vector CarLocation { get; set; }
+
+        double CarLocationX { get; set; }
+
+        double CarLocationY { get; set; }
 
         /// <summary>
         /// Gets or sets the speed of the Car.

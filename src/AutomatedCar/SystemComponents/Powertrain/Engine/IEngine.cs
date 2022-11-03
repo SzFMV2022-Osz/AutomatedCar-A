@@ -20,10 +20,14 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// </summary>
         int GetSpeed { get; }
 
+        Vector Acceleration { get; set; }
+
+        Vector Velocity { get; set; }
+
         /// <summary>
         /// Gets the state of the gearbox. Only for debug purposes.
         /// </summary>
-        GearshiftState GetGearshiftState { get; }
+        //GearshiftState GetGearshiftState { get; }
 
         /// <summary>
         /// Gets RPM of the car.
@@ -33,39 +37,36 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// <summary>
         /// Gets the percentage value of the throttle.
         /// </summary>
-        float GetThrottleValue { get; }
+        int GetThrottleValue { get; }
 
         /// <summary>
         /// Gets the percentage value of the brake.
         /// </summary>
-        float GetBrakeValue { get; }
+        int GetBrakeValue { get; }
+
+        void CalculateSpeed();
+
+        double GetVelocityAccordingToGear(double slowingForce);
+
+        void CalculateRevolutions();
+
+        void HandleRpmTransitionWhenShifting();
 
         /// <summary>
         /// Accelerate the car.
         /// </summary>
-        /// <returns>driving force lenght.</returns>
-        float Accelerate();
+        void Accelerate();
 
         /// <summary>
         /// Slows the car.
         /// </summary>
-        /// <returns>driving force lenght.</returns>
-        float Lift();
+        void Lift();
 
         /// <summary>
         /// Breaks the car.
         /// </summary>
-        /// <returns>driving force lenght.</returns>
-        float Braking();
+        void Braking();
 
-        /// <summary>
-        /// Switch state dawn.
-        /// </summary>
-        void StateDown();
-
-        /// <summary>
-        /// Switch state up.
-        /// </summary>
-        void StateUp();
+        void LiftBraking();
     }
 }

@@ -16,16 +16,16 @@ namespace AutomatedCar.SystemComponents.Powertrain
     public interface IGearshift
     {
         /// <summary>
-        /// Returns next gear ratio.
+        /// Gets or sets state.
         /// </summary>
-        /// <returns>ratio or -1f.</returns>
-        float NextGearRatio();
+        /// <returns>state.</returns>
+        GearshiftState State { get; set; }
 
         /// <summary>
-        /// Returns previous gear ratio.
+        /// Gets or sets state.
         /// </summary>
-        /// <returns>ratio or -1f.</returns>
-        float PreviousGearRatio();
+        /// <returns>state.</returns>
+        Shifting InnerShiftingStatus { get; set; }
 
         /// <summary>
         /// Shifts up.
@@ -38,31 +38,13 @@ namespace AutomatedCar.SystemComponents.Powertrain
         void ShiftDown();
 
         /// <summary>
-        /// Sets gear shift state.
-        /// </summary>
-        /// <param name="state">state.</param>
-        void SetState(GearshiftState state);
-
-        /// <summary>
-        /// Returns gear ratio.
-        /// </summary>
-        /// <returns>ratio.</returns>
-        float GetGearRatio();
-
-        /// <summary>
-        /// Returns state.
-        /// </summary>
-        /// <returns>state.</returns>
-        GearshiftState GetState();
-
-        /// <summary>
         /// Switch state dawn.
         /// </summary>
-        void StateDown();
+        void StateDown(int velocity, int speed);
 
         /// <summary>
         /// Switch state up.
         /// </summary>
-        void StateUp();
+        void StateUp(int velocity, int speed);
     }
 }
