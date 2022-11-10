@@ -21,8 +21,6 @@ namespace AutomatedCar.Models.NPC
         /// <summary>
         /// Initializes a new instance of the <see cref="NpcCar"/> class.
         /// </summary>
-        /// <param name="x">X coordinate of current position.</param>
-        /// <param name="y">Y coordinate of current position.</param>
         /// <param name="filename">.</param>
         public NpcCar(Route route, string filename)
             : base(route, filename, 10, true, WorldObjectType.Car)
@@ -46,11 +44,11 @@ namespace AutomatedCar.Models.NPC
         /// <inheritdoc/>
         public void Move()
         {
-            double distanceX = Math.Abs(this.betterX - this.Route.CurrentPoint.X);
-            double distanceY = Math.Abs(this.betterY - this.Route.CurrentPoint.Y);
-            double distance = Math.Sqrt((distanceX * distanceX) + (distanceY * distanceY));
-            Vector newdirection = this.NewDirection();
-            double rotation = (Math.Atan2(newdirection.Y, newdirection.X) * (180 / Math.PI)) + 90;
+            var distanceX = Math.Abs(this.betterX - this.Route.CurrentPoint.X);
+            var distanceY = Math.Abs(this.betterY - this.Route.CurrentPoint.Y);
+            var distance = Math.Sqrt((distanceX * distanceX) + (distanceY * distanceY));
+            var newdirection = this.NewDirection();
+            var rotation = (Math.Atan2(newdirection.Y, newdirection.X) * (180 / Math.PI)) + 90;
 
             if (distanceX == 0 && distanceY == 0)
             {
@@ -87,10 +85,10 @@ namespace AutomatedCar.Models.NPC
                 }
             }
 
-            int carWidth = 100; // TODO: should be calculated somewhere based on the image (filename) or get it as a parameter
-            double rotationRadians = rotation * Math.PI / 180;
-            double offsetX = Math.Cos(rotationRadians) * (carWidth / 2);
-            double offsetY = Math.Sin(rotationRadians) * (carWidth / 2);
+            var carWidth = 100; // TODO: should be calculated somewhere based on the image (filename) or get it as a parameter
+            var rotationRadians = rotation * Math.PI / 180;
+            var offsetX = Math.Cos(rotationRadians) * (carWidth / 2.0);
+            var offsetY = Math.Sin(rotationRadians) * (carWidth / 2.0);
 
             this.X = (int)(this.betterX - offsetX);
             this.Y = (int)(this.betterY - offsetY);
@@ -98,15 +96,11 @@ namespace AutomatedCar.Models.NPC
 
         private Vector NewDirection()
         {
-            Vector direction = new Vector(this.Route.CurrentPoint.X - this.betterX, this.Route.CurrentPoint.Y - this.betterY);
-            double distance = Math.Sqrt((direction.X * direction.X) + (direction.Y * direction.Y));
-            Vector newdirection = new Vector(direction.X / distance, direction.Y / distance);
-            if (distance != 0)
-            {
-                return newdirection;
-            }
+            var direction = new Vector(this.Route.CurrentPoint.X - this.betterX, this.Route.CurrentPoint.Y - this.betterY);
+            var distance = Math.Sqrt((direction.X * direction.X) + (direction.Y * direction.Y));
+            var newdirection = new Vector(direction.X / distance, direction.Y / distance);
 
-            return new Vector(0, 0);
+            return distance != 0 ? newdirection : new Vector(0, 0);
         }
 
         private class MockedRoute
@@ -114,7 +108,6 @@ namespace AutomatedCar.Models.NPC
             public int X { get; set; }
 
             public int Y { get; set; }
-
         }
     }
 }
