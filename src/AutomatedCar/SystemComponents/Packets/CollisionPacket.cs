@@ -1,9 +1,9 @@
 ﻿namespace AutomatedCar.SystemComponents.Packets
 {
-    using AutomatedCar.Models;
-    using ReactiveUI;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using AutomatedCar.Models;
+    using ReactiveUI;
 
     public class CollisionPacket : ReactiveObject, IReadOnlyCollisionPacket
     {

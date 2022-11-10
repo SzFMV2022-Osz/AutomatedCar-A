@@ -1,24 +1,24 @@
 ﻿namespace AutomatedCar.SystemComponents.Sensors
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using AutomatedCar.Helpers;
     using AutomatedCar.Models;
     using AutomatedCar.SystemComponents.Packets;
     using Avalonia;
     using Avalonia.Media;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Numerics;
 
     public class Camera : Sensor
     {
         private WorldObject cameraViewField;
         private PolylineGeometry viewFieldGeometry;
 
-        public Camera(VirtualFunctionBus virtualFunctionBus) : base(virtualFunctionBus)
+        public Camera(VirtualFunctionBus virtualFunctionBus)
+            : base(virtualFunctionBus)
         {
-            double deg = 60;
-            int dist = 80;
+            var deg = 60;
+            var dist = 80;
             this.vision = SensorVision.CalculateVision(dist, deg, new Point(0, 0));
             this.virtualFunctionBus.CameraPacket = new SensorPacket();
         }
@@ -26,7 +26,7 @@
         private void InitCameraViewField()
         {
             var car = World.Instance.ControlledCar;
-            Point cameraPos = new Point(
+            var cameraPos = new Point(
                 x: car.RotationPoint.X,
                 y: car.Geometry.Bounds.Top + 50);
 
@@ -42,7 +42,7 @@
 
         public override void Process()
         {
-            if (cameraViewField is null)
+            if (this.cameraViewField is null)
             {
                 this.InitCameraViewField();
             }
@@ -58,7 +58,7 @@
 
         protected override List<WorldObject> FilterRelevantWorldObjects()
         {
-            List<WorldObject> objs = this.GetWorldObjects();
+            var objs = this.GetWorldObjects();
             return objs.Where(obj => (obj.WorldObjectType == WorldObjectType.Road || obj.WorldObjectType == WorldObjectType.RoadSign) && this.IsRelevant(obj)).ToList();
         }
 
@@ -69,7 +69,7 @@
 
         private bool IsRelevant(WorldObject obj)
         {
-            bool isInTriangle = false;
+            var isInTriangle = false;
             var objPolys = CollisionDetection.TransformRoadRawGeometry(obj);
             var cameraTriangle = new Tuple<Point, Point, Point>(
                 this.viewFieldGeometry.Points[0],
@@ -111,7 +111,7 @@
 
         private void OrderByDistance()
         {
-            //distance = sqrt((x2-x1)^2+(y2-y1)^2)
+            // distance = sqrt((x2-x1)^2+(y2-y1)^2)
             this.virtualFunctionBus.CameraPacket.RelevantWorldObjs = this.virtualFunctionBus.CameraPacket.RelevantWorldObjs.OrderBy(obj => Math.Sqrt(Math.Pow(obj.X - this.vision.SensorPos.X, 2) + Math.Pow(obj.Y - this.vision.SensorPos.Y, 2))).ToList();
         }
     }

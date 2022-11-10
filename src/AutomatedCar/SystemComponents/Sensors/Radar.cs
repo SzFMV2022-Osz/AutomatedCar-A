@@ -26,12 +26,11 @@
             this.distInGame = 50 * this.dist;
 
             // finding car's width
-            //var carWith = this.GetAutomatedCar().RawGeometries[0].Points.Max(x => x.X);
+            // var carWith = this.GetAutomatedCar().RawGeometries[0].Points.Max(x => x.X);
 
             // positioning sensor on the car
             this.vision = SensorVision.CalculateVision(this.dist, this.deg, new Point(0, 0));
             this.virtualFunctionBus.RadarPacket = new RadarPacket();
-
         }
 
         public override void Process()
@@ -48,7 +47,6 @@
         {
             var list = this.GetWorldObjects().Where(x => this.IsRelevant(x)).ToList();
             return list;
-
         }
 
         protected override void SaveWorldObjectsToPacket()
@@ -70,19 +68,18 @@
             Trace.WriteLine("CLOSEST IN LANE:");
             Trace.WriteLine(packet.ClosestInLane == null ? "no closest" : packet.ClosestInLane.Filename + ", " + packet.ClosestInLane.X + ", " + packet.ClosestInLane.Y);
             */
-
         }
 
         private bool IsRelevant(WorldObject obj)
         {
-            AutomatedCar car = this.GetAutomatedCar();
+            var car = this.GetAutomatedCar();
 
             if (obj.Equals(car))
             {
                 return false;
             }
 
-            if (!(obj is INPC) && !(obj is Car))
+            if (obj is not INPC && obj is not Car)
             {
                 return false;
             }
@@ -91,7 +88,7 @@
 
             var roi = this.GetROI();
 
-            bool isInTriangle = false;
+            var isInTriangle = false;
             for (int i = 0; i < objPoly.Points.Count && !isInTriangle; ++i)
             {
                 isInTriangle = CollisionDetection.PointInTriangle(objPoly.Points[i], new Tuple<Point, Point, Point>(roi.Item1, roi.Item2, roi.Item3));
@@ -121,32 +118,36 @@
 
             var carWidth = this.GetAutomatedCar().RawGeometries[0].Points.Max(x => x.X);
 
-            Point relativePoint = new Point(carWidth, -this.distInGame);
-            Point relativeNextPoint = CollisionDetection.RotatePoint(relativePoint, car.Rotation);
+            var relativePoint = new Point(carWidth, -this.distInGame);
+            var relativeNextPoint = CollisionDetection.RotatePoint(relativePoint, car.Rotation);
 
-            Rect rect = new Rect(car.X, car.Y, relativeNextPoint.X, relativeNextPoint.Y);
+            var rect = new Rect(car.X, car.Y, relativeNextPoint.X, relativeNextPoint.Y);
 
-            PolylineGeometry poly = new PolylineGeometry();
+            var poly = new PolylineGeometry();
             poly.Points.Add(rect.TopLeft);
             poly.Points.Add(rect.TopRight);
             poly.Points.Add(rect.BottomLeft);
             poly.Points.Add(rect.BottomRight);
 
-            double closestDist = double.MaxValue;
-            WorldObject closest = relevantList[0];
-            for (int i = 0; i < relevantList.Count; ++i)
+            var closestDist = double.MaxValue;
+            var closest = relevantList[0];
+
+            foreach (var t in relevantList)
             {
                 if (!CollisionDetection.BoundingBoxesCollide(poly, CollisionDetection.TransformRawGeometry(closest), 1))
                 {
                     continue;
                 }
 
-                double calculated = Math.Sqrt(Math.Pow(roi.Item3.X - relevantList[i].X, 2) + Math.Pow(roi.Item3.Y - relevantList[i].Y, 2));
-                if (calculated < closestDist)
+                double calculated = Math.Sqrt(Math.Pow(roi.Item3.X - t.X, 2) + Math.Pow(roi.Item3.Y - t.Y, 2));
+
+                if (!(calculated < closestDist))
                 {
-                    closestDist = calculated;
-                    closest = relevantList[i];
+                    continue;
                 }
+
+                closestDist = calculated;
+                closest = t;
             }
 
             if (closestDist == double.MaxValue)
@@ -159,12 +160,7 @@
 
         private WorldObject NearestWorldObject(List<WorldObject> list)
         {
-            if (list.Count == 0)
-            {
-                return null;
-            }
-
-            return list[0];
+            return list.Count == 0 ? null : list[0];
         }
     }
 }

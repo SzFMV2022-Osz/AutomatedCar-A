@@ -44,14 +44,17 @@ namespace AutomatedCar.SystemComponents.InputManager.Messenger
 
             set
             {
-                EventHandler<ControlEventArgs> handler = SteeringEventHandler;
-                ControlEventArgs eventArgs = new ControlEventArgs();
-                if (handler != null)
+                var handler = SteeringEventHandler;
+                var eventArgs = new ControlEventArgs();
+
+                if (handler == null)
                 {
-                    eventArgs.Steering = value;
-                    this.steering = value;
-                    handler?.Invoke(this, eventArgs);
+                    return;
                 }
+
+                eventArgs.Steering = value;
+                this.steering = value;
+                handler?.Invoke(this, eventArgs);
             }
         }
 
@@ -67,14 +70,17 @@ namespace AutomatedCar.SystemComponents.InputManager.Messenger
 
             set
             {
-                EventHandler<ControlEventArgs> handler = PedalEventHandler;
-                ControlEventArgs eventArgs = new ControlEventArgs();
-                if (handler != null)
+                var handler = PedalEventHandler;
+                var eventArgs = new ControlEventArgs();
+
+                if (handler == null)
                 {
-                    eventArgs.Pedal = value;
-                    this.pedal = value;
-                    handler?.Invoke(this, eventArgs);
+                    return;
                 }
+
+                eventArgs.Pedal = value;
+                this.pedal = value;
+                handler?.Invoke(this, eventArgs);
             }
         }
 
@@ -90,14 +96,17 @@ namespace AutomatedCar.SystemComponents.InputManager.Messenger
 
             set
             {
-                EventHandler<ControlEventArgs> handler = GearboxEventHandler;
-                ControlEventArgs eventArgs = new ControlEventArgs();
-                if (handler != null)
+                var handler = GearboxEventHandler;
+                var eventArgs = new ControlEventArgs();
+
+                if (handler == null)
                 {
-                    eventArgs.Gear = value;
-                    this.gears = value;
-                    handler?.Invoke(this, eventArgs);
+                    return;
                 }
+
+                eventArgs.Gear = value;
+                this.gears = value;
+                handler?.Invoke(this, eventArgs);
             }
         }
     }

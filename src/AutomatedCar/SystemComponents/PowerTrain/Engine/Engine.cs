@@ -2,13 +2,9 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace AutomatedCar.SystemComponents.Powertrain
+namespace AutomatedCar.SystemComponents.Powertrain.Engine
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
 
     /// <summary>
     /// Engine.
@@ -79,14 +75,18 @@ namespace AutomatedCar.SystemComponents.Powertrain
             this.Velocity += this.ChangeVelocity(false) + this.ChangeVelocity(true);
             this.rpm = this.GetRPM();
 
-            if (this.rpm.Equals(this.maxrpm))
+            if (!this.rpm.Equals(this.maxrpm))
             {
-                if (this.GetNextGearRPM() > this.minrpm)
-                {
-                    this.gearshift.ShiftUp();
-                    this.rpm = this.GetRPM();
-                }
+                return this.LongitudinalForce();
             }
+
+            if (!(this.GetNextGearRPM() > this.minrpm))
+            {
+                return this.LongitudinalForce();
+            }
+
+            this.gearshift.ShiftUp();
+            this.rpm = this.GetRPM();
 
             return this.LongitudinalForce();
         }
@@ -101,14 +101,19 @@ namespace AutomatedCar.SystemComponents.Powertrain
             this.breakPedal -= .01f;
             this.gasPedal -= .01f;
             this.Velocity = (int)this.GetSpeedByWheelRotation() + this.ChangeVelocity(false) + this.ChangeVelocity(true);
-            if (this.rpm < this.minrpm + 0.25f)
+
+            if (!(this.rpm < this.minrpm + 0.25f))
             {
-                if (this.GetPrewGearRPM() < this.maxrpm)
-                {
-                    this.gearshift.ShiftDown();
-                    this.rpm = this.GetRPM();
-                }
+                return this.LongitudinalForce(true);
             }
+
+            if (!(this.GetPrewGearRPM() < this.maxrpm))
+            {
+                return this.LongitudinalForce(true);
+            }
+
+            this.gearshift.ShiftDown();
+            this.rpm = this.GetRPM();
 
             return this.LongitudinalForce(true);
         }
@@ -125,14 +130,18 @@ namespace AutomatedCar.SystemComponents.Powertrain
             this.Velocity += this.ChangeVelocity(false) + this.ChangeVelocity(true);
             this.rpm = this.GetRPM();
 
-            if (this.rpm < this.minrpm)
+            if (!(this.rpm < this.minrpm))
             {
-                if (this.GetPrewGearRPM() < this.maxrpm)
-                {
-                    this.gearshift.ShiftDown();
-                    this.rpm = this.GetRPM();
-                }
+                return this.LongitudinalForce();
             }
+
+            if (!(this.GetPrewGearRPM() < this.maxrpm))
+            {
+                return this.LongitudinalForce();
+            }
+
+            this.gearshift.ShiftDown();
+            this.rpm = this.GetRPM();
 
             return this.LongitudinalForce();
         }
@@ -279,18 +288,17 @@ namespace AutomatedCar.SystemComponents.Powertrain
 
         private float LookupHpCurve(float rpm)
         {
-            if (rpm >= 1000 && rpm <= 5000)
+            if (rpm is >= 1000 and <= 5000)
             {
                 return (0.06875f * rpm) - 18.75f;
             }
-            else if (rpm > 5000 && rpm < this.maxrpm)
+
+            if (rpm > 5000 && rpm < this.maxrpm)
             {
                 return (-1 * (float)Math.Pow(rpm - 5500, 2) * 0.000099f) + 350;
             }
-            else
-            {
-                return 325.25f;
-            }
+
+            return 325.25f;
         }
 
         private float Frr()

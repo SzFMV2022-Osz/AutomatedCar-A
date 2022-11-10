@@ -36,7 +36,7 @@
         /// Calculates absolute coordinates of the sensor's vision.
         /// Item1: Left Pos
         /// Item2: Right Pos
-        /// Item3: Sensor Pos
+        /// Item3: Sensor Pos.
         /// </summary>
         /// <returns>Region of interest.</returns>
         protected Tuple<Point, Point, Point> GetROI()
@@ -45,7 +45,7 @@
             var carPos = new Point(car.X, car.Y);
             var sensorOffset = new Point(0, -car.RotationPoint.Y);
 
-            List<Point> points = new List<Point>();
+            var points = new List<Point>();
             points.Add(CollisionDetection.RotatePoint(this.vision.Left, car.Rotation) + carPos + sensorOffset);
             points.Add(CollisionDetection.RotatePoint(this.vision.Right, car.Rotation) + carPos + sensorOffset);
             points.Add(CollisionDetection.RotatePoint(this.vision.SensorPos, car.Rotation) + carPos + sensorOffset);
