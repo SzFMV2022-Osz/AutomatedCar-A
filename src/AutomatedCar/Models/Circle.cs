@@ -27,9 +27,7 @@ namespace AutomatedCar.Models
 
         public int Height { get; set; }
 
-        public double CalculateArea()
-        {
-            return Math.PI * this.Radius * this.Radius;
-        }
+        public double CalculateArea() =>
+            Math.PI * this.Radius * this.Radius;
     }
 }

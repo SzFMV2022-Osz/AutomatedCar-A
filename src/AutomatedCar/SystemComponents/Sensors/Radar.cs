@@ -36,7 +36,7 @@
 
         public override void Process()
         {
-            if (World.Instance.controlledCars.Count == 0)
+            if (World.Instance.ControlledCars.Count == 0)
             {
                 return;
             }

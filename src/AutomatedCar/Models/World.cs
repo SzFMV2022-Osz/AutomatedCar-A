@@ -7,22 +7,23 @@
     using System.Globalization;
     using System.IO;
     using System.Reflection;
-    using Newtonsoft.Json;
-    using Helpers;
-    using Visualization;
     using Avalonia.Media;
+    using Helpers;
+    using Newtonsoft.Json;
+    using Visualization;
 
     public class World
     {
         private int controlledCarPointer = 0;
-        public List<AutomatedCar> controlledCars = new ();
+        public List<AutomatedCar> ControlledCars = new ();
 
         public static World Instance { get; } = new World();
+
         public List<WorldObject> WorldObjects { get; set; } = new List<WorldObject>();
 
         public AutomatedCar ControlledCar
         {
-            get => this.controlledCars[this.controlledCarPointer];
+            get => this.ControlledCars[this.controlledCarPointer];
         }
 
         public int ControlledCarPointer
@@ -36,13 +37,13 @@
 
         public void AddControlledCar(AutomatedCar controlledCar)
         {
-            this.controlledCars.Add(controlledCar);
+            this.ControlledCars.Add(controlledCar);
             this.AddObject(controlledCar);
         }
 
         public void NextControlledCar()
         {
-            if (this.controlledCarPointer < this.controlledCars.Count - 1)
+            if (this.controlledCarPointer < this.ControlledCars.Count - 1)
             {
                 this.ControlledCarPointer += 1;
             }
@@ -60,7 +61,7 @@
             }
             else
             {
-               this.ControlledCarPointer = this.controlledCars.Count - 1;
+                this.ControlledCarPointer = this.ControlledCars.Count - 1;
             }
         }
 
@@ -81,15 +82,21 @@
             var renderTransformOrigins = this.CalculateRenderTransformOrigins();
             var worldObjectPolygons = this.ReadPolygonJSON();
 
-            StreamReader reader = new StreamReader(Assembly.GetExecutingAssembly()
-                    .GetManifestResourceStream(filename));
+            var reader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream(filename));
 
             RawWorld rawWorld = JsonConvert.DeserializeObject<RawWorld>(reader.ReadToEnd());
             this.Height = rawWorld.Height;
             this.Width = rawWorld.Width;
             foreach (RawWorldObject rwo in rawWorld.Objects)
             {
-                var wo = new WorldObject(rwo.X, rwo.Y, rwo.Type + ".png", this.DetermineZIndex(rwo.Type), this.DetermineCollidablity(rwo.Type), this.DetermineType(rwo.Type));
+                var wo = new WorldObject(
+                    rwo.X,
+                    rwo.Y,
+                    rwo.Type + ".png",
+                    this.DetermineZIndex(rwo.Type),
+                    this.DetermineCollidablity(rwo.Type),
+                    this.DetermineType(rwo.Type));
+
                 (int x, int y) rp = (0, 0);
 
                 if (rotationPoints.ContainsKey(rwo.Type))
@@ -99,11 +106,11 @@
 
                 wo.RotationPoint = new System.Drawing.Point(rp.x, rp.y);
 
-                string rto = "0,0";
+                var rto = "0,0";
 
                 if (renderTransformOrigins.ContainsKey(rwo.Type))
                 {
-                   rto = renderTransformOrigins[rwo.Type];
+                    rto = renderTransformOrigins[rwo.Type];
                 }
 
                 wo.RenderTransformOrigin = rto;
@@ -128,11 +135,18 @@
                         transformGroup.Children.Add(rotate);
                         transformGroup.Children.Add(translate);
 
-                        var mx2 = new System.Drawing.Drawing2D.Matrix(rwo.M11, rwo.M12, rwo.M21, rwo.M22, wo.RotationPoint.X, wo.RotationPoint.Y);
+                        var mx2 = new System.Drawing.Drawing2D.Matrix(
+                            rwo.M11,
+                            rwo.M12,
+                            rwo.M21,
+                            rwo.M22,
+                            wo.RotationPoint.X,
+                            wo.RotationPoint.Y);
+
                         var mx = new System.Drawing.Drawing2D.Matrix();
                         mx.RotateAt(Convert.ToSingle(wo.Rotation), new PointF(wo.RotationPoint.X, wo.RotationPoint.Y));
                         mx.Translate(wo.RotationPoint.X, wo.RotationPoint.Y);
-                        PointF[] gpa = new PointF[geometry.Points.Count];
+                        var gpa = new PointF[geometry.Points.Count];
 
                         var gpa2 = this.ToDotNetPoints(geometry.Points).ToArray();
                         this.ToDotNetPoints(geometry.Points).CopyTo(gpa);
@@ -148,6 +162,7 @@
         private List<System.Drawing.PointF> ToDotNetPoints(Avalonia.Points points)
         {
             var result = new List<System.Drawing.PointF>();
+
             foreach (var p in points)
             {
                 result.Add(new PointF(Convert.ToSingle(p.X), Convert.ToSingle(p.Y)));
@@ -159,6 +174,7 @@
         private List<System.Drawing.PointF> ToDotNetPoints(Avalonia.Points points, int x, int y)
         {
             var result = new List<System.Drawing.PointF>();
+
             foreach (var p in points)
             {
                 result.Add(new PointF(Convert.ToSingle(p.X) + x, Convert.ToSingle(p.Y) + y));
@@ -170,6 +186,7 @@
         private Avalonia.Points ToAvaloniaPoints(IEnumerable<PointF> points)
         {
             var result = new Avalonia.Points();
+
             foreach (var p in points)
             {
                 result.Add(new Avalonia.Point(p.X, p.Y));
@@ -180,12 +197,13 @@
 
         private Dictionary<string, (int x, int y)> ReadRotationsPoints(string filename = "reference_points.json")
         {
-            StreamReader reader = new StreamReader(Assembly.GetExecutingAssembly()
-                    .GetManifestResourceStream($"AutomatedCar.Assets.{filename}"));
+            var reader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream($"AutomatedCar.Assets.{filename}"));
 
             var rotationPoints = JsonConvert.DeserializeObject<List<RotationPoint>>(reader.ReadToEnd());
+
             Dictionary<string, (int x, int y)> result = new ();
-            foreach (RotationPoint rp in rotationPoints)
+
+            foreach (var rp in rotationPoints)
             {
                 result.Add(rp.Type, (rp.X, rp.Y));
             }
@@ -193,17 +211,20 @@
             return result;
         }
 
-        private Dictionary<string, List<PolylineGeometry>> ReadPolygonJSON(string filename = "worldobject_polygons.json")
+        private Dictionary<string, List<PolylineGeometry>> ReadPolygonJSON(
+            string filename = "worldobject_polygons.json")
         {
             // TODO: Avalonia specific
-            StreamReader reader = new StreamReader(Assembly.GetExecutingAssembly()
-                    .GetManifestResourceStream($"AutomatedCar.Assets.{filename}"));
+            StreamReader reader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream($"AutomatedCar.Assets.{filename}"));
 
-            var objects = JsonConvert.DeserializeObject<Dictionary<string, List<RawWorldObjectPolygon>>>(reader.ReadToEnd())["objects"];
+            var objects =
+                JsonConvert.DeserializeObject<Dictionary<string, List<RawWorldObjectPolygon>>>(reader.ReadToEnd())["objects"];
             var result = new Dictionary<string, List<PolylineGeometry>>();
+
             foreach (RawWorldObjectPolygon rwop in objects)
             {
                 var polygonList = new List<PolylineGeometry>();
+
                 foreach (RawPolygon rp in rwop.Polys)
                 {
                     var points = new Avalonia.Points();
@@ -225,17 +246,17 @@
         // It accepts different string values than WPF. For .5,.5 you actually need 50%,50%. .5,.5 is treated as "half of the logical pixel" in both directions instead of "half of the control"
         private Dictionary<string, string> CalculateRenderTransformOrigins(string filename = "reference_points.json")
         {
-            NumberFormatInfo nfi = new NumberFormatInfo();
+            var nfi = new NumberFormatInfo();
             nfi.NumberDecimalSeparator = ".";
-            StreamReader reader = new StreamReader(Assembly.GetExecutingAssembly()
-                    .GetManifestResourceStream($"AutomatedCar.Assets.{filename}"));
+            var reader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream($"AutomatedCar.Assets.{filename}"));
 
             var rotationPoints = JsonConvert.DeserializeObject<List<RotationPoint>>(reader.ReadToEnd());
             Dictionary<string, string> result = new ();
+
             foreach (RotationPoint rp in rotationPoints)
             {
                 var img = new System.Drawing.Bitmap(Assembly.GetExecutingAssembly()
-                        .GetManifestResourceStream($"AutomatedCar.Assets.WorldObjects.{rp.Type}.png"));
+                    .GetManifestResourceStream($"AutomatedCar.Assets.WorldObjects.{rp.Type}.png"));
                 var x = rp.Y / (double)img.Size.Width * 100.0;
                 var y = rp.X / (double)img.Size.Height * 100.0;
                 result.Add(rp.Type, x.ToString("0.00", nfi) + "%," + y.ToString("0.00", nfi) + "%");
@@ -250,6 +271,7 @@
         {
             // return Math.Atan2(m11, m12) * (180.0 / Math.PI);
             var result = Math.Acos(m11) * (180.0 / Math.PI);
+
             if (m12 < 0)
             {
                 result = 360 - result;
@@ -260,11 +282,13 @@
 
         private int DetermineZIndex(string type)
         {
-            int result = 1;
+            var result = 1;
+
             if (type == "crosswalk")
             {
                 result = 5;
             }
+
             if (type == "tree")
             {
                 result = 20;
@@ -275,20 +299,27 @@
 
         private bool DetermineCollidablity(string type)
         {
-            List<string> collideables = new List<string> { "boundary", "garage", "parking_bollard",
-                "roadsign_parking_right", "roadsign_priority_stop", "roadsign_speed_40", "roadsign_speed_50", "roadsign_speed_60", "tree" };
-            bool result = false;
-            if (collideables.Contains(type))
+            var collideables = new List<string>
             {
-                result = true;
-            }
+                "boundary",
+                "garage",
+                "parking_bollard",
+                "roadsign_parking_right",
+                "roadsign_priority_stop",
+                "roadsign_speed_40",
+                "roadsign_speed_50",
+                "roadsign_speed_60",
+                "tree",
+            };
+
+            var result = collideables.Contains(type);
 
             return result;
         }
 
         private WorldObjectType DetermineType(string type)
         {
-            WorldObjectType result = WorldObjectType.Other;
+            var result = WorldObjectType.Other;
             switch (type)
             {
                 case "boundary":
@@ -325,8 +356,8 @@
 
         public GraphicsPath AddGeometry()
         {
-            GraphicsPath geom = new ();
-            List<Point> points = new ();
+            var geom = new GraphicsPath();
+            var points = new List<Point>();
             points.Add(new Point(50, 50));
             points.Add(new Point(50, 100));
             points.Add(new Point(100, 50));
@@ -335,7 +366,6 @@
             geom.CloseFigure();
 
             // geom.PathPoints
-
             return geom;
         }
     }
