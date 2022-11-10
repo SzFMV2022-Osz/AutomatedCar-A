@@ -4,10 +4,7 @@
 
     public class PopUpWindowViewModel : ViewModelBase
     {
-        public PopUpWindowViewModel(AutomatedCar controlledCar)
-        {
-            this.ControlledCar = new CarViewModel(controlledCar);
-        }
+        public PopUpWindowViewModel(AutomatedCar controlledCar) => this.ControlledCar = new CarViewModel(controlledCar);
 
         public CarViewModel ControlledCar { get; set; }
     }

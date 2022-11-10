@@ -1,15 +1,10 @@
 ﻿namespace AutomatedCar.ViewModels
 {
+    using System.Collections.Generic;
+    using System.Drawing;
     using AutomatedCar.Models;
     using Avalonia.Media;
     using ReactiveUI;
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Drawing;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
 
     public class WorldObjectViewModel : ViewModelBase
     {
@@ -19,12 +14,6 @@
         {
             this.worldObject = worldObject;
             this.worldObject.PropertyChangedEvent += this.OnPropertyChanged;
-        }
-
-
-        private void OnPropertyChanged(object sender, PropertyChangedEventArgs args)
-        {
-            this.RaisePropertyChanged(args.PropertyName);
         }
 
         public int X
@@ -42,7 +31,7 @@
             get => this.worldObject.Rotation;
         }
 
-        public int ZIndex 
+        public int ZIndex
         {
             get => this.worldObject.ZIndex;
         }
@@ -52,7 +41,7 @@
             get => this.worldObject.Filename;
         }
 
-        public Point RotationPoint 
+        public Point RotationPoint
         {
             get => this.worldObject.RotationPoint;
         }
@@ -82,5 +71,8 @@
         {
             get => this.worldObject.WorldObjectType;
         }
+
+        private void OnPropertyChanged(object sender, PropertyChangedEventArgs args) =>
+            this.RaisePropertyChanged(args.PropertyName);
     }
 }
