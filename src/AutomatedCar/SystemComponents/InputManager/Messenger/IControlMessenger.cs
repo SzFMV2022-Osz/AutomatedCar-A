@@ -29,7 +29,7 @@ namespace AutomatedCar.SystemComponents.InputManager.Messenger
         /// <summary>
         /// Event for the cruise control.
         /// </summary>
-        event EventHandler CruiseControlEventHandler;
+        event EventHandler<ControlEventArgs> CruiseControlEventHandler;
 
         /// <summary>
         /// Fires the event for steering wheel state change.
@@ -52,6 +52,7 @@ namespace AutomatedCar.SystemComponents.InputManager.Messenger
         /// <summary>
         /// Fires the even for cruise control controlling.
         /// </summary>
+        /// <param name="cruiseControlInput">Tells the cruise control what type of input was received.</param>
         public void FireCruiseControlEvent(CruiseControlInputs cruiseControlInput);
     }
 }

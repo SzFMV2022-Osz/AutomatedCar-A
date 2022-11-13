@@ -33,7 +33,7 @@ namespace AutomatedCar.SystemComponents.InputManager.Messenger
         /// <summary>
         /// Event for the cruise control.
         /// </summary>
-        public event EventHandler CruiseControlEventHandler;
+        public event EventHandler<ControlEventArgs> CruiseControlEventHandler;
 
         /// <summary>
         /// Gets a ControlMessenger instance.
@@ -96,6 +96,10 @@ namespace AutomatedCar.SystemComponents.InputManager.Messenger
             }
         }
 
+        /// <summary>
+        /// Fires the event for cruise control input received.
+        /// </summary>
+        /// <param name="cruiseControlInput">The type of input received for the cruise control.</param>
         public void FireCruiseControlEvent(CruiseControlInputs cruiseControlInput)
         {
             ControlEventArgs eventArgs = new ControlEventArgs();

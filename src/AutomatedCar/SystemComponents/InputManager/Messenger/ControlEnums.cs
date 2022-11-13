@@ -76,6 +76,8 @@ namespace AutomatedCar.SystemComponents.InputManager.Messenger
 
         IncreaseTargetSpeed,
 
-        DecreaseTargetSpeed
+        DecreaseTargetSpeed,
+
+        Empty
     }
 }
