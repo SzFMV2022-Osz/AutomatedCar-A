@@ -6,6 +6,7 @@ namespace AutomatedCar.SystemComponents.InputManager.InputHandler
 {
     using AutomatedCar.SystemComponents.InputManager.Messenger;
     using AutomatedCar.SystemComponents.Packets;
+    using System.Diagnostics;
 
     /// <summary>
     /// InputManager manages the input packets for the powertrain.
@@ -128,6 +129,7 @@ namespace AutomatedCar.SystemComponents.InputManager.InputHandler
         /// <param name="eventArgs"></param>
         public void OnCruiseControlInput(object sender, ControlEventArgs eventArgs)
         {
+            Debug.WriteLine(eventArgs.CruiseControlInput.ToString());
             switch (eventArgs.CruiseControlInput)
             {
                 case CruiseControlInputs.TurnOnOrOff:
