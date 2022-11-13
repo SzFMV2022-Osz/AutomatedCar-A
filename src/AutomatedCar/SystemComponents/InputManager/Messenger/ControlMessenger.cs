@@ -31,6 +31,11 @@ namespace AutomatedCar.SystemComponents.InputManager.Messenger
         public event EventHandler<ControlEventArgs> GearboxEventHandler;
 
         /// <summary>
+        /// Event for the cruise control.
+        /// </summary>
+        public event EventHandler CruiseControlEventHandler;
+
+        /// <summary>
         /// Gets a ControlMessenger instance.
         /// </summary>
         public static ControlMessenger Instance
@@ -88,6 +93,16 @@ namespace AutomatedCar.SystemComponents.InputManager.Messenger
             {
                 eventArgs.Gear = gearState;
                 this.GearboxEventHandler?.Invoke(this, eventArgs);
+            }
+        }
+
+        public void FireCruiseControlEvent(CruiseControlInputs cruiseControlInput)
+        {
+            ControlEventArgs eventArgs = new ControlEventArgs();
+            if (this.CruiseControlEventHandler != null)
+            {
+                eventArgs.CruiseControlInput = cruiseControlInput;
+                this.CruiseControlEventHandler?.Invoke(this, eventArgs);
             }
         }
     }
