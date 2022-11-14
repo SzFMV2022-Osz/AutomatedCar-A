@@ -4,6 +4,7 @@
 
 namespace AutomatedCar.SystemComponents.Powertrain
 {
+    using System;
     using System.Diagnostics;
     using AutomatedCar.Models;
     using AutomatedCar.SystemComponents.InputManager.Messenger;
@@ -140,22 +141,22 @@ namespace AutomatedCar.SystemComponents.Powertrain
                 case SteeringState.Left:
                     this.steering.TurnLeft();
                     this.steering.GetRotation();
-                    World.Instance.ControlledCar.Rotation = this.steering.Rotation;
+                    World.Instance.ControlledCar.Rotation -= Convert.ToInt32(this.steering.Rotation);
                     World.Instance.ControlledCar.X = (int)this.steering.CarLocation.X;
                     World.Instance.ControlledCar.Y = (int)this.steering.CarLocation.Y;
                     //this.virtualFunctionBus.PowertrainPacket.Steering = this.virtualFunctionBus.InputPacket.SteeringState;
-                    this.virtualFunctionBus.PowertrainPacket.RotationAngle = this.steering.Rotation;
+                    this.virtualFunctionBus.PowertrainPacket.RotationAngle -= Convert.ToInt32(this.steering.Rotation) * 2;
                     this.virtualFunctionBus.PowertrainPacket.Left = "L";
                     this.virtualFunctionBus.PowertrainPacket.Right = string.Empty;
                     break;
                 case SteeringState.Right:
                     this.steering.TurnRight();
                     this.steering.GetRotation();
-                    World.Instance.ControlledCar.Rotation = this.steering.Rotation;
+                    World.Instance.ControlledCar.Rotation += Convert.ToInt32(this.steering.Rotation);
                     World.Instance.ControlledCar.X = (int)this.steering.CarLocation.X;
                     World.Instance.ControlledCar.Y = (int)this.steering.CarLocation.Y;
                     //this.virtualFunctionBus.PowertrainPacket.Steering = this.virtualFunctionBus.InputPacket.SteeringState;
-                    this.virtualFunctionBus.PowertrainPacket.RotationAngle = this.steering.Rotation;
+                    this.virtualFunctionBus.PowertrainPacket.RotationAngle += Convert.ToInt32(this.steering.Rotation) * 2;
                     this.virtualFunctionBus.PowertrainPacket.Left = string.Empty;
                     this.virtualFunctionBus.PowertrainPacket.Right = "R";
                     break;
