@@ -106,6 +106,10 @@ namespace AutomatedCar.ViewModels
         {
             // World.Instance.DebugStatus.Rotate = !World.Instance.DebugStatus.Rotate;
         }
+        public void ToggleLKA()
+        {
+
+        }
 
         public void OnKeyUp(Key key)
         {

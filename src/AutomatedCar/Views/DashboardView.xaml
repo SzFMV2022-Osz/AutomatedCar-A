@@ -51,6 +51,10 @@
                               RenderTransformOrigin="{Binding RotationPoint, Converter={x:Static visualization:RenderTransformOriginTransformer.Instance}}"
                               Source="resm:AutomatedCar.Assets.steering-wheel.png?assembly=AutomatedCar">
                           </Image>
+							<Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto">
+								<TextBlock Grid.Row="0" Grid.Column="0">LKA on/off:</TextBlock>
+								<TextBlock Grid.Row="0" Grid.Column="1" Text=" {Binding Car.VirtualFunctionBus.XXX}"/>
+							</Grid>
                             <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
                                 <TextBlock Grid.Row="0" Grid.Column="0">X:</TextBlock>
                                 <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding X}"/>

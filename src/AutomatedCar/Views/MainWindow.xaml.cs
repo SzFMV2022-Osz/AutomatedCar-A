@@ -90,6 +90,11 @@ namespace AutomatedCar.Views
                 viewModel.CourseDisplay.ToggleRotation();
             }
 
+            if (Keyboard.IsKeyDown(Key.L))
+            {
+                viewModel.CourseDisplay.ToggleLKA();
+            }
+
             if (Keyboard.IsKeyDown(Key.F1))
             {
                 new HelpWindow().Show();
