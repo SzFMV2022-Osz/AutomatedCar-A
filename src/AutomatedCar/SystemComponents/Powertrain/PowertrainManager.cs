@@ -171,8 +171,8 @@ namespace AutomatedCar.SystemComponents.Powertrain
                     break;
             }
 
-            Debug.WriteLine(this.engine.GetSpeed);
-            Debug.WriteLine(this.engine.GetGearshiftState);
+            //Debug.WriteLine(this.engine.GetSpeed);
+            //Debug.WriteLine(this.engine.GetGearshiftState);
         }
     }
 }

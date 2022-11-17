@@ -6,6 +6,7 @@ namespace AutomatedCar.SystemComponents.InputManager.InputHandler
 {
     using AutomatedCar.SystemComponents.InputManager.Messenger;
     using AutomatedCar.SystemComponents.Packets;
+    using System.Diagnostics;
 
     /// <summary>
     /// InputManager manages the input packets for the powertrain.
@@ -25,10 +26,12 @@ namespace AutomatedCar.SystemComponents.InputManager.InputHandler
             this.CurrentGearState = Gears.Steady;
             this.CurrendPedalState = Pedals.Empty;
             this.CurrentSteeringState = SteeringState.Center;
+            this.CurrentCruiseControlInput = CruiseControlInputs.Empty;
 
             ControlMessenger.Instance.SteeringEventHandler += this.OnSteering;
             ControlMessenger.Instance.PedalEventHandler += this.OnPedal;
             ControlMessenger.Instance.GearboxEventHandler += this.OnGearbox;
+            ControlMessenger.Instance.CruiseControlEventHandler += this.OnCruiseControlInput;
         }
 
         /// <summary>
@@ -50,6 +53,11 @@ namespace AutomatedCar.SystemComponents.InputManager.InputHandler
         /// Gets or sets the next value for the InputPacket.
         /// </summary>
         private Pedals CurrendPedalState { get; set; }
+
+        /// <summary>
+        /// Gets or sets the next value for the InputPacket.
+        /// </summary>
+        private CruiseControlInputs CurrentCruiseControlInput { get; set; }
 
         /// <summary>
         /// Sets the packet for steering.
@@ -114,6 +122,33 @@ namespace AutomatedCar.SystemComponents.InputManager.InputHandler
             }
         }
 
+        /// <summary>
+        /// Sets the packet for cruise control.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="eventArgs"></param>
+        public void OnCruiseControlInput(object sender, ControlEventArgs eventArgs)
+        {
+            Debug.WriteLine(eventArgs.CruiseControlInput.ToString());
+            switch (eventArgs.CruiseControlInput)
+            {
+                case CruiseControlInputs.TurnOnOrOff:
+                    this.CurrentCruiseControlInput = CruiseControlInputs.TurnOnOrOff;
+                    break;
+                case CruiseControlInputs.ChangeTargetDistance:
+                    this.CurrentCruiseControlInput = CruiseControlInputs.ChangeTargetDistance;
+                    break;
+                case CruiseControlInputs.IncreaseTargetSpeed:
+                    this.CurrentCruiseControlInput = CruiseControlInputs.IncreaseTargetSpeed;
+                    break;
+                case CruiseControlInputs.DecreaseTargetSpeed:
+                    this.CurrentCruiseControlInput= CruiseControlInputs.DecreaseTargetSpeed;
+                    break;
+                case CruiseControlInputs.Empty:
+                    this.CurrentCruiseControlInput = CruiseControlInputs.Empty;
+                    break;
+            }
+        }
         /// <inheritdoc/>
         public override void Process()
         {
@@ -121,6 +156,7 @@ namespace AutomatedCar.SystemComponents.InputManager.InputHandler
             this.InputPacket.GearState = this.CurrentGearState;
             this.InputPacket.PedalState = this.CurrendPedalState;
             this.InputPacket.SteeringState = this.CurrentSteeringState;
+            this.InputPacket.CruiseControlInput = this.CurrentCruiseControlInput;
         }
 
         private bool IsGearStateJustChanged(Gears newGearState)

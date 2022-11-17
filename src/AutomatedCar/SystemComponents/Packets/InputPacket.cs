@@ -20,6 +20,7 @@ namespace AutomatedCar.SystemComponents.Packets
             this.PedalState = Pedals.Empty;
             this.GearState = Gears.Steady;
             this.IsGearStateJustChanged = false;
+            this.CruiseControlInput = CruiseControlInputs.Empty;
         }
 
         /// <summary>
@@ -36,6 +37,11 @@ namespace AutomatedCar.SystemComponents.Packets
         /// Gets or sets the state of the gearbox.
         /// </summary>
         public Gears GearState { get; set; }
+       
+        /// <summary>
+        /// Gets or sets if input is detected for the cruise control.
+        /// </summary>
+        public CruiseControlInputs CruiseControlInput { get; set; }
 
         /// <summary>
         /// Gets or sets if the gear state is just changed.
@@ -48,7 +54,7 @@ namespace AutomatedCar.SystemComponents.Packets
         /// <returns>A string to log.</returns>
         public override string ToString()
         {
-            return $"{this.SteeringState.ToString()} - {this.PedalState.ToString()} - {this.GearState.ToString()} - GearStateJustChanged: {this.IsGearStateJustChanged}";
+            return $"{this.SteeringState.ToString()} - {this.PedalState.ToString()} - {this.GearState.ToString()} - GearStateJustChanged: {this.IsGearStateJustChanged} - {this.CruiseControlInput.ToString()}";
         }
     }
 }
