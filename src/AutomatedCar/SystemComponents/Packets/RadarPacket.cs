@@ -13,16 +13,32 @@
         private WorldObject closestInLane;
         private WorldObject closest;
 
+        private Dictionary<WorldObject, WorldObjectTracker> objectTrackingDatas;
+
         public WorldObject ClosestInLane
         {
             get => this.closestInLane;
-            set => this.RaiseAndSetIfChanged(ref this.closestInLane, value);
+            set
+            {
+                this.RaiseAndSetIfChanged(ref this.closestInLane, null); // ugly fix for refreshing UI, but it works
+                this.RaiseAndSetIfChanged(ref this.closestInLane, value);
+            }
         }
 
         public WorldObject Closest
         {
             get => this.closest;
-            set => this.RaiseAndSetIfChanged(ref this.closest, value);
+            set
+            {
+                this.RaiseAndSetIfChanged(ref this.closest, null); // same here
+                this.RaiseAndSetIfChanged(ref this.closest, value);
+            }
+        }
+
+        public Dictionary<WorldObject, WorldObjectTracker> ObjectTrackingDatas
+        {
+            get => this.objectTrackingDatas;
+            set => this.objectTrackingDatas = value;
         }
     }
 }
