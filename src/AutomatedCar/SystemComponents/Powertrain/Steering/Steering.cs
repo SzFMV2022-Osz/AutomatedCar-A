@@ -2,7 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace AutomatedCar.SystemComponents.Powertrain
+namespace AutomatedCar.SystemComponents.Powertrain.Steering
 {
     using System;
     using System.Collections.Generic;

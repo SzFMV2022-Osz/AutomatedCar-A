@@ -32,7 +32,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
             virtualFunctionBus.PowertrainPacket = this.powertrainPacket;
             this.gearshift = new Gearshift();
             this.engine = new Engine(this.gearshift);
-            this.steering = new Steering();
+            this.steering = new Steering.Steering();
         }
 
         /// <summary>
