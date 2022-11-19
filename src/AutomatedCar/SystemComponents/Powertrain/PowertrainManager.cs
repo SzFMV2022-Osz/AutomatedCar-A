@@ -16,9 +16,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
     public class PowertrainManager : SystemComponent, IPowertrain
     {
         private IPowertrainPacket powertrainPacket;
-
         private IEngine engine;
-        private ISteering steering;
         private SteeringV2 steeringV2;
         private IGearshift gearshift;
 
@@ -34,7 +32,6 @@ namespace AutomatedCar.SystemComponents.Powertrain
             virtualFunctionBus.PowertrainPacket = this.powertrainPacket;
             this.gearshift = new Gearshift();
             this.engine = new Engine(this.gearshift);
-            this.steering = new Steering.Steering();
             this.steeringV2 = new SteeringV2();
         }
 
@@ -43,18 +40,12 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// </summary>
         public override void Process()
         {
-            steeringV2.SetCarLocation(World.Instance.ControlledCar.X, World.Instance.ControlledCar.Y);
-            steeringV2.SetCarHeading(World.Instance.ControlledCar.Rotation);
-
-            // Debug.WriteLine(this.virtualFunctionBus.InputPacket.ToString());
             switch (this.virtualFunctionBus.InputPacket.PedalState)
             {
                 case Pedals.Gas:
                     if (this.engine.GetGearshiftState == GearshiftState.D || this.engine.GetGearshiftState == GearshiftState.R)
                     {
                         this.engine.Accelerate();
-                        this.steering.CarSpeed = this.engine.GetSpeed;
-                        //World.Instance.ControlledCar.Y -= this.engine.GetSpeed;
                     }
 
                     this.virtualFunctionBus.PowertrainPacket.CurrentSpeed = this.engine.GetSpeed;
@@ -66,8 +57,6 @@ namespace AutomatedCar.SystemComponents.Powertrain
                     if (this.engine.GetGearshiftState == GearshiftState.D || this.engine.GetGearshiftState == GearshiftState.R)
                     {
                         this.engine.Braking();
-                        this.steering.CarSpeed = this.engine.GetSpeed;
-                        //World.Instance.ControlledCar.Y -= this.engine.GetSpeed;
                     }
 
                     this.virtualFunctionBus.PowertrainPacket.CurrentSpeed = this.engine.GetSpeed;
@@ -79,8 +68,6 @@ namespace AutomatedCar.SystemComponents.Powertrain
                     if (this.engine.GetSpeed > 0 || this.engine.GetSpeed < 0)
                     {
                         this.engine.Lift();
-                        this.steering.CarSpeed = this.engine.GetSpeed;
-                        //World.Instance.ControlledCar.Y -= this.engine.GetSpeed;
 
                         this.virtualFunctionBus.PowertrainPacket.CurrentSpeed = this.engine.GetSpeed;
                         this.virtualFunctionBus.PowertrainPacket.Rpm = this.engine.GetRPMValue;
@@ -144,34 +131,23 @@ namespace AutomatedCar.SystemComponents.Powertrain
             {
                 case SteeringState.Left:
                     this.steeringV2.SteeringLeft();
-                    //this.virtualFunctionBus.PowertrainPacket.Steering = this.virtualFunctionBus.InputPacket.SteeringState;
-                    this.virtualFunctionBus.PowertrainPacket.RotationAngle = this.steering.Rotation;
                     this.virtualFunctionBus.PowertrainPacket.Left = "L";
                     this.virtualFunctionBus.PowertrainPacket.Right = string.Empty;
                     break;
                 case SteeringState.Right:
                     this.steeringV2.SteeringRight();
-                    
-                    //this.virtualFunctionBus.PowertrainPacket.Steering = this.virtualFunctionBus.InputPacket.SteeringState;
-                    this.virtualFunctionBus.PowertrainPacket.RotationAngle = this.steering.Rotation;
                     this.virtualFunctionBus.PowertrainPacket.Left = string.Empty;
                     this.virtualFunctionBus.PowertrainPacket.Right = "R";
                     break;
                 case SteeringState.Center:
                     this.steeringV2.SteeringCenter();
-                    //this.virtualFunctionBus.PowertrainPacket.Steering = this.virtualFunctionBus.InputPacket.SteeringState;
-                    this.virtualFunctionBus.PowertrainPacket.RotationAngle = this.steering.Rotation;
                     this.virtualFunctionBus.PowertrainPacket.Left = string.Empty;
                     this.virtualFunctionBus.PowertrainPacket.Right = string.Empty;
                     break;
             }
 
-            steeringV2.DoTheMagic(engine.GetSpeed);
-
-            World.Instance.ControlledCar.Rotation = this.steeringV2.CarHeading;
-            World.Instance.ControlledCar.X = (int)this.steeringV2.CarLocation.X;
-            World.Instance.ControlledCar.Y = (int)this.steeringV2.CarLocation.Y;
-
+            this.virtualFunctionBus.PowertrainPacket.RotationAngle = this.steeringV2.SteeringAngle;
+            this.steeringV2.SteeringAndSetNewCarPosition(this.engine.GetSpeed, World.Instance.ControlledCar);
         }
     }
 }
