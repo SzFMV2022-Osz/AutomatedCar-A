@@ -71,7 +71,7 @@
 
         public void DoTheMagic(int carSpeed)
         {
-            double normalHeading = ConvertAngleFromDegenerateAvalonia(carHeading);
+            double normalHeading = ConvertAngleFromAvalonia(carHeading);
             double normalHeadingRad = toRadian(normalHeading);
             double steerAngleRad = toRadian(steerAngle);
 
@@ -90,49 +90,23 @@
 
             carLocation = new Vector(newCarLocationX, newCarLocationY);
             normalHeadingRad = Math.Atan2(frontWheelY - backWheelY, frontWheelX - backWheelX);
-            carHeading = ConvertAngleToDegenerateAvalonia(toDegree(normalHeadingRad));
+            carHeading = ConvertAngleToAvalonia(toDegree(normalHeadingRad));
         }
 
-        double ConvertAngleFromDegenerateAvalonia(double degree)
-        {
-            degree = toRadian(degree);
-            double x = Math.Cos(degree);
-            x = computationErrorValuesToZero(x);
-            double y = Math.Sin(degree);
-            y = computationErrorValuesToZero(y);
-
-            x = x * -1;
-            y *= -1;
-
-            double newRad = Math.Atan2(y, x);
-            double newDegree = toDegree(newRad);
-
-            newDegree = normalizeDegree(newDegree);
-            newDegree += 90;
-            newDegree = normalizeDegree(newDegree);
-
-            return Math.Round(newDegree, 2, MidpointRounding.ToEven);
-        }
-
-        double ConvertAngleToDegenerateAvalonia(double degree)
+        double ConvertAngleFromAvalonia(double degree)
         {
             degree -= 90;
             degree = normalizeDegree(degree);
 
-            degree = toRadian(degree);
-            double x = Math.Cos(degree);
-            x = computationErrorValuesToZero(x);
-            double y = Math.Sin(degree);
-            y = computationErrorValuesToZero(y);
+            return degree;
+        }
 
-            x = x * -1;
-            y *= -1;
+        double ConvertAngleToAvalonia(double degree)
+        {
+            degree += 90;
+            degree = normalizeDegree(degree);
 
-            double newRad = Math.Atan2(y, x);
-            double newDegree = toDegree(newRad);
-
-            newDegree = normalizeDegree(newDegree);
-            return Math.Round(newDegree, 2, MidpointRounding.ToEven);
+            return degree;
         }
 
         double computationErrorValuesToZero(double val)
