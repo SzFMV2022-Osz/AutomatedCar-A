@@ -28,7 +28,7 @@ namespace AutomatedCar.Models.NPC
         /// <param name="y">Y coordinate of current position.</param>
         /// <param name="filename">.</param>
         public NpcPerson(Route route, string filename)
-            : base(route, filename, 10, true, WorldObjectType.Car)
+            : base(route, filename, 10, true, WorldObjectType.Pedestrian)
         {
             this.MoveComponent = new MoveComponent(this.VirtualFunctionBus, this);
             this.VirtualFunctionBus.RegisterComponent(this.MoveComponent);

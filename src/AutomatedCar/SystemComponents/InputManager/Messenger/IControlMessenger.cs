@@ -27,6 +27,11 @@ namespace AutomatedCar.SystemComponents.InputManager.Messenger
         event EventHandler<ControlEventArgs> GearboxEventHandler;
 
         /// <summary>
+        /// Event for the cruise control.
+        /// </summary>
+        event EventHandler<ControlEventArgs> CruiseControlEventHandler;
+
+        /// <summary>
         /// Fires the event for steering wheel state change.
         /// </summary>
         /// <param name="steeringState">Gets a steeringtate for the steering wheel.</param>
@@ -43,5 +48,11 @@ namespace AutomatedCar.SystemComponents.InputManager.Messenger
         /// </summary>
         /// <param name="gearState">Gets a steeringtate for the steering wheel.</param>
         public void FireGearboxEvent(Gears gearState);
+
+        /// <summary>
+        /// Fires the even for cruise control controlling.
+        /// </summary>
+        /// <param name="cruiseControlInput">Tells the cruise control what type of input was received.</param>
+        public void FireCruiseControlEvent(CruiseControlInputs cruiseControlInput);
     }
 }
