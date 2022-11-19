@@ -51,7 +51,7 @@
                               RenderTransformOrigin="{Binding RotationPoint, Converter={x:Static visualization:RenderTransformOriginTransformer.Instance}}"
                               Source="resm:AutomatedCar.Assets.steering-wheel.png?assembly=AutomatedCar">
                           </Image>
-                            <Border BorderThickness="2" BorderBrush="Yellow" Margin="4">
+                            <Border BorderThickness="2" BorderBrush="Yellow" Margin="4" IsVisible="{Binding ShouldShowAEBWarning}">
 	                            <TextBlock Margin="4" Foreground="Yellow" FontWeight="Bold">WARNING: AEB won't work properly above 70 km/h</TextBlock>
                             </Border>
                             <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
