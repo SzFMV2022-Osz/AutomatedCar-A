@@ -129,10 +129,23 @@ namespace AutomatedCar.SystemComponents.Powertrain
         public float Accelerate()
         {
             this.gasPedal += .01f;
-            this.brakePedal -= .01f;
+
+            if (this.brakePedal > 0)
+            {
+                this.brakePedal -= .01f;
+            }
+            else
+            {
+                this.brakePedal = 0;
+            }
+
             this.ClampPedals();
             this.Velocity += this.ChangeVelocity(false) + this.ChangeVelocity(true);
             this.rpm = this.GetRPM();
+
+            Debug.WriteLine("Gas: " + this.gasPedal);
+            Debug.WriteLine("Brake: " + this.brakePedal);
+            Debug.WriteLine("RPM: " + this.rpm);
 
             if (this.rpm.Equals(this.maxrpm))
             {
@@ -152,10 +165,32 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// <returns>driving force lenght.</returns>
         public float Lift()
         {
-            this.rpm -= 0.75f; // enginebrake
-            this.brakePedal -= .25f;
-            this.gasPedal -= .25f;
+            this.rpm -= 0.50f; // enginebrake
+
+            if (this.gasPedal > 0)
+            {
+                this.gasPedal -= .25f;
+            }
+            else
+            {
+                this.gasPedal = 0;
+            }
+
+            if (this.brakePedal > 0)
+            {
+                this.brakePedal -= .25f;
+            }
+            else
+            {
+                this.brakePedal = 0;
+            }
+
             this.Velocity = (int)this.GetSpeedByWheelRotation() + this.ChangeVelocity(false) + this.ChangeVelocity(true);
+
+            Debug.WriteLine("Gas: " + this.gasPedal);
+            Debug.WriteLine("Brake: " + this.brakePedal);
+            Debug.WriteLine("RPM: " + this.rpm);
+
             if (this.rpm < this.minrpm + 0.25f)
             {
                 if (this.GetPrewGearRPM() < this.maxrpm)
@@ -175,10 +210,22 @@ namespace AutomatedCar.SystemComponents.Powertrain
         public float Braking()
         {
             this.brakePedal += .01f;
-            this.gasPedal -= .01f;
+            if (this.gasPedal > 0)
+            {
+                this.gasPedal -= .01f;
+            }
+            else
+            {
+                this.brakePedal = 0;
+            }
+
             this.ClampPedals();
             this.Velocity = (int)this.GetSpeedByWheelRotation() + this.ChangeVelocity(false) + this.ChangeVelocity(true);
             this.rpm = this.GetRPM();
+
+            Debug.WriteLine("Gas: " + this.gasPedal);
+            Debug.WriteLine("Brake: " + this.brakePedal);
+            Debug.WriteLine("RPM: " + this.rpm);
 
             if (this.rpm < this.minrpm)
             {
