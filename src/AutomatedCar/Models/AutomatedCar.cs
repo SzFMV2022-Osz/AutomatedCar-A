@@ -11,9 +11,9 @@ namespace AutomatedCar.Models
         private VirtualFunctionBus virtualFunctionBus;
 
         private Sensor radarSensor;
-        
+
         private Sensor cameraSensor;
-        
+
         private PowertrainManager powertrainManager;
 
         public AutomatedCar(int x, int y, string filename)

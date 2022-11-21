@@ -18,7 +18,7 @@
             this.powertrainPacket = new PowertrainPacket();
             virtualFunctionBus.PowertrainPacket = this.powertrainPacket;
             this.gearshift = new Gearshift();
-            this.engine = new Engine(this.gearshift);
+            this.engine = new Engine.Engine(this.gearshift);
             this.steering = new Steering(0,0,0,GearshiftState.P,0);
 
             ControlMessenger.SteeringEventHandler += OnSteering;

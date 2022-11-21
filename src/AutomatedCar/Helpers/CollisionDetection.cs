@@ -1,13 +1,11 @@
 ﻿namespace AutomatedCar.Helpers
 {
-    using AutomatedCar.Models;
-    using Avalonia;
-    using Avalonia.Media;
-    using ReactiveUI;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Numerics;
+    using AutomatedCar.Models;
+    using Avalonia;
+    using Avalonia.Media;
 
     public static class CollisionDetection
     {
@@ -15,64 +13,7 @@
         {
             ClockWise,
             CounterClockWise,
-            Collinear
-        }
-
-        private static Orientation GetOrientation(Point p, Point q, Point r)
-        {
-            double slopeCoefficient = ((q.Y - p.Y) * (r.X - q.X)) - ((q.X - p.X) * (r.Y - q.Y));
-            return slopeCoefficient switch
-            {
-                0 => Orientation.Collinear,
-                > 0 => Orientation.CounterClockWise,
-                _ => Orientation.ClockWise
-            };
-        }
-
-        private static bool PointOnLine(Point point, Point lineStart, Point lineEnd)
-        {
-            Point firstHalf = point - lineStart;
-            Point secondHalf = lineEnd - point;
-
-            double dotProduct = (firstHalf.X * secondHalf.X) + (firstHalf.Y * secondHalf.Y);
-            double squaredLineLength = Math.Pow(lineEnd.X - lineStart.X, 2) + Math.Pow(lineEnd.Y - lineStart.Y, 2);
-
-            return dotProduct >= 0 && dotProduct <= squaredLineLength;
-        }
-
-        private static double DotProduct(Point pointA, Point pointB) => (pointA.X * pointB.X) + (pointA.Y * pointB.Y);
-
-        private static bool LinesIntersect(Point line1Start, Point line1End, Point line2Start, Point line2End)
-        {
-            // Logic: https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/
-            Orientation o1 = GetOrientation(line1Start, line1End, line2Start);
-            Orientation o2 = GetOrientation(line1Start, line1End, line2End);
-            Orientation o3 = GetOrientation(line2Start, line2End, line1Start);
-            Orientation o4 = GetOrientation(line2Start, line2End, line1End);
-
-            bool orientationsDiffer = !o1.Equals(o2) && !o3.Equals(o4);
-
-            if (orientationsDiffer)
-            {
-                return true;
-            }
-
-            if (o1.Equals(Orientation.Collinear) && PointOnLine(line2Start, line1Start, line1End))
-            {
-                return true;
-            }
-
-            if (o2.Equals(Orientation.Collinear) && PointOnLine(line2End, line1Start, line1End))
-            {
-                return true;
-            }
-
-            if (o3.Equals(Orientation.Collinear) && PointOnLine(line1Start, line2Start, line2End))
-            {
-                return true;
-            }
-
-            return o4.Equals(Orientation.Collinear) && PointOnLine(line1End, line2Start, line2End);
+            Collinear,
         }
 
         /// <summary>
@@ -88,7 +29,7 @@
         /// <returns>Whether the number of line intersections >= the treshold.</returns>
         public static bool BoundingBoxesCollide(PolylineGeometry source, PolylineGeometry destination, int threshold)
         {
-            int intersectionCounter = 0;
+            var intersectionCounter = 0;
 
             var commonEndpoints = new List<Point>(source.Points.Where(point => destination.Points.Contains(point)));
 
@@ -100,16 +41,23 @@
 
             for (int sourceIdx = 1; sourceIdx < sourceWithFirstElement.Count; sourceIdx++)
             {
-                Tuple<Point, Point> sourceLine = new(sourceWithFirstElement[sourceIdx - 1], sourceWithFirstElement[sourceIdx]);
+                Tuple<Point, Point> sourceLine = new (sourceWithFirstElement[sourceIdx - 1],
+                    sourceWithFirstElement[sourceIdx]);
                 for (int destIdx = 1; destIdx < destinationWithFirstElement.Count; destIdx++)
                 {
                     Tuple<Point, Point> destinationLine =
-                        new(destinationWithFirstElement[destIdx - 1], destinationWithFirstElement[destIdx]);
+                        new (destinationWithFirstElement[destIdx - 1], destinationWithFirstElement[destIdx]);
+
+                    var doLinesIntersect = LinesIntersect(
+                        sourceLine.Item1,
+                        sourceLine.Item2,
+                        destinationLine.Item1,
+                        destinationLine.Item2);
 
                     // Common endpoints will automatically be added to intersectionCounter at the end.
                     // We don't want to double dip.
-                    if (LinesIntersect(sourceLine.Item1, sourceLine.Item2, destinationLine.Item1, destinationLine.Item2)
-                        && !(commonEndpoints.Contains(destinationLine.Item1) || commonEndpoints.Contains(destinationLine.Item2)))
+                    if (doLinesIntersect &&
+                        !(commonEndpoints.Contains(destinationLine.Item1) || commonEndpoints.Contains(destinationLine.Item2)))
                     {
                         intersectionCounter++;
                     }
@@ -152,9 +100,9 @@
         /// <returns>Whether the point lies inside, or at the edge of the triangle.</returns>
         public static bool PointInTriangle(Point p, Tuple<Point, Point, Point> triangle)
         {
-            Point p0 = triangle.Item1;
-            Point p1 = triangle.Item2;
-            Point p2 = triangle.Item3;
+            var p0 = triangle.Item1;
+            var p1 = triangle.Item2;
+            var p2 = triangle.Item3;
             var s = ((p0.X - p2.X) * (p.Y - p2.Y)) - ((p0.Y - p2.Y) * (p.X - p2.X));
             var t = ((p1.X - p0.X) * (p.Y - p0.Y)) - ((p1.Y - p0.Y) * (p.X - p0.X));
 
@@ -171,6 +119,7 @@
         {
             // Convert to rad
             angle *= Math.PI / 180f;
+
             // Rotation Matrix equation: https://en.wikipedia.org/wiki/Rotation_matrix#Common_rotations
             return new Point(
                 (point.X * Math.Cos(angle)) - (point.Y * Math.Sin(angle)),
@@ -183,17 +132,16 @@
         /// <param name="boundingBox">The bounding box of the object.</param>
         /// <param name="angle">The angle of the rotation, in degrees.</param>
         /// <returns>A new Bounding Box, with all of its' points rotated.</returns>
-        public static PolylineGeometry RotateBoundingBox(PolylineGeometry boundingBox, double angle)
-        {
-            return new PolylineGeometry(boundingBox.Points.Select(point => RotatePoint(point, angle)).ToList(), false);
-        }
+        public static PolylineGeometry RotateBoundingBox(PolylineGeometry boundingBox, double angle) =>
+            new PolylineGeometry(boundingBox.Points.Select(point => RotatePoint(point, angle)).ToList(), false);
 
         /// <summary>
         /// Adds (dx, dy) to every point in geometry.
         /// </summary>
         public static PolylineGeometry TranslateGeometry(PolylineGeometry geometry, double dx, double dy)
         {
-            PolylineGeometry translated = new PolylineGeometry();
+            var translated = new PolylineGeometry();
+
             foreach (var point in geometry.Points)
             {
                 translated.Points.Add(new Point(point.X + dx, point.Y + dy));
@@ -215,7 +163,8 @@
 
         public static List<PolylineGeometry> TransformRoadRawGeometry(WorldObject obj)
         {
-            List<PolylineGeometry> geoms = new List<PolylineGeometry>();
+            var geoms = new List<PolylineGeometry>();
+
             foreach (var rawGeometry in obj.RawGeometries)
             {
                 var geom = TranslateGeometry(rawGeometry, -obj.RotationPoint.X, -obj.RotationPoint.Y);
@@ -223,7 +172,66 @@
                 geom = TranslateGeometry(geom, obj.X, obj.Y);
                 geoms.Add(geom);
             }
+
             return geoms;
+        }
+
+        private static Orientation GetOrientation(Point p, Point q, Point r)
+        {
+            var slopeCoefficient = ((q.Y - p.Y) * (r.X - q.X)) - ((q.X - p.X) * (r.Y - q.Y));
+
+            return slopeCoefficient switch
+            {
+                0 => Orientation.Collinear,
+                > 0 => Orientation.CounterClockWise,
+                _ => Orientation.ClockWise
+            };
+        }
+
+        private static bool PointOnLine(Point point, Point lineStart, Point lineEnd)
+        {
+            var firstHalf = point - lineStart;
+            var secondHalf = lineEnd - point;
+
+            var dotProduct = (firstHalf.X * secondHalf.X) + (firstHalf.Y * secondHalf.Y);
+            var squaredLineLength = Math.Pow(lineEnd.X - lineStart.X, 2) + Math.Pow(lineEnd.Y - lineStart.Y, 2);
+
+            return dotProduct >= 0 && dotProduct <= squaredLineLength;
+        }
+
+        private static double DotProduct(Point pointA, Point pointB) => (pointA.X * pointB.X) + (pointA.Y * pointB.Y);
+
+        private static bool LinesIntersect(Point line1Start, Point line1End, Point line2Start, Point line2End)
+        {
+            // Logic: https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/
+            var o1 = GetOrientation(line1Start, line1End, line2Start);
+            var o2 = GetOrientation(line1Start, line1End, line2End);
+            var o3 = GetOrientation(line2Start, line2End, line1Start);
+            var o4 = GetOrientation(line2Start, line2End, line1End);
+
+            bool orientationsDiffer = !o1.Equals(o2) && !o3.Equals(o4);
+
+            if (orientationsDiffer)
+            {
+                return true;
+            }
+
+            if (o1.Equals(Orientation.Collinear) && PointOnLine(line2Start, line1Start, line1End))
+            {
+                return true;
+            }
+
+            if (o2.Equals(Orientation.Collinear) && PointOnLine(line2End, line1Start, line1End))
+            {
+                return true;
+            }
+
+            if (o3.Equals(Orientation.Collinear) && PointOnLine(line1Start, line2Start, line2End))
+            {
+                return true;
+            }
+
+            return o4.Equals(Orientation.Collinear) && PointOnLine(line1End, line2Start, line2End);
         }
     }
 }

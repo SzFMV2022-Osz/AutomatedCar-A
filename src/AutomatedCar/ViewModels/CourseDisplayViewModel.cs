@@ -1,22 +1,17 @@
-using System.Collections.ObjectModel;
-using AutomatedCar.Models;
-using System.Linq;
-
-using ReactiveUI;
-
 namespace AutomatedCar.ViewModels
 {
-    using AutomatedCar.SystemComponents.InputManager.Messenger;
+    using System.Collections.ObjectModel;
+    using System.Linq;
     using AutomatedCar.SystemComponents.InputManager.InputHandler;
     using Avalonia.Controls;
-    using JetBrains.Annotations;
     using Models;
-    using System;
+    using ReactiveUI;
+    using SystemComponents.InputManager.Messenger;
     using Visualization;
 
     public class CourseDisplayViewModel : ViewModelBase
     {
-        public ObservableCollection<WorldObjectViewModel> WorldObjects { get; } = new ObservableCollection<WorldObjectViewModel>();
+        public ObservableCollection<WorldObjectViewModel> WorldObjects { get; }
 
         private Avalonia.Vector offset;
 

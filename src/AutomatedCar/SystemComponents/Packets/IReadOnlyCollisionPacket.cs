@@ -1,12 +1,14 @@
 ﻿namespace AutomatedCar.SystemComponents.Packets
 {
-    using AutomatedCar.Models;
     using System.Collections.Generic;
+    using AutomatedCar.Models;
 
     public interface IReadOnlyCollisionPacket
     {
         bool Collided { get; }
+
         IEnumerable<WorldObject> CollisionsWithNPCs { get; }
+
         IEnumerable<WorldObject> CollisionsWithStaticObjects { get; }
     }
 }

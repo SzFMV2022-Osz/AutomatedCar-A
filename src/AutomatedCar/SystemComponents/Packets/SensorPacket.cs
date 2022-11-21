@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
     using AutomatedCar.Models;
-    using Avalonia.Collections;
     using ReactiveUI;
 
     public class SensorPacket : ReactiveObject, ISensorPacket

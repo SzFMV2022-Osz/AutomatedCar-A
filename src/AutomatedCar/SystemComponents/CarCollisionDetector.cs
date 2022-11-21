@@ -1,13 +1,10 @@
 ﻿namespace AutomatedCar.SystemComponents
 {
-    using AutomatedCar.Models;
-    using AutomatedCar.SystemComponents.Packets;
-    using Avalonia;
-    using Avalonia.Data.Converters;
-    using Avalonia.Media;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
+    using AutomatedCar.Models;
+    using AutomatedCar.SystemComponents.Packets;
 
     public class CarCollisionDetector : SystemComponent
     {

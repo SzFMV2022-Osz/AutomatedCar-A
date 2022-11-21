@@ -1,8 +1,7 @@
 ﻿namespace AutomatedCar.SystemComponents.Packets
 {
-    using AutomatedCar.Models;
-    using Avalonia.Collections;
     using System.Collections.Generic;
+    using AutomatedCar.Models;
 
     public interface ISensorPacket
     {

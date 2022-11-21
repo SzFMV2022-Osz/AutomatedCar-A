@@ -9,7 +9,7 @@ namespace AutomatedCar.Models
     {
         public PropertyChangedEventArgs(string propertyName)
         {
-            PropertyName = propertyName;
+            this.PropertyName = propertyName;
         }
 
         public string PropertyName { get; set; }
@@ -17,8 +17,6 @@ namespace AutomatedCar.Models
 
     public class WorldObject
     {
-        public event EventHandler<PropertyChangedEventArgs> PropertyChangedEvent;
-
         private int x;
         private int y;
 
@@ -33,6 +31,8 @@ namespace AutomatedCar.Models
             this.Collideable = collideable;
             this.WorldObjectType = worldObjectType;
         }
+
+        public event EventHandler<PropertyChangedEventArgs> PropertyChangedEvent;
 
         public int ZIndex { get; set; }
 

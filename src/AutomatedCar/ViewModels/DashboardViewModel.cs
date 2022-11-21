@@ -6,10 +6,7 @@ namespace AutomatedCar.ViewModels
     public class DashboardViewModel : ViewModelBase
     {
         public CarViewModel ControlledCar { get; set; }
-        
-        public DashboardViewModel(AutomatedCar controlledCar)
-        {
-            this.ControlledCar = new CarViewModel(controlledCar);
-        }
+
+        public DashboardViewModel(AutomatedCar controlledCar) => this.ControlledCar = new CarViewModel(controlledCar);
     }
 }
