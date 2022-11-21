@@ -14,7 +14,6 @@ namespace AutomatedCar.Models.NPC
     /// </summary>
     internal class NpcCar : NPC, INPC
     {
-        private int index;
         private double betterX;
         private double betterY;
 
@@ -29,6 +28,7 @@ namespace AutomatedCar.Models.NPC
         {
             this.MoveComponent = new MoveComponent(this.VirtualFunctionBus, this);
             this.VirtualFunctionBus.RegisterComponent(this.MoveComponent);
+            this.RotationPoint = new System.Drawing.Point(51, 30);
         }
 
         /// <inheritdoc/>
@@ -51,49 +51,39 @@ namespace AutomatedCar.Models.NPC
             double distance = Math.Sqrt((distanceX * distanceX) + (distanceY * distanceY));
             Vector newdirection = this.NewDirection();
             double rotation = (Math.Atan2(newdirection.Y, newdirection.X) * (180 / Math.PI)) + 90;
+            double distancepertick = (this.Speed * 1000 * 50) / (3600 * 60);
 
-            if (distanceX == 0 && distanceY == 0)
+            if (rotation < 0)
             {
+                rotation += 360;
+            }
+
+            if (rotation > 360)
+            {
+                rotation -= 360;
+            }
+
+            if (distance <= distancepertick)
+            {
+                this.betterX = this.Route.CurrentPoint.X;
+                this.betterY = this.Route.CurrentPoint.Y;
                 this.Route.NextPoint();
-                this.Speed = this.Route.CurrentPoint.Speed / 10; // TODO: calculate pixels/meter and convert speed from km/h
+                this.Speed = this.Route.CurrentPoint.Speed;
             }
-            else
+
+            if (this.betterX != this.Route.CurrentPoint.X)
             {
-                if (distanceX <= this.Speed)
-                {
-                    this.betterX = this.Route.CurrentPoint.X;
-                }
-
-                if (distanceY <= this.Speed)
-                {
-                    this.betterY = this.Route.CurrentPoint.Y;
-                }
-
-                if (this.betterX != this.Route.CurrentPoint.X)
-                {
-                    this.betterX += newdirection.X * this.Speed;
-                    this.Rotation = rotation;
-                }
-
-                if (this.betterY != this.Route.CurrentPoint.Y)
-                {
-                    this.betterY += newdirection.Y * this.Speed;
-                    this.Rotation = rotation;
-                }
-
-                if (distanceX != 0 && distanceY != 0)
-                {
-                    this.Rotation = rotation;
-                }
+                this.betterX += newdirection.X * distancepertick;
             }
 
-            int carWidth = 100; // TODO: should be calculated somewhere based on the image (filename) or get it as a parameter
-            double rotationRadians = rotation * Math.PI / 180;
-            double offsetX = Math.Cos(rotationRadians) * (carWidth / 2);
-            double offsetY = Math.Sin(rotationRadians) * (carWidth / 2);
+            if (this.betterY != this.Route.CurrentPoint.Y)
+            {
+                this.betterY += newdirection.Y * distancepertick;
+            }
 
-            this.X = (int)(this.betterX - offsetX);
-            this.Y = (int)(this.betterY - offsetY);
+            this.Rotation = rotation;
+            this.X = (int)this.betterX;
+            this.Y = (int)this.betterY;
         }
 
         private Vector NewDirection()
@@ -107,14 +97,6 @@ namespace AutomatedCar.Models.NPC
             }
 
             return new Vector(0, 0);
-        }
-
-        private class MockedRoute
-        {
-            public int X { get; set; }
-
-            public int Y { get; set; }
-
         }
     }
 }
