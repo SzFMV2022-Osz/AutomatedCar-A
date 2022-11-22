@@ -31,7 +31,7 @@
                     {
                         World.Instance.ControlledCar.cruiseControl.ACCenabled = !World.Instance.ControlledCar.cruiseControl.ACCenabled;
                     }
-
+                    ControlMessenger.Instance.FireCruiseControlEvent(CruiseControlInputs.Empty);
                     break;
             }
         }
