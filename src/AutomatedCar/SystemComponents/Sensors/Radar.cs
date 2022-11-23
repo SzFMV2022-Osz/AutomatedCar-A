@@ -31,7 +31,7 @@
             // positioning sensor on the car
             this.vision = SensorVision.CalculateVision(this.dist, this.deg, new Point(0, 0));
             this.virtualFunctionBus.RadarPacket = new RadarPacket();
-
+            this.virtualFunctionBus.RadarPacket.ObjectTrackingDatas = new Dictionary<WorldObject, WorldObjectTracker>();
         }
 
         public override void Process()
@@ -44,11 +44,35 @@
             this.SaveWorldObjectsToPacket();
         }
 
+        public void UpdateTracking(List<WorldObject> list)
+        {
+            var objectTrackingDatas = this.virtualFunctionBus.RadarPacket.ObjectTrackingDatas;
+
+            // Out of sight check.
+            foreach (var entry in objectTrackingDatas)
+            {
+                if (!list.Contains(entry.Key))
+                {
+                    objectTrackingDatas.Remove(entry.Key);
+                }
+            }
+
+            var timestamp = DateTime.Now;
+
+            foreach (var obj in list)
+            {
+                if (!objectTrackingDatas.ContainsKey(obj))
+                {
+                    objectTrackingDatas[obj] = new WorldObjectTracker();
+                }
+
+                objectTrackingDatas[obj].AddPoint(new Point(obj.X, obj.Y), timestamp);
+            }
+        }
+
         protected override List<WorldObject> FilterRelevantWorldObjects()
         {
-            var list = this.GetWorldObjects().Where(x => this.IsRelevant(x)).ToList();
-            return list;
-
+            return this.GetWorldObjects().Where(x => this.IsRelevant(x)).ToList();
         }
 
         protected override void SaveWorldObjectsToPacket()
@@ -56,10 +80,12 @@
             var list = this.FilterRelevantWorldObjects();
             list = this.OrderByDistance(list);
 
-            this.virtualFunctionBus.RadarPacket.RelevantWorldObjs = list;
+            this.UpdateTracking(list);
 
+            this.virtualFunctionBus.RadarPacket.RelevantWorldObjs = list;
             this.virtualFunctionBus.RadarPacket.Closest = this.NearestWorldObject(list);
             this.virtualFunctionBus.RadarPacket.ClosestInLane = this.ClosestInLane(list);
+
             /*
             Trace.WriteLine(packet.RelevantWorldObjs.Count);
             packet.RelevantWorldObjs.ForEach(x => Trace.Write(x.X + "," + x.Y + " " + x.Filename + "; "));
@@ -70,7 +96,6 @@
             Trace.WriteLine("CLOSEST IN LANE:");
             Trace.WriteLine(packet.ClosestInLane == null ? "no closest" : packet.ClosestInLane.Filename + ", " + packet.ClosestInLane.X + ", " + packet.ClosestInLane.Y);
             */
-
         }
 
         private bool IsRelevant(WorldObject obj)
@@ -82,7 +107,11 @@
                 return false;
             }
 
-            if (!(obj is INPC) && !(obj is Car))
+            if (obj.WorldObjectType != WorldObjectType.Car
+                && obj.WorldObjectType != WorldObjectType.RoadSign
+                && obj.WorldObjectType != WorldObjectType.Tree
+                && obj.WorldObjectType != WorldObjectType.Pedestrian
+                && obj.WorldObjectType != WorldObjectType.Other)
             {
                 return false;
             }

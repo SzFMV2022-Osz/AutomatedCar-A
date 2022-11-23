@@ -11,5 +11,6 @@
     {
         WorldObject ClosestInLane { get; set; }
         WorldObject Closest { get; set; }
+        Dictionary<WorldObject, WorldObjectTracker> ObjectTrackingDatas { get; set; }
     }
 }
