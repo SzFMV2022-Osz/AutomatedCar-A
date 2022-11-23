@@ -2,12 +2,10 @@
 {
     using AutomatedCar.Models;
     using AutomatedCar.SystemComponents.InputManager.Messenger;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
 
+    /// <summary>
+    /// This class represents the Cruise control feature.
+    /// </summary>
     public class CruiseControl : SystemComponent
     {
         public bool ACCenabled;
@@ -15,7 +13,12 @@
         private readonly double[] accDistances = new double[4] { 0.8, 1, 1.2, 1.4 };
         private int currentAccDistanceIdx;
 
-        public CruiseControl(VirtualFunctionBus virtualFunctionBus) : base(virtualFunctionBus)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CruiseControl"/> class.
+        /// </summary>
+        /// <param name="virtualFunctionBus">VBF parameter.</param>
+        public CruiseControl(VirtualFunctionBus virtualFunctionBus)
+            : base(virtualFunctionBus)
         {
             this.ACCenabled = false;
             this.currentAccDistanceIdx = 0;
@@ -40,9 +43,9 @@
             this.currentAccDistanceIdx++;
         }
 
+        /// <inheritdoc/>
         public override void Process()
         {
-            //throw new NotImplementedException();
             switch (this.virtualFunctionBus.InputPacket.CruiseControlInput)
             {
                 case CruiseControlInputs.TurnOnOrOff:
@@ -54,7 +57,11 @@
                     {
                         World.Instance.ControlledCar.cruiseControl.ACCenabled = !World.Instance.ControlledCar.cruiseControl.ACCenabled;
                     }
+
                     ControlMessenger.Instance.FireCruiseControlEvent(CruiseControlInputs.Empty);
+                    break;
+                case CruiseControlInputs.ChangeTargetDistance:
+                    this.SetNextAccDistance();
                     break;
             }
         }
