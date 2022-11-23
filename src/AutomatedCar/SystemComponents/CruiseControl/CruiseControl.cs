@@ -12,9 +12,32 @@
     {
         public bool ACCenabled;
 
+        private readonly double[] accDistances = new double[4] { 0.8, 1, 1.2, 1.4 };
+        private int currentAccDistanceIdx;
+
         public CruiseControl(VirtualFunctionBus virtualFunctionBus) : base(virtualFunctionBus)
         {
             this.ACCenabled = false;
+            this.currentAccDistanceIdx = 0;
+        }
+
+        /// <summary>
+        /// Gets the current ACC distance value (e.g 0.8). OverflowException is being avoided using modulus.
+        /// </summary>
+        public double GetCurrentAccDistance
+        {
+            get
+            {
+                return this.accDistances[this.currentAccDistanceIdx % this.accDistances.Length];
+            }
+        }
+
+        /// <summary>
+        /// Sets the next possible ACC distance (e.g from 0.8 to 1).
+        /// </summary>
+        public void SetNextAccDistance()
+        {
+            this.currentAccDistanceIdx++;
         }
 
         public override void Process()
