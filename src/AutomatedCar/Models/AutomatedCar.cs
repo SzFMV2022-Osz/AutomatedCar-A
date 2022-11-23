@@ -1,7 +1,12 @@
+// <copyright file="AutomatedCar.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 namespace AutomatedCar.Models
 {
     using Avalonia.Media;
     using global::AutomatedCar.SystemComponents;
+    using global::AutomatedCar.SystemComponents.CruiseControl;
     using global::AutomatedCar.SystemComponents.InputManager.InputHandler;
     using global::AutomatedCar.SystemComponents.Powertrain;
     using global::AutomatedCar.SystemComponents.Sensors;
@@ -18,6 +23,8 @@ namespace AutomatedCar.Models
 
         private InputManager inputManager;
 
+        public CruiseControl cruiseControl;
+
         public AutomatedCar(int x, int y, string filename)
             : base(x, y, filename)
         {
@@ -27,6 +34,7 @@ namespace AutomatedCar.Models
             this.ZIndex = 10;
             this.inputManager = new InputManager(this.virtualFunctionBus);
             this.powertrainManager = new PowertrainManager(this.virtualFunctionBus);
+            this.cruiseControl = new CruiseControl(this.virtualFunctionBus);
         }
 
         public VirtualFunctionBus VirtualFunctionBus { get => this.virtualFunctionBus; }
