@@ -21,10 +21,15 @@ namespace AutomatedCar.Views
                 e.Cancel = true;
                 Keyboard.Keys.Clear();
             };
-            this.WhenActivated(x => x(ViewModel.WhenAnyValue(x => x.PopUp.ControlledCar.Car.VirtualFunctionBus.CollisionPacket.Collided).Where(x => x == true).Subscribe(x =>
+            this.WhenActivated(x => x(this.ViewModel.WhenAnyValue(x => x.PopUp.ControlledCar.Car.VirtualFunctionBus.CollisionPacket.Collided).Where(x => x == true).Subscribe(x =>
             {
-                popUpWindow.DataContext = ViewModel.PopUp;
-                //popUpWindow.ShowDialog(this);
+                popUpWindow.DataContext = this.ViewModel.PopUp;
+                MainWindowViewModel viewModel = (MainWindowViewModel)this.DataContext;
+                if (!popUpWindow.IsVisible && viewModel.CourseDisplay.DebugStatus.Enabled)
+                {
+                    popUpWindow.DataContext = viewModel.PopUp;
+                    popUpWindow.ShowDialog(this);
+                }
             })));
         }
 
