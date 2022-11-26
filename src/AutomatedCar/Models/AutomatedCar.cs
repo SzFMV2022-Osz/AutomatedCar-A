@@ -18,6 +18,8 @@ namespace AutomatedCar.Models
         private Sensor radarSensor;
         
         private Sensor cameraSensor;
+
+        private CarCollisionDetector carCollisionDetector;
         
         private PowertrainManager powertrainManager;
 
@@ -30,6 +32,9 @@ namespace AutomatedCar.Models
         public AutomatedCar(int x, int y, string filename)
             : base(x, y, filename)
         {
+            this.Collideable = true;
+            this.WorldObjectType = WorldObjectType.Car;
+
             this.virtualFunctionBus = new VirtualFunctionBus();
             this.radarSensor = new Radar(this.virtualFunctionBus);
             this.cameraSensor = new Camera(this.virtualFunctionBus);
@@ -41,8 +46,6 @@ namespace AutomatedCar.Models
         }
 
         public VirtualFunctionBus VirtualFunctionBus { get => this.virtualFunctionBus; }
-
-        public CarCollisionDetector CarCollisionDetector { get; set; }
 
         public int Revolution { get; set; }
 
