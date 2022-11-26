@@ -51,13 +51,24 @@
             // Out of sight check.
             foreach (var entry in objectTrackingDatas)
             {
-                if (!list.Contains(entry.Key))
+                if (!list.Contains(entry.Key) && entry.Key != World.Instance.ControlledCar)
                 {
                     objectTrackingDatas.Remove(entry.Key);
                 }
             }
 
             var timestamp = DateTime.Now;
+
+            // Always add controlled car's position
+            if (!objectTrackingDatas.ContainsKey(World.Instance.ControlledCar))
+            {
+                objectTrackingDatas[World.Instance.ControlledCar] = new WorldObjectTracker();
+            }
+
+            objectTrackingDatas[World.Instance.ControlledCar].AddPoint(
+                new Point(World.Instance.ControlledCar.X, World.Instance.ControlledCar.Y),
+                timestamp
+                );
 
             foreach (var obj in list)
             {

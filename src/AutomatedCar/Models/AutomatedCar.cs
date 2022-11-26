@@ -25,6 +25,8 @@ namespace AutomatedCar.Models
 
         public CruiseControl cruiseControl;
 
+        public AutomaticEmergencyBreak AEB;
+
         public AutomatedCar(int x, int y, string filename)
             : base(x, y, filename)
         {
@@ -35,6 +37,7 @@ namespace AutomatedCar.Models
             this.inputManager = new InputManager(this.virtualFunctionBus);
             this.powertrainManager = new PowertrainManager(this.virtualFunctionBus);
             this.cruiseControl = new CruiseControl(this.virtualFunctionBus);
+            this.AEB = new AutomaticEmergencyBreak(this.virtualFunctionBus);
         }
 
         public VirtualFunctionBus VirtualFunctionBus { get => this.virtualFunctionBus; }
