@@ -31,7 +31,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
             this.powertrainPacket = new PowertrainPacket();
             virtualFunctionBus.PowertrainPacket = this.powertrainPacket;
             this.gearshift = new Gearshift();
-            this.engine = new Engine(this.gearshift);
+            this.engine = new Engine(this.virtualFunctionBus, this.gearshift);
             this.steeringV2 = new SteeringV2();
         }
 

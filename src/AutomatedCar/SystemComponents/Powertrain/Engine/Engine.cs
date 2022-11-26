@@ -10,21 +10,21 @@ namespace AutomatedCar.SystemComponents.Powertrain
     /// <summary>
     /// Engine.
     /// </summary>
-    public class Engine : IEngine
+    public class Engine : SystemComponent, IEngine
     {
         private static readonly float Pi = (float)Math.PI;
         private readonly IGearshift gearshift;
-        private readonly int weight;
-        private readonly float frontArea;
-        private readonly float wheelradius;
-        private readonly float dragCoefficient;
-        private readonly float diferential;
-        private readonly float transmissionefficiency;
-        private readonly float brakeConstant;
-        private readonly float maxrpm;
-        private readonly float minrpm;
+        private readonly int weight = 1800;
+        private readonly float frontArea = 2.2f;
+        private readonly float wheelradius = 0.34f;
+        private readonly float dragCoefficient = 0.30f;
+        private readonly float diferential = 3.42f;
+        private readonly float transmissionefficiency = 0.7f;
+        private readonly float brakeConstant = 100;
+        private readonly float maxrpm = 6000;
+        private readonly float minrpm = 1000;
 
-        private int[] torqueCurve = new int[8] { 100, 280, 325, 420, 460, 340, 300, 100 };
+        private int[] torqueCurve = new int[7] { 400, 430, 450, 480, 460, 450, 390 };
         private float rpm;
         private float gasPedal;
         private float brakePedal;
@@ -33,6 +33,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// <summary>
         /// Initializes a new instance of the <see cref="Engine"/> class.
         /// </summary>
+        /// <param name="bus">A virtualfunctionbus.</param>
         /// <param name="gearshift">Gearshift to use.</param>
         /// <param name="weight">weight of the car.</param>
         /// <param name="dragCoefficient">Drag coefficient of the car.</param>
@@ -43,20 +44,19 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// <param name="maxrpm">Maximum rpm.</param>
         /// <param name="minrpm">Minimum rpm.</param>
         /// <param name="cbrake">Max brake force rpm.</param>
-        public Engine(IGearshift gearshift, int weight = 1800, float dragCoefficient = 0.30f, float frontArea = 2.2f, float diferential = 3.42f, float transmissionefficiency = 0.7f, float wheelradius = 0.34f, float maxrpm = 6000, int minrpm = 1000, int cbrake = 100)
+        public Engine(VirtualFunctionBus bus, IGearshift gearshift)
+            : base(bus)
         {
             this.gearshift = gearshift;
-            this.weight = weight;
-            this.dragCoefficient = dragCoefficient;
-            this.frontArea = frontArea;
-            this.diferential = diferential;
-            this.transmissionefficiency = transmissionefficiency;
-            this.wheelradius = wheelradius;
-            this.maxrpm = maxrpm;
-            this.minrpm = minrpm;
-            this.brakeConstant = cbrake;
             this.rpm = 1000;
             this.velocity = 0;
+            this.brakePedal = 0;
+            this.gasPedal = 0;
+        }
+
+        public override void Process()
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -187,7 +187,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// </summary>
         public void Lift()
         {
-            this.rpm -= 0.50f; // enginebrake
+            this.rpm -= 0.25f; // enginebrake
 
             if (this.gasPedal > 0)
             {
@@ -403,7 +403,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
 
         private float LookupTorqueCurve(float rpm)
         {
-            if (rpm >= 1000 && rpm <= 5000)
+            /*if (rpm >= 1000 && rpm <= 5000)
             {
                 return (0.06875f * rpm) - 18.75f;
             }
@@ -414,31 +414,39 @@ namespace AutomatedCar.SystemComponents.Powertrain
             else
             {
                 return 325.25f;
-            }
+            }*/
 
-            /*if (rpm >= 1000 && rpm < 2000)
+            if (rpm == 1000)
             {
-
+                return this.torqueCurve[0];
+            }
+            else if (rpm > 1000 && rpm < 2000)
+            {
+                return this.torqueCurve[1];
             }
             else if (rpm < 3000)
             {
-
+                return this.torqueCurve[2];
             }
             else if (rpm < 4000)
             {
-
+                return this.torqueCurve[3];
             }
             else if (rpm < 5000)
             {
-
+                return this.torqueCurve[4];
+            }
+            else if (rpm < 5500)
+            {
+                return this.torqueCurve[5];
             }
             else if (rpm < 6000)
+            {
+                return this.torqueCurve[6];
+            }
 
-
-            return 0;*/
+            return 0;
         }
-
-        
 
         private void ClampPedals()
         {
