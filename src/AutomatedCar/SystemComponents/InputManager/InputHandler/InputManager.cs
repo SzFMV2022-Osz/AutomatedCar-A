@@ -123,32 +123,29 @@ namespace AutomatedCar.SystemComponents.InputManager.InputHandler
         }
 
         /// <summary>
-        /// Sets the packet for cruise control.
+        /// Places the input meant for the ACC in a queue.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="eventArgs"></param>
         public void OnCruiseControlInput(object sender, ControlEventArgs eventArgs)
         {
-            Debug.WriteLine(eventArgs.CruiseControlInput.ToString());
             switch (eventArgs.CruiseControlInput)
             {
                 case CruiseControlInputs.TurnOnOrOff:
-                    this.CurrentCruiseControlInput = CruiseControlInputs.TurnOnOrOff;
+                    InputPacket.CruiseControlInputs.Enqueue(CruiseControlInputs.TurnOnOrOff);
                     break;
                 case CruiseControlInputs.ChangeTargetDistance:
-                    this.CurrentCruiseControlInput = CruiseControlInputs.ChangeTargetDistance;
+                    InputPacket.CruiseControlInputs.Enqueue(CruiseControlInputs.ChangeTargetDistance);
                     break;
                 case CruiseControlInputs.IncreaseTargetSpeed:
-                    this.CurrentCruiseControlInput = CruiseControlInputs.IncreaseTargetSpeed;
+                    InputPacket.CruiseControlInputs.Enqueue(CruiseControlInputs.IncreaseTargetSpeed);
                     break;
                 case CruiseControlInputs.DecreaseTargetSpeed:
-                    this.CurrentCruiseControlInput= CruiseControlInputs.DecreaseTargetSpeed;
-                    break;
-                case CruiseControlInputs.Empty:
-                    this.CurrentCruiseControlInput = CruiseControlInputs.Empty;
+                    InputPacket.CruiseControlInputs.Enqueue(CruiseControlInputs.DecreaseTargetSpeed);
                     break;
             }
         }
+
         /// <inheritdoc/>
         public override void Process()
         {
@@ -156,7 +153,6 @@ namespace AutomatedCar.SystemComponents.InputManager.InputHandler
             this.InputPacket.GearState = this.CurrentGearState;
             this.InputPacket.PedalState = this.CurrendPedalState;
             this.InputPacket.SteeringState = this.CurrentSteeringState;
-            this.InputPacket.CruiseControlInput = this.CurrentCruiseControlInput;
         }
 
         private bool IsGearStateJustChanged(Gears newGearState)

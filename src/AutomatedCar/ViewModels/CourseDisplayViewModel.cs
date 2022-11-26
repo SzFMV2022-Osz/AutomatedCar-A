@@ -143,11 +143,6 @@ namespace AutomatedCar.ViewModels
             {
                 ControlMessenger.Instance.FireGearboxEvent(Gears.Steady);
             }
-
-            if (key == Key.C || key == Key.T || key == Key.OemPlus || key == Key.OemMinus)
-            {
-                ControlMessenger.Instance.FireCruiseControlEvent(CruiseControlInputs.Empty);
-            }
         }
 
         public void FocusCar(ScrollViewer scrollViewer)
