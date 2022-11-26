@@ -70,14 +70,14 @@ namespace AutomatedCar.SystemComponents.InputManager.Messenger
 
     public enum CruiseControlInputs
     {
+        Empty,
+
         TurnOnOrOff,
 
         ChangeTargetDistance,
 
         IncreaseTargetSpeed,
 
-        DecreaseTargetSpeed,
-
-        Empty
+        DecreaseTargetSpeed
     }
 }

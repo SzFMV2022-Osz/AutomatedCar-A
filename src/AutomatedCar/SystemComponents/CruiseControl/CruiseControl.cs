@@ -2,6 +2,7 @@
 {
     using AutomatedCar.Models;
     using AutomatedCar.SystemComponents.InputManager.Messenger;
+    using System.Diagnostics;
 
     /// <summary>
     /// This class represents the Cruise control feature.
@@ -52,71 +53,85 @@
         /// <inheritdoc/>
         public override void Process()
         {
-            switch (this.virtualFunctionBus.InputPacket.CruiseControlInput)
+            CruiseControl selectedACC = World.Instance.ControlledCar.cruiseControl;
+
+            // ONLY the controlled car should accept the inputs!
+            if (selectedACC == this)
             {
-                case CruiseControlInputs.TurnOnOrOff:
-                    if (World.Instance.ControlledCar.cruiseControl.ACCenabled)
+                CruiseControlInputs input = CruiseControlInputs.Empty;
+
+                // The inputs are placed into a ConcurrentQueue to avoid input spam.
+                this.virtualFunctionBus.InputPacket.CruiseControlInputs.TryDequeue(out input);
+
+                if (input != CruiseControlInputs.Empty)
+                {
+                    switch (input)
                     {
-                        World.Instance.ControlledCar.cruiseControl.ACCenabled = !World.Instance.ControlledCar.cruiseControl.ACCenabled;
-                        this.targetSpeed = 0;
+                        case CruiseControlInputs.TurnOnOrOff:
+                            if (selectedACC.ACCenabled)
+                            {
+                                selectedACC.ACCenabled = !selectedACC.ACCenabled;
+                                this.targetSpeed = 0;
+                            }
+                            else if (!selectedACC.ACCenabled)
+                            {
+                                selectedACC.ACCenabled = !selectedACC.ACCenabled;
+                                if (World.Instance.ControlledCar.VirtualFunctionBus.PowertrainPacket.CurrentSpeed >= 160)
+                                {
+                                    this.targetSpeed = this.maxTargetSpeed;
+                                }
+                                else
+                                {
+                                    this.targetSpeed = virtualFunctionBus.PowertrainPacket.CurrentSpeed;
+                                }
+                            }
+                            Debug.WriteLine("ACCenabled: " + this.ACCenabled.ToString());
+                            break;
+
+                        case CruiseControlInputs.ChangeTargetDistance:
+                            this.SetNextAccDistance();
+                            Debug.WriteLine("Target distance: " + selectedACC.GetCurrentAccDistance);
+                            break;
+
+                        case CruiseControlInputs.IncreaseTargetSpeed:
+                            if (this.ACCenabled)
+                            {
+                                if (virtualFunctionBus.PowertrainPacket.CurrentSpeed + this.targetSpeedDiff >= this.maxTargetSpeed)
+                                {
+                                    this.targetSpeed = this.maxTargetSpeed;
+                                }
+                                else if (virtualFunctionBus.PowertrainPacket.CurrentSpeed + this.targetSpeedDiff <= this.minTargetSpeed)
+                                {
+                                    this.targetSpeed = this.minTargetSpeed;
+                                }
+                                else
+                                {
+                                    this.targetSpeed += this.targetSpeedDiff;
+                                }
+                            }
+                            Debug.WriteLine("Target speed increased: " + this.targetSpeed);
+                            break;
+
+                        case CruiseControlInputs.DecreaseTargetSpeed:
+                            if (this.ACCenabled)
+                            {
+                                if (virtualFunctionBus.PowertrainPacket.CurrentSpeed - this.targetSpeedDiff >= this.maxTargetSpeed)
+                                {
+                                    this.targetSpeed = this.maxTargetSpeed;
+                                }
+                                else if (virtualFunctionBus.PowertrainPacket.CurrentSpeed - this.targetSpeedDiff <= this.minTargetSpeed)
+                                {
+                                    this.targetSpeed = this.minTargetSpeed;
+                                }
+                                else
+                                {
+                                    this.targetSpeed -= this.targetSpeedDiff;
+                                }
+                            }
+                            Debug.WriteLine("Target speed decreased: " + this.targetSpeed);
+                            break;
                     }
-                    else if (!World.Instance.ControlledCar.cruiseControl.ACCenabled && World.Instance.ControlledCar.VirtualFunctionBus.PowertrainPacket.CurrentSpeed >= 30)
-                    {
-                        World.Instance.ControlledCar.cruiseControl.ACCenabled = !World.Instance.ControlledCar.cruiseControl.ACCenabled;
-                        if (World.Instance.ControlledCar.VirtualFunctionBus.PowertrainPacket.CurrentSpeed >= 160)
-                        {
-                            this.targetSpeed = this.maxTargetSpeed;
-                        }
-                        else
-                        {
-                            this.targetSpeed = World.Instance.ControlledCar.VirtualFunctionBus.PowertrainPacket.CurrentSpeed;
-                        }
-                    }
-
-                    ControlMessenger.Instance.FireCruiseControlEvent(CruiseControlInputs.Empty);
-                    break;
-
-                case CruiseControlInputs.ChangeTargetDistance:
-                    this.SetNextAccDistance();
-                    break;
-
-                case CruiseControlInputs.IncreaseTargetSpeed:
-                    if (this.ACCenabled)
-                    {
-                        if (World.Instance.ControlledCar.VirtualFunctionBus.PowertrainPacket.CurrentSpeed + this.targetSpeedDiff >= this.maxTargetSpeed)
-                        {
-                            this.targetSpeed = this.maxTargetSpeed;
-                        }
-                        else if (World.Instance.ControlledCar.VirtualFunctionBus.PowertrainPacket.CurrentSpeed + this.targetSpeedDiff <= this.minTargetSpeed)
-                        {
-                            this.targetSpeed = this.minTargetSpeed;
-                        }
-                        else
-                        {
-                            this.targetSpeed += this.targetSpeedDiff;
-                        }
-                    }
-
-                    break;
-
-                case CruiseControlInputs.DecreaseTargetSpeed:
-                    if (this.ACCenabled)
-                    {
-                        if (World.Instance.ControlledCar.VirtualFunctionBus.PowertrainPacket.CurrentSpeed - this.targetSpeedDiff >= this.maxTargetSpeed)
-                        {
-                            this.targetSpeed = this.maxTargetSpeed;
-                        }
-                        else if (World.Instance.ControlledCar.VirtualFunctionBus.PowertrainPacket.CurrentSpeed - this.targetSpeedDiff <= this.minTargetSpeed)
-                        {
-                            this.targetSpeed = this.minTargetSpeed;
-                        }
-                        else
-                        {
-                            this.targetSpeed -= this.targetSpeedDiff;
-                        }
-                    }
-
-                    break;
+                }
             }
         }
     }

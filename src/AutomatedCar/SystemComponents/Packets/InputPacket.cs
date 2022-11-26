@@ -5,6 +5,8 @@
 namespace AutomatedCar.SystemComponents.Packets
 {
     using AutomatedCar.SystemComponents.InputManager.Messenger;
+    using System.Collections.Concurrent;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Packet for communication between the user and powertrain.
@@ -20,7 +22,7 @@ namespace AutomatedCar.SystemComponents.Packets
             this.PedalState = Pedals.Empty;
             this.GearState = Gears.Steady;
             this.IsGearStateJustChanged = false;
-            this.CruiseControlInput = CruiseControlInputs.Empty;
+            this.CruiseControlInputs = new ConcurrentQueue<CruiseControlInputs>();
         }
 
         /// <summary>
@@ -37,11 +39,11 @@ namespace AutomatedCar.SystemComponents.Packets
         /// Gets or sets the state of the gearbox.
         /// </summary>
         public Gears GearState { get; set; }
-       
+
         /// <summary>
-        /// Gets or sets if input is detected for the cruise control.
+        /// Gets or sets the CruiseControlInputs Queue.
         /// </summary>
-        public CruiseControlInputs CruiseControlInput { get; set; }
+        public ConcurrentQueue<CruiseControlInputs> CruiseControlInputs { get; set; }
 
         /// <summary>
         /// Gets or sets if the gear state is just changed.
@@ -54,7 +56,7 @@ namespace AutomatedCar.SystemComponents.Packets
         /// <returns>A string to log.</returns>
         public override string ToString()
         {
-            return $"{this.SteeringState.ToString()} - {this.PedalState.ToString()} - {this.GearState.ToString()} - GearStateJustChanged: {this.IsGearStateJustChanged} - {this.CruiseControlInput.ToString()}";
+            return $"{this.SteeringState.ToString()} - {this.PedalState.ToString()} - {this.GearState.ToString()} - GearStateJustChanged: {this.IsGearStateJustChanged}";
         }
     }
 }
