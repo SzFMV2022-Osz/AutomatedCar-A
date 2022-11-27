@@ -14,6 +14,6 @@
 
         bool CanBeTurnedOn(List<Coordinate> objects, int carX, int carY);
 
-        bool MustBeTurnedOff(List<Coordinate> worldObjects);
+        bool MustBeTurnedOff(List<Coordinate> objects, int carX, int carY);
     }
 }

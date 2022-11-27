@@ -21,9 +21,9 @@
             return this.RoadSideIsOK();
         }
 
-        public bool MustBeTurnedOff(List<Coordinate> objects)
+        public bool MustBeTurnedOff(List<Coordinate> objects, int carX, int carY)
         {
-            if (!this.CanBeTurnedOn(objects, this.carX, this.carY))
+            if (!this.CanBeTurnedOn(objects, carX, carY))
             {
                 return false;
             }
@@ -36,7 +36,7 @@
 
         private bool CurveIsNotOK()
         {
-            //since you put roadSides into the roadSides IEnumerable in order of closest to furthest, we dont need to reorder it
+            // since you put roadSides into the roadSides IEnumerable in order of closest to furthest, we dont need to reorder it
             bool isCurveOk = false;
             bool roadCurves = isTheRoadCurving();
 
