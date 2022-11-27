@@ -124,7 +124,10 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// </summary>
         public void StateDown()
         {
-            this.gearshift.StateDown();
+            if (this.GetSpeed < 5)
+            {
+                this.gearshift.StateDown();
+            }
         }
 
         /// <summary>
@@ -132,7 +135,10 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// </summary>
         public void StateUp()
         {
-            this.gearshift.StateUp();
+            if (this.GetSpeed < 5)
+            {
+                this.gearshift.StateUp();
+            }
         }
 
         /// <summary>
