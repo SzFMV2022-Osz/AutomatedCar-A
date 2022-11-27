@@ -207,7 +207,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
                 this.brakePedal = 0;
             }
 
-            this.Velocity = this.GetSpeedByWheelRotation() + this.ChangeVelocity(false) + this.ChangeVelocity(true);
+            this.Velocity += this.ChangeVelocity(false) + this.ChangeVelocity(true);
 
             /*Debug.WriteLine("Gas: " + this.gasPedal);
             Debug.WriteLine("Brake: " + this.brakePedal);*/
@@ -247,7 +247,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
                 this.brakePedal = 0;
             }
 
-            this.Velocity = this.GetSpeedByWheelRotation() + this.ChangeVelocity(true) + this.ChangeVelocity(false);
+            this.Velocity += this.ChangeVelocity(true) + this.ChangeVelocity(false);
             this.rpm = this.GetRPM();
 
             /*Debug.WriteLine("Gas: " + this.gasPedal);
@@ -369,16 +369,16 @@ namespace AutomatedCar.SystemComponents.Powertrain
             }
             else
             {
-                /*if (rpm < 1000)
+                if (this.GetSpeed == 0)
                 {
                     return 1000;
                 }
                 else
                 {
                     return rpm;
-                }*/
+                }
 
-                return rpm;
+                //return rpm;
             }
         }
 
