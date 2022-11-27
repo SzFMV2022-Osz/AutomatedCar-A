@@ -31,7 +31,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
             this.powertrainPacket = new PowertrainPacket();
             virtualFunctionBus.PowertrainPacket = this.powertrainPacket;
             this.gearshift = new Gearshift();
-            this.engine = new Engine(this.virtualFunctionBus, this.gearshift);
+            this.engine = new Engine(this.gearshift);
             this.steeringV2 = new SteeringV2();
         }
 
@@ -95,6 +95,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
                         else if (this.engine.GetGearshiftState == GearshiftState.N)
                         {
                             this.virtualFunctionBus.PowertrainPacket.CurrentGear = "N";
+                            this.virtualFunctionBus.PowertrainPacket.Rpm = this.engine.GetRPMValue;
                         }
                         else
                         {
@@ -115,6 +116,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
                         else if (this.engine.GetGearshiftState == GearshiftState.N)
                         {
                             this.virtualFunctionBus.PowertrainPacket.CurrentGear = "N";
+                            this.virtualFunctionBus.PowertrainPacket.Rpm = this.engine.GetRPMValue;
                         }
                         else
                         {
