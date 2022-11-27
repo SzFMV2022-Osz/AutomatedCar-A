@@ -159,7 +159,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
                 this.brakePedal = 0;
             }
 
-            this.Velocity += this.ChangeVelocity(false) + this.ChangeVelocity(true);
+            this.Velocity = this.GetSpeedByWheelRotation() + this.ChangeVelocity(false);
             this.rpm = this.GetRPM();
 
             /*Debug.WriteLine("Gas: " + this.gasPedal);
@@ -213,13 +213,10 @@ namespace AutomatedCar.SystemComponents.Powertrain
             Debug.WriteLine("Brake: " + this.brakePedal);*/
             Debug.WriteLine("RPM: " + this.rpm);
 
-            if (this.rpm < this.minrpm + 0.25f)
+            if (this.rpm <= this.minrpm)
             {
-                if (this.GetPrewGearRPM() < this.maxrpm)
-                {
-                    this.gearshift.ShiftDown();
-                    this.rpm = this.GetRPM();
-                }
+                this.gearshift.ShiftDown();
+                this.rpm = this.GetRPM();
             }
         }
 
@@ -247,7 +244,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
                 this.brakePedal = 0;
             }
 
-            this.Velocity += this.ChangeVelocity(true) + this.ChangeVelocity(false);
+            this.Velocity = this.GetSpeedByWheelRotation() + this.ChangeVelocity(true);
             this.rpm = this.GetRPM();
 
             /*Debug.WriteLine("Gas: " + this.gasPedal);
@@ -298,14 +295,20 @@ namespace AutomatedCar.SystemComponents.Powertrain
                 case GearshiftState.R:
                     if (isbraking)
                     {
-                        longitudionalForce = this.BrakingForce() + this.DragForce() + this.Frr();
+                        longitudionalForce = this.BrakingForce() - this.DragForce() - this.Frr();
                     }
                     else
                     {
-                        longitudionalForce = this.DrivingForce() + this.DragForce() + this.Frr();
+                        longitudionalForce = this.DrivingForce() - this.DragForce() - this.Frr();
                     }
 
                     longitudionalForce *= -1;
+
+                    if (longitudionalForce > 0 && !isbraking)
+                    {
+                        longitudionalForce = 0;
+                    }
+
                     break;
                 case GearshiftState.N:
                     break;
@@ -317,6 +320,10 @@ namespace AutomatedCar.SystemComponents.Powertrain
                     else
                     {
                         longitudionalForce = this.DrivingForce() + this.DragForce() + this.Frr();
+                        if (longitudionalForce < 0)
+                        {
+                            longitudionalForce = 0;
+                        }
                     }
 
                     break;
