@@ -164,7 +164,7 @@
             Point relativePoint = new Point(carWidth, -this.distInGame);
             Point relativeNextPoint = CollisionDetection.RotatePoint(relativePoint, car.Rotation);
 
-            Rect rect = new Rect(car.X, car.Y, relativeNextPoint.X, relativeNextPoint.Y);
+            Rect rect = new Rect(car.X + this.vision.SensorPos.X - (carWidth / 2), car.Y + this.vision.SensorPos.Y, relativeNextPoint.X, relativeNextPoint.Y);
 
             PolylineGeometry poly = new PolylineGeometry();
             poly.Points.Add(rect.TopLeft);
@@ -176,7 +176,7 @@
             WorldObject closest = relevantList[0];
             for (int i = 0; i < relevantList.Count; ++i)
             {
-                if (!CollisionDetection.BoundingBoxesCollide(poly, CollisionDetection.TransformRawGeometry(closest), 1))
+                if (!CollisionDetection.BoundingBoxesCollide(poly, CollisionDetection.TransformRawGeometry(closest), 0))
                 {
                     continue;
                 }
