@@ -41,7 +41,7 @@ namespace AutomatedCar.Models
             this.ZIndex = 10;
             this.inputManager = new InputManager(this.virtualFunctionBus);
             this.powertrainManager = new PowertrainManager(this.virtualFunctionBus);
-            this.cruiseControl = new CruiseControl(this.virtualFunctionBus);
+            this.cruiseControl = new CruiseControl(this.virtualFunctionBus, this);
             this.AEB = new AutomaticEmergencyBreak(this.virtualFunctionBus);
         }
 
