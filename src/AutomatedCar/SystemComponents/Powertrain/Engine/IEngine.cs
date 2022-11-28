@@ -43,20 +43,17 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// <summary>
         /// Accelerate the car.
         /// </summary>
-        /// <returns>driving force lenght.</returns>
-        float Accelerate();
+        void Accelerate();
 
         /// <summary>
         /// Slows the car.
         /// </summary>
-        /// <returns>driving force lenght.</returns>
-        float Lift();
+        void Lift();
 
         /// <summary>
         /// Breaks the car.
         /// </summary>
-        /// <returns>driving force lenght.</returns>
-        float Braking();
+        void Braking();
 
         /// <summary>
         /// Switch state dawn.

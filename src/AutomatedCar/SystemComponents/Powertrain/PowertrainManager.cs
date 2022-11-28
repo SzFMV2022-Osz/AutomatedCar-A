@@ -95,6 +95,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
                         else if (this.engine.GetGearshiftState == GearshiftState.N)
                         {
                             this.virtualFunctionBus.PowertrainPacket.CurrentGear = "N";
+                            this.virtualFunctionBus.PowertrainPacket.Rpm = this.engine.GetRPMValue;
                         }
                         else
                         {
@@ -115,6 +116,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
                         else if (this.engine.GetGearshiftState == GearshiftState.N)
                         {
                             this.virtualFunctionBus.PowertrainPacket.CurrentGear = "N";
+                            this.virtualFunctionBus.PowertrainPacket.Rpm = this.engine.GetRPMValue;
                         }
                         else
                         {
