@@ -157,6 +157,9 @@
                             break;
                     }
                 }
+                this.virtualFunctionBus.CruiseControlPacket.ACCEnabled = this.ACCenabled;
+                this.virtualFunctionBus.CruiseControlPacket.TargetDistance = this.GetCurrentAccDistance;
+                this.virtualFunctionBus.CruiseControlPacket.TargetSpeed = this.targetSpeed;
             }
         }
 

@@ -51,7 +51,7 @@
                               RenderTransformOrigin="{Binding RotationPoint, Converter={x:Static visualization:RenderTransformOriginTransformer.Instance}}"
                               Source="resm:AutomatedCar.Assets.steering-wheel.png?assembly=AutomatedCar">
                           </Image>
-                            <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+                            <Grid ColumnDefinitions="100,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
                                 <TextBlock Grid.Row="0" Grid.Column="0">X:</TextBlock>
                                 <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding X}"/>
                                 <TextBlock Grid.Row="1" Grid.Column="0">Y:</TextBlock>
@@ -66,7 +66,7 @@
                                 <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding VirtualFunctionBus.DummyPacket.DistanceY}"/>
                                 <TextBlock Grid.Row="6" Grid.Column="0">ACC enabled:</TextBlock>
                                 <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding Car.VirtualFunctionBus.CruiseControlPacket.ACCEnabled}"/>
-                                <TextBlock Grid.Row="7" Grid.Column="0">Target distance:</TextBlock>
+                                <TextBlock Grid.Row="7" Grid.Column="0">Target distance: </TextBlock>
                                 <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding Car.VirtualFunctionBus.CruiseControlPacket.TargetDistance}"/>
                                 <TextBlock Grid.Row="8" Grid.Column="0">Target speed:</TextBlock>
                                 <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding Car.VirtualFunctionBus.CruiseControlPacket.TargetSpeed}"/>

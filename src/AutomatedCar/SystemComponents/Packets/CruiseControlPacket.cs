@@ -11,7 +11,7 @@
     {
         private bool accEnabled;
         private int targetSpeed;
-        private int targetDistance;
+        private double targetDistance;
 
         public bool ACCEnabled
         {
@@ -25,7 +25,7 @@
             set => this.RaiseAndSetIfChanged(ref this.targetSpeed, value);
         }
 
-        public int TargetDistance
+        public double TargetDistance
         {
             get => targetDistance;
             set => this.RaiseAndSetIfChanged(ref this.targetDistance, value);
