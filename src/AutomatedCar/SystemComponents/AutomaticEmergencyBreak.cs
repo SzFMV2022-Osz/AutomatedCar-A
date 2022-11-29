@@ -76,5 +76,43 @@
         {
             return Math.Sqrt(Math.Pow(velocity.X, 2) + Math.Pow(velocity.Y, 2)) / Constants.SecondsBetweenTrack * Constants.MeterInPixels;
         }
+
+        /// <summary>
+        /// Calculates the possible crash point for two objects.
+        /// </summary>
+        /// <param name="carGeom">Cars's polylineGeometry.</param>
+        /// <param name="objGeom">target object's polylineGeometry.</param>
+        /// <param name="carPosition">Car's position.</param>
+        /// <param name="objPosition">Target's position.</param>
+        /// <returns>Returns the closest point where the car could crash with something, returns default Optional otherwise.</returns>
+        private Optional<Point> CalculateCollision(PolylineGeometry carGeom, PolylineGeometry objGeom, Point carPosition, Point objPosition)
+        {
+            PolylineGeometry closest;
+
+            bool couldCrash = CollisionDetection.BoundingBoxesCollide(carGeom, objGeom, 0);
+            if (couldCrash)
+            {
+                closest = objGeom;
+            }
+            else
+            {
+                return default(Optional<Point>);
+            }
+
+            Point closestPoint = closest.Points[0];
+            var closestPointDistance = Math.Sqrt(Math.Pow(carPosition.X - objPosition.X, 2) + Math.Pow(carPosition.Y - objPosition.Y, 2));
+            var closestPoints = closest.Points.ToList();
+            foreach (var polyPoint in closestPoints)
+            {
+                var currentPointDistance = Math.Sqrt(Math.Pow(carPosition.X - polyPoint.X, 2) + Math.Pow(carPosition.Y - polyPoint.Y, 2));
+                if (carGeom.FillContains(polyPoint) && currentPointDistance < closestPointDistance)
+                {
+                    closestPoint = polyPoint;
+                    break;
+                }
+            }
+
+            return new Optional<Point>(closestPoint);
+        }
     }
 }
