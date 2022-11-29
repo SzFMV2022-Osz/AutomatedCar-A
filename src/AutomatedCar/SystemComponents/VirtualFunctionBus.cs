@@ -19,6 +19,8 @@ namespace AutomatedCar.SystemComponents
 
         public InputPacket InputPacket { get; set; }
 
+        public CruiseControlPacket CruiseControlPacket { get; set; }
+
         public void RegisterComponent(SystemComponent component)
         {
             this.components.Add(component);

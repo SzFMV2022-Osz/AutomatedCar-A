@@ -35,6 +35,7 @@
             this.currentAccDistanceIdx = 0;
             this.targetSpeed = 0;
             this.car = car;
+            this.virtualFunctionBus.CruiseControlPacket = new Packets.CruiseControlPacket();
         }
 
         /// <summary>

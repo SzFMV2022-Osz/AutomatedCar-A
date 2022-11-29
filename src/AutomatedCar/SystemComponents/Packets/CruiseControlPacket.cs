@@ -15,19 +15,19 @@
 
         public bool ACCEnabled
         {
-            get => true;
+            get => accEnabled;
             set => this.RaiseAndSetIfChanged(ref this.accEnabled, value);
         }
 
         public int TargetSpeed
         {
-            get => 0;
+            get => targetSpeed;
             set => this.RaiseAndSetIfChanged(ref this.targetSpeed, value);
         }
 
         public int TargetDistance
         {
-            get => 0;
+            get => targetDistance;
             set => this.RaiseAndSetIfChanged(ref this.targetDistance, value);
         }
     }
