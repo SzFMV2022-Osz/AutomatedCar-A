@@ -116,6 +116,11 @@ namespace AutomatedCar.Views
                 viewModel.CourseDisplay.TurnCruiseControlOnOff();
             }
 
+            if (Keyboard.IsKeyDown(Key.L))
+            {
+                viewModel.CourseDisplay.TurnLKAOnOrOff();
+            }
+
             if (Keyboard.IsKeyDown(Key.T))
             {
                 viewModel.CourseDisplay.ChangeTargetDistance();

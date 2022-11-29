@@ -23,6 +23,7 @@ namespace AutomatedCar.SystemComponents.Packets
             this.GearState = Gears.Steady;
             this.IsGearStateJustChanged = false;
             this.CruiseControlInputs = new ConcurrentQueue<CruiseControlInputs>();
+            this.LKAInputs = new ConcurrentQueue<LkaInputs>();
         }
 
         /// <summary>
@@ -44,6 +45,11 @@ namespace AutomatedCar.SystemComponents.Packets
         /// Gets or sets the CruiseControlInputs Queue.
         /// </summary>
         public ConcurrentQueue<CruiseControlInputs> CruiseControlInputs { get; set; }
+
+        /// <summary>
+        /// Gets or sets the LKA Queue.
+        /// </summary>
+        public ConcurrentQueue<LkaInputs> LKAInputs { get; set; }
 
         /// <summary>
         /// Gets or sets if the gear state is just changed.

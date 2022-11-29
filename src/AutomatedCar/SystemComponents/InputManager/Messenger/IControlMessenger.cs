@@ -54,5 +54,11 @@ namespace AutomatedCar.SystemComponents.InputManager.Messenger
         /// </summary>
         /// <param name="cruiseControlInput">Tells the cruise control what type of input was received.</param>
         public void FireCruiseControlEvent(CruiseControlInputs cruiseControlInput);
+
+        /// <summary>
+        /// Fires the event for lka controlling.
+        /// </summary>
+        /// <param name="lkaInput">Tells thelka what type of input was received.</param>
+        public void FireLKAEvent(LkaInputs lkaInput);
     }
 }

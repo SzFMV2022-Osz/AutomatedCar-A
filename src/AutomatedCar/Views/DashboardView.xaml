@@ -51,7 +51,7 @@
                                     <RotateTransform Angle="{Binding Car.VirtualFunctionBus.PowertrainPacket.RotationAngle}"/>
                                 </Image.RenderTransform>
                             </Image>
-                            <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
+                            <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
                                 <TextBlock Grid.Row="0" Grid.Column="0">X:</TextBlock>
                                 <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding X}"/>
                                 <TextBlock Grid.Row="1" Grid.Column="0">Y:</TextBlock>
@@ -64,6 +64,10 @@
                                 <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding VirtualFunctionBus.DummyPacket.DistanceX}"/>
                                 <TextBlock Grid.Row="5" Grid.Column="0">Distance Y:</TextBlock>
                                 <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding VirtualFunctionBus.DummyPacket.DistanceY}"/>
+                                <TextBlock Grid.Row="6" Grid.Column="0">Lane keeping status:</TextBlock>
+                                <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding Car.VirtualFunctionBus.LKAPacket.LaneKeepingStatus}"/>
+                                <TextBlock Grid.Row="7" Grid.Column="0">Lane keeping available:</TextBlock>
+                                <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding Car.VirtualFunctionBus.LKAPacket.LaneKeepingAvailable}"/>
                             </Grid>
 							<Border BorderThickness="0.5" BorderBrush="White" CornerRadius="3,3,3,3" Margin="0,5,0,0">
 									<DockPanel MaxHeight="130">

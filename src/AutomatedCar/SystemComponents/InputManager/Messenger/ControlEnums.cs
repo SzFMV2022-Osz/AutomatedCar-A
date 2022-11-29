@@ -80,4 +80,15 @@ namespace AutomatedCar.SystemComponents.InputManager.Messenger
 
         DecreaseTargetSpeed
     }
+
+    public enum LkaInputs
+    {
+        Empty,
+
+        TurnOnOrOff,
+
+        Enabled,
+
+        Disabled,
+    }
 }

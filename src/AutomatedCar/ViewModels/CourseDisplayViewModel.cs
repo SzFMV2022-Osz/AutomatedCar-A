@@ -62,12 +62,14 @@ namespace AutomatedCar.ViewModels
         {
             // World.Instance.ControlledCar.X -= 5;
             ControlMessenger.Instance.FireSteeringEvent(SteeringState.Left);
+            ControlMessenger.Instance.FireLKAEvent(LkaInputs.Disabled);
         }
 
         public void KeyRight()
         {
             // World.Instance.ControlledCar.X += 5;
             ControlMessenger.Instance.FireSteeringEvent(SteeringState.Right);
+            ControlMessenger.Instance.FireLKAEvent(LkaInputs.Disabled);
         }
 
         public void PageUp()
@@ -112,6 +114,11 @@ namespace AutomatedCar.ViewModels
             ControlMessenger.Instance.FireCruiseControlEvent(CruiseControlInputs.TurnOnOrOff);
         }
 
+        public void TurnLKAOnOrOff()
+        {
+            ControlMessenger.Instance.FireLKAEvent(LkaInputs.TurnOnOrOff);
+        }
+
         public void ChangeTargetDistance()
         {
             ControlMessenger.Instance.FireCruiseControlEvent(CruiseControlInputs.ChangeTargetDistance);
@@ -136,6 +143,7 @@ namespace AutomatedCar.ViewModels
 
             if (key == Key.Left || key == Key.Right)
             {
+                ControlMessenger.Instance.FireLKAEvent(LkaInputs.Enabled);
                 ControlMessenger.Instance.FireSteeringEvent(SteeringState.Center);
             }
 
