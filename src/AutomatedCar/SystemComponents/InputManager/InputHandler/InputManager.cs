@@ -6,6 +6,7 @@ namespace AutomatedCar.SystemComponents.InputManager.InputHandler
 {
     using AutomatedCar.SystemComponents.InputManager.Messenger;
     using AutomatedCar.SystemComponents.Packets;
+    using System.Diagnostics;
 
     /// <summary>
     /// InputManager manages the input packets for the powertrain.
@@ -25,10 +26,12 @@ namespace AutomatedCar.SystemComponents.InputManager.InputHandler
             this.CurrentGearState = Gears.Steady;
             this.CurrendPedalState = Pedals.Empty;
             this.CurrentSteeringState = SteeringState.Center;
+            this.CurrentCruiseControlInput = CruiseControlInputs.Empty;
 
             ControlMessenger.Instance.SteeringEventHandler += this.OnSteering;
             ControlMessenger.Instance.PedalEventHandler += this.OnPedal;
             ControlMessenger.Instance.GearboxEventHandler += this.OnGearbox;
+            ControlMessenger.Instance.CruiseControlEventHandler += this.OnCruiseControlInput;
         }
 
         /// <summary>
@@ -50,6 +53,11 @@ namespace AutomatedCar.SystemComponents.InputManager.InputHandler
         /// Gets or sets the next value for the InputPacket.
         /// </summary>
         private Pedals CurrendPedalState { get; set; }
+
+        /// <summary>
+        /// Gets or sets the next value for the InputPacket.
+        /// </summary>
+        private CruiseControlInputs CurrentCruiseControlInput { get; set; }
 
         /// <summary>
         /// Sets the packet for steering.
@@ -110,6 +118,30 @@ namespace AutomatedCar.SystemComponents.InputManager.InputHandler
                     break;
                 case Gears.Steady:
                     this.CurrentGearState = Gears.Steady;
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Places the input meant for the ACC in a queue.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="eventArgs"></param>
+        public void OnCruiseControlInput(object sender, ControlEventArgs eventArgs)
+        {
+            switch (eventArgs.CruiseControlInput)
+            {
+                case CruiseControlInputs.TurnOnOrOff:
+                    InputPacket.CruiseControlInputs.Enqueue(CruiseControlInputs.TurnOnOrOff);
+                    break;
+                case CruiseControlInputs.ChangeTargetDistance:
+                    InputPacket.CruiseControlInputs.Enqueue(CruiseControlInputs.ChangeTargetDistance);
+                    break;
+                case CruiseControlInputs.IncreaseTargetSpeed:
+                    InputPacket.CruiseControlInputs.Enqueue(CruiseControlInputs.IncreaseTargetSpeed);
+                    break;
+                case CruiseControlInputs.DecreaseTargetSpeed:
+                    InputPacket.CruiseControlInputs.Enqueue(CruiseControlInputs.DecreaseTargetSpeed);
                     break;
             }
         }

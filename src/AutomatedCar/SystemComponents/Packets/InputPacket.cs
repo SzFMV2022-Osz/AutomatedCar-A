@@ -5,6 +5,8 @@
 namespace AutomatedCar.SystemComponents.Packets
 {
     using AutomatedCar.SystemComponents.InputManager.Messenger;
+    using System.Collections.Concurrent;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Packet for communication between the user and powertrain.
@@ -20,6 +22,7 @@ namespace AutomatedCar.SystemComponents.Packets
             this.PedalState = Pedals.Empty;
             this.GearState = Gears.Steady;
             this.IsGearStateJustChanged = false;
+            this.CruiseControlInputs = new ConcurrentQueue<CruiseControlInputs>();
         }
 
         /// <summary>
@@ -36,6 +39,11 @@ namespace AutomatedCar.SystemComponents.Packets
         /// Gets or sets the state of the gearbox.
         /// </summary>
         public Gears GearState { get; set; }
+
+        /// <summary>
+        /// Gets or sets the CruiseControlInputs Queue.
+        /// </summary>
+        public ConcurrentQueue<CruiseControlInputs> CruiseControlInputs { get; set; }
 
         /// <summary>
         /// Gets or sets if the gear state is just changed.

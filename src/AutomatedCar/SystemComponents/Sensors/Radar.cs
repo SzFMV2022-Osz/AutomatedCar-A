@@ -31,7 +31,7 @@
             // positioning sensor on the car
             this.vision = SensorVision.CalculateVision(this.dist, this.deg, new Point(0, 0));
             this.virtualFunctionBus.RadarPacket = new RadarPacket();
-
+            this.virtualFunctionBus.RadarPacket.ObjectTrackingDatas = new Dictionary<WorldObject, WorldObjectTracker>();
         }
 
         public override void Process()
@@ -44,11 +44,46 @@
             this.SaveWorldObjectsToPacket();
         }
 
+        public void UpdateTracking(List<WorldObject> list)
+        {
+            var objectTrackingDatas = this.virtualFunctionBus.RadarPacket.ObjectTrackingDatas;
+
+            // Out of sight check.
+            foreach (var entry in objectTrackingDatas)
+            {
+                if (!list.Contains(entry.Key) && entry.Key != World.Instance.ControlledCar)
+                {
+                    objectTrackingDatas.Remove(entry.Key);
+                }
+            }
+
+            var timestamp = DateTime.Now;
+
+            // Always add controlled car's position
+            if (!objectTrackingDatas.ContainsKey(World.Instance.ControlledCar))
+            {
+                objectTrackingDatas[World.Instance.ControlledCar] = new WorldObjectTracker();
+            }
+
+            objectTrackingDatas[World.Instance.ControlledCar].AddPoint(
+                new Point(World.Instance.ControlledCar.X, World.Instance.ControlledCar.Y),
+                timestamp
+                );
+
+            foreach (var obj in list)
+            {
+                if (!objectTrackingDatas.ContainsKey(obj))
+                {
+                    objectTrackingDatas[obj] = new WorldObjectTracker();
+                }
+
+                objectTrackingDatas[obj].AddPoint(new Point(obj.X, obj.Y), timestamp);
+            }
+        }
+
         protected override List<WorldObject> FilterRelevantWorldObjects()
         {
-            var list = this.GetWorldObjects().Where(x => this.IsRelevant(x)).ToList();
-            return list;
-
+            return this.GetWorldObjects().Where(x => this.IsRelevant(x)).ToList();
         }
 
         protected override void SaveWorldObjectsToPacket()
@@ -56,10 +91,12 @@
             var list = this.FilterRelevantWorldObjects();
             list = this.OrderByDistance(list);
 
-            this.virtualFunctionBus.RadarPacket.RelevantWorldObjs = list;
+            this.UpdateTracking(list);
 
+            this.virtualFunctionBus.RadarPacket.RelevantWorldObjs = list;
             this.virtualFunctionBus.RadarPacket.Closest = this.NearestWorldObject(list);
             this.virtualFunctionBus.RadarPacket.ClosestInLane = this.ClosestInLane(list);
+
             /*
             Trace.WriteLine(packet.RelevantWorldObjs.Count);
             packet.RelevantWorldObjs.ForEach(x => Trace.Write(x.X + "," + x.Y + " " + x.Filename + "; "));
@@ -70,7 +107,6 @@
             Trace.WriteLine("CLOSEST IN LANE:");
             Trace.WriteLine(packet.ClosestInLane == null ? "no closest" : packet.ClosestInLane.Filename + ", " + packet.ClosestInLane.X + ", " + packet.ClosestInLane.Y);
             */
-
         }
 
         private bool IsRelevant(WorldObject obj)
@@ -82,7 +118,11 @@
                 return false;
             }
 
-            if (!(obj is INPC) && !(obj is Car))
+            if (obj.WorldObjectType != WorldObjectType.Car
+                && obj.WorldObjectType != WorldObjectType.RoadSign
+                && obj.WorldObjectType != WorldObjectType.Tree
+                && obj.WorldObjectType != WorldObjectType.Pedestrian
+                && obj.WorldObjectType != WorldObjectType.Other)
             {
                 return false;
             }
@@ -124,7 +164,7 @@
             Point relativePoint = new Point(carWidth, -this.distInGame);
             Point relativeNextPoint = CollisionDetection.RotatePoint(relativePoint, car.Rotation);
 
-            Rect rect = new Rect(car.X, car.Y, relativeNextPoint.X, relativeNextPoint.Y);
+            Rect rect = new Rect(car.X + this.vision.SensorPos.X - (carWidth / 2), car.Y + this.vision.SensorPos.Y, relativeNextPoint.X, relativeNextPoint.Y);
 
             PolylineGeometry poly = new PolylineGeometry();
             poly.Points.Add(rect.TopLeft);
@@ -136,7 +176,7 @@
             WorldObject closest = relevantList[0];
             for (int i = 0; i < relevantList.Count; ++i)
             {
-                if (!CollisionDetection.BoundingBoxesCollide(poly, CollisionDetection.TransformRawGeometry(closest), 1))
+                if (!CollisionDetection.BoundingBoxesCollide(poly, CollisionDetection.TransformRawGeometry(closest), 0))
                 {
                     continue;
                 }

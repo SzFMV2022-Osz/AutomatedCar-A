@@ -107,6 +107,26 @@ namespace AutomatedCar.ViewModels
             // World.Instance.DebugStatus.Rotate = !World.Instance.DebugStatus.Rotate;
         }
 
+        public void TurnCruiseControlOnOff()
+        {
+            ControlMessenger.Instance.FireCruiseControlEvent(CruiseControlInputs.TurnOnOrOff);
+        }
+
+        public void ChangeTargetDistance()
+        {
+            ControlMessenger.Instance.FireCruiseControlEvent(CruiseControlInputs.ChangeTargetDistance);
+        }
+
+        public void IncreaseTargetSpeed()
+        {
+            ControlMessenger.Instance.FireCruiseControlEvent(CruiseControlInputs.IncreaseTargetSpeed);
+        }
+
+        public void DecreaseTargetSpeed()
+        {
+            ControlMessenger.Instance.FireCruiseControlEvent(CruiseControlInputs.DecreaseTargetSpeed);
+        }
+
         public void OnKeyUp(Key key)
         {
             if (key == Key.Up || key == Key.Down)
