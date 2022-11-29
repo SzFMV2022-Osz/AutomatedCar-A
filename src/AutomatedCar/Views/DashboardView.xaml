@@ -46,12 +46,14 @@
                             <TextBlock Text="Brake"/>
                             <ProgressBar Minimum="0" Maximum="1" HorizontalAlignment="Center" VerticalAlignment="Center" Value="{Binding Car.VirtualFunctionBus.PowertrainPacket.CurrentBrakeValue}"></ProgressBar>
                             <Separator Height="12"></Separator>
-                          <Image
-                              Width="90" Height="90"
-                              RenderTransformOrigin="{Binding RotationPoint, Converter={x:Static visualization:RenderTransformOriginTransformer.Instance}}"
-                              Source="resm:AutomatedCar.Assets.steering-wheel.png?assembly=AutomatedCar">
-                          </Image>
+
+                            <Image Width="90" Height="90" Source="resm:AutomatedCar.Assets.steering-wheel.png?assembly=AutomatedCar">
+                                <Image.RenderTransform>
+                                    <RotateTransform Angle="{Binding Car.VirtualFunctionBus.PowertrainPacket.RotationAngle}"/>
+                                </Image.RenderTransform>
+                            </Image>
                             <Grid ColumnDefinitions="100,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+
                                 <TextBlock Grid.Row="0" Grid.Column="0">X:</TextBlock>
                                 <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding X}"/>
                                 <TextBlock Grid.Row="1" Grid.Column="0">Y:</TextBlock>
