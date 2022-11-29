@@ -4,6 +4,7 @@
 
 namespace AutomatedCar.SystemComponents.Powertrain
 {
+    using System;
     using System.Diagnostics;
     using AutomatedCar.Models;
     using AutomatedCar.SystemComponents.InputManager.Messenger;
