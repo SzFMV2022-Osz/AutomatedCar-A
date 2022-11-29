@@ -1,6 +1,7 @@
 ﻿namespace AutomatedCar.SystemComponents.Packets
 {
     using AutomatedCar.Models;
+    using Avalonia;
     using ReactiveUI;
     using System;
     using System.Collections.Generic;
@@ -12,6 +13,7 @@
     {
         private WorldObject closestInLane;
         private WorldObject closest;
+        private Rect frontalRadarArea;
 
         private Dictionary<WorldObject, WorldObjectTracker> objectTrackingDatas;
 
@@ -39,6 +41,12 @@
         {
             get => this.objectTrackingDatas;
             set => this.objectTrackingDatas = value;
+        }
+
+        public Rect FrontalRadarArea
+        {
+            get => this.frontalRadarArea;
+            set => this.frontalRadarArea = value;
         }
     }
 }
