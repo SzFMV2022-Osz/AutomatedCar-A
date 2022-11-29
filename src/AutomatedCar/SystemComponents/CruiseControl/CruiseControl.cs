@@ -60,25 +60,36 @@
         /// <inheritdoc/>
         public override void Process()
         {
+            HandleInput();
+
+            // Do the math
+            if (this.ACCenabled)
+            {
+                double? distCarInFront = this.CalculateDistanceFromCarInFront();
+
+                if (distCarInFront != null)
+                {
+                    this.HandleACC(distCarInFront ?? 0);
+                }
+                else
+                {
+                    this.HandleCC();
+                }
+            }
+
+            // Save to packet
+            this.virtualFunctionBus.CruiseControlPacket.ACCEnabled = this.ACCenabled;
+            this.virtualFunctionBus.CruiseControlPacket.TargetDistance = this.GetCurrentAccDistance;
+            this.virtualFunctionBus.CruiseControlPacket.TargetSpeed = this.targetSpeed;
+        }
+
+        private void HandleInput()
+        {
             CruiseControl selectedACC = World.Instance.ControlledCar.cruiseControl;
 
             // ONLY the controlled car should accept the inputs!
             if (selectedACC == this)
             {
-                if (this.ACCenabled)
-                {
-                    double? distCarInFront = this.CalculateDistanceFromCarInFront();
-
-                    if (distCarInFront != null)
-                    {
-                        this.HandleACC(distCarInFront ?? 0);
-                    }
-                    else
-                    {
-                        this.HandleCC();
-                    }
-                }
-
                 CruiseControlInputs input = CruiseControlInputs.Empty;
 
                 // The inputs are placed into a ConcurrentQueue to avoid input spam.
@@ -121,11 +132,11 @@
                         case CruiseControlInputs.IncreaseTargetSpeed:
                             if (this.ACCenabled)
                             {
-                                if (virtualFunctionBus.PowertrainPacket.CurrentSpeed + this.targetSpeedDiff >= this.maxTargetSpeed)
+                                if (this.targetSpeed + this.targetSpeedDiff >= this.maxTargetSpeed)
                                 {
                                     this.targetSpeed = this.maxTargetSpeed;
                                 }
-                                else if (virtualFunctionBus.PowertrainPacket.CurrentSpeed + this.targetSpeedDiff <= this.minTargetSpeed)
+                                else if (this.targetSpeed + this.targetSpeedDiff <= this.minTargetSpeed)
                                 {
                                     this.targetSpeed = this.minTargetSpeed;
                                 }
@@ -140,11 +151,11 @@
                         case CruiseControlInputs.DecreaseTargetSpeed:
                             if (this.ACCenabled)
                             {
-                                if (virtualFunctionBus.PowertrainPacket.CurrentSpeed - this.targetSpeedDiff >= this.maxTargetSpeed)
+                                if (this.targetSpeed - this.targetSpeedDiff >= this.maxTargetSpeed)
                                 {
                                     this.targetSpeed = this.maxTargetSpeed;
                                 }
-                                else if (virtualFunctionBus.PowertrainPacket.CurrentSpeed - this.targetSpeedDiff <= this.minTargetSpeed)
+                                else if (this.targetSpeed - this.targetSpeedDiff <= this.minTargetSpeed)
                                 {
                                     this.targetSpeed = this.minTargetSpeed;
                                 }
@@ -157,15 +168,13 @@
                             break;
                     }
                 }
-                this.virtualFunctionBus.CruiseControlPacket.ACCEnabled = this.ACCenabled;
-                this.virtualFunctionBus.CruiseControlPacket.TargetDistance = this.GetCurrentAccDistance;
-                this.virtualFunctionBus.CruiseControlPacket.TargetSpeed = this.targetSpeed;
             }
         }
 
         private void HandleCC()
         {
-            double carSpeedKph = this.PixelPerSecondToKph(this.car.Speed);
+            int currentSpeed = this.virtualFunctionBus.PowertrainPacket.CurrentSpeed;
+            double carSpeedKph = this.PixelPerSecondToKph(currentSpeed);
             if (carSpeedKph < this.targetSpeed)
             {
                 this.virtualFunctionBus.InputPacket.PedalState = Pedals.Gas;
@@ -182,9 +191,10 @@
 
         private void HandleACC(double distCarInFront)
         {
-            double gap = distCarInFront / this.car.Speed;
+            int currentSpeed = this.virtualFunctionBus.PowertrainPacket.CurrentSpeed;
+            double gap = distCarInFront / currentSpeed;
             double gapGoal = this.accDistances[this.currentAccDistanceIdx];
-            double carSpeedKph = this.PixelPerSecondToKph(this.car.Speed);
+            double carSpeedKph = this.PixelPerSecondToKph(currentSpeed);
 
             this.virtualFunctionBus.InputPacket.PedalState = Pedals.Empty;
 
