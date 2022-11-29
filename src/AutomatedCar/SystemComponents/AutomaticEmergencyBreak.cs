@@ -108,7 +108,6 @@
                 if (carGeom.FillContains(polyPoint) && currentPointDistance < closestPointDistance)
                 {
                     closestPoint = polyPoint;
-                    break;
                 }
             }
 
