@@ -15,7 +15,5 @@
         WorldObject Closest { get; set; }
 
         Dictionary<WorldObject, WorldObjectTracker> ObjectTrackingDatas { get; set; }
-
-        Rect FrontalRadarArea { get; set; }
     }
 }

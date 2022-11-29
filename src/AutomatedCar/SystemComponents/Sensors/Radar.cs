@@ -165,7 +165,6 @@
             Point relativeNextPoint = CollisionDetection.RotatePoint(relativePoint, car.Rotation);
 
             Rect rect = new Rect(car.X + this.vision.SensorPos.X - (carWidth / 2), car.Y + this.vision.SensorPos.Y, relativeNextPoint.X, relativeNextPoint.Y);
-            this.virtualFunctionBus.RadarPacket.FrontalRadarArea = rect;
             PolylineGeometry poly = new PolylineGeometry();
             poly.Points.Add(rect.TopLeft);
             poly.Points.Add(rect.TopRight);
