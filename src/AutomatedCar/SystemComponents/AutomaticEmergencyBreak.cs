@@ -91,9 +91,8 @@
             }
 
             Rect rect = this.virtualFunctionBus.RadarPacket.FrontalRadarArea;
-
-            WorldObject closest = objects[0];
-            var closestObjectDistance = Math.Sqrt(Math.Pow(car.X - closest.X, 2) + Math.Pow(car.Y - closest.Y, 2));
+            WorldObject closest = null;
+            var closestObjectDistance = double.MaxValue;
             PolylineGeometry poly = new PolylineGeometry();
             poly.Points.Add(rect.TopLeft);
             poly.Points.Add(rect.TopRight);
@@ -101,13 +100,18 @@
             poly.Points.Add(rect.BottomRight);
             foreach (var staticObject in objects)
             {
-                bool couldCrash = !CollisionDetection.BoundingBoxesCollide(poly, CollisionDetection.TransformRawGeometry(staticObject), 0);
+                bool couldCrash = CollisionDetection.BoundingBoxesCollide(poly, CollisionDetection.TransformRawGeometry(staticObject), 0);
                 var currentDistance = Math.Sqrt(Math.Pow(car.X - staticObject.X, 2) + Math.Pow(car.Y - staticObject.Y, 2));
                 if (couldCrash && currentDistance < closestObjectDistance)
                 {
                     closest = staticObject;
                     closestObjectDistance = currentDistance;
                 }
+            }
+
+            if (closest == null)
+            {
+                return default(Optional<Point>);
             }
 
             // Default point where the crash would happen at an exact moment is the central point of the object.
