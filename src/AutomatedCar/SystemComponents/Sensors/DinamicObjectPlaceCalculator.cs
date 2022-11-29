@@ -20,10 +20,10 @@ namespace AutomatedCar.SystemComponents.Sensors
         /// <param name="b">Second point.</param>
         /// <param name="c">Third point.</param>
         /// <param name="pointCount">Next x point.</param>
-        /// <returns>Possible points.</returns>
-        public List<Point> CalculatePoints(Point a, Point b, Point c, int pointCount)
+        /// <returns>Possible object info.</returns>
+        public List<DinamicObjectInformationHolder> CalculatePoints(Point a, Point b, Point c, int pointCount)
         {
-            var points = new List<Point>();
+            var points = new List<DinamicObjectInformationHolder>();
             var v1 = new Vector(a, b);
             var v2 = new Vector(b, c);
 
@@ -36,7 +36,7 @@ namespace AutomatedCar.SystemComponents.Sensors
             {
                 tempvecor.Rotate(degree);
                 tempvecor.Move(tempvecor1);
-                points.Add(tempvecor.B);
+                points.Add(new DinamicObjectInformationHolder(tempvecor.B, tempvecor.GetVecotrRotation));
                 tempvecor1 = tempvecor;
             }
 
@@ -75,6 +75,14 @@ namespace AutomatedCar.SystemComponents.Sensors
             }
 
             /// <summary>
+            /// Gets Vector rotation in degree.
+            /// </summary>
+            public double GetVecotrRotation
+            {
+                get { return ((this.A.X * 1) + (this.A.Y * 0)) / (this.Length * 1); }
+            }
+
+            /// <summary>
             /// Rotate the vector with aplha.
             /// </summary>
             /// <param name="alpha">Degree of the rotation.</param>
@@ -91,7 +99,7 @@ namespace AutomatedCar.SystemComponents.Sensors
             /// <returns>Degree between two vectors.</returns>
             public double DegreeCalculation(Vector vector)
             {
-                return (Math.PI / 180) * (((this.A.X * this.B.X) + (this.A.Y * this.B.Y)) / (this.Length * vector.Length));
+                return (Math.PI / 180) * (((this.B.X * vector.B.X) + (this.B.Y * vector.B.Y)) / (this.Length * vector.Length));
             }
 
             /// <summary>

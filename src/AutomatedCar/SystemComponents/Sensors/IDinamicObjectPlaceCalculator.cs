@@ -19,7 +19,7 @@ namespace AutomatedCar.SystemComponents.Sensors
         /// <param name="b">Second point.</param>
         /// <param name="c">Third point.</param>
         /// <param name="pointCount">Next x point.</param>
-        /// <returns>Possible points.</returns>
-        public List<Point> CalculatePoints(Point a, Point b, Point c, int pointCount);
+        /// <returns>Possible object info.</returns>
+        public List<DinamicObjectInformationHolder> CalculatePoints(Point a, Point b, Point c, int pointCount);
     }
 }
