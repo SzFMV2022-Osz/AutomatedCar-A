@@ -99,7 +99,7 @@
                 return default(Optional<Point>);
             }
 
-            Point closestPoint = closest.Points[0];
+            Point closestPoint = objPosition;
             var closestPointDistance = Math.Sqrt(Math.Pow(carPosition.X - objPosition.X, 2) + Math.Pow(carPosition.Y - objPosition.Y, 2));
             var closestPoints = closest.Points.ToList();
             foreach (var polyPoint in closestPoints)
@@ -108,6 +108,7 @@
                 if (carGeom.FillContains(polyPoint) && currentPointDistance < closestPointDistance)
                 {
                     closestPoint = polyPoint;
+                    closestPointDistance = currentPointDistance;
                 }
             }
 
