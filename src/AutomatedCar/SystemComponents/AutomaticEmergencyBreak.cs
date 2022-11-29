@@ -76,5 +76,23 @@
         {
             return Math.Sqrt(Math.Pow(velocity.X, 2) + Math.Pow(velocity.Y, 2)) / Constants.SecondsBetweenTrack * Constants.MeterInPixels;
         }
+
+        public bool AEB(Point collisionPoint, Point velocity)
+        {
+            AutomatedCar car = World.Instance.ControlledCar;
+
+            double distanceToCollision = Math.Sqrt(Math.Pow(collisionPoint.X - car.X, 2) + Math.Pow(collisionPoint.Y - car.Y, 2)) / Constants.MeterInPixels;
+            double breakingDistance = this.BreakingDistanceCalculator(distanceToCollision, velocity);
+            return breakingDistance >= distanceToCollision;
+        }
+
+        private double BreakingDistanceCalculator(double distanceToCollision, Point velocity)
+        {
+            // time = distance divided by speed
+            double time = distanceToCollision / this.ConvertToMeterPerSec(velocity);
+
+            // To determine how far the vehicle will travel while braking, use the formula of 1/2 the initial velocity multiplied by the time required to stop.
+            return (this.ConvertToMeterPerSec(velocity) / 2) * time;
+        }
     }
 }
