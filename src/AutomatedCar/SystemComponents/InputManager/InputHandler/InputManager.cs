@@ -96,6 +96,7 @@ namespace AutomatedCar.SystemComponents.InputManager.InputHandler
                     this.CurrendPedalState = Pedals.Empty;
                     break;
                 case Pedals.Brake:
+                    this.CurrentCruiseControlInput = CruiseControlInputs.TurnOnOrOff;
                     this.CurrendPedalState = Pedals.Brake;
                     break;
             }
