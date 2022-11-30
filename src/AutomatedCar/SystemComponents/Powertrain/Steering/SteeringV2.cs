@@ -87,10 +87,15 @@ namespace AutomatedCar.SystemComponents.Powertrain.Steering
             double backWheelX = car.X - (this.wheelBase / 2 * Math.Cos(normalHeadingRad));
             double backWheelY = car.Y - (this.wheelBase / 2 * Math.Sin(normalHeadingRad));
 
-            backWheelX += carSpeed * this.dt * Math.Cos(normalHeadingRad);
-            backWheelY += carSpeed * this.dt * Math.Sin(normalHeadingRad);
-            frontWheelX += carSpeed * this.dt * Math.Cos(normalHeadingRad + steerAngleRad);
-            frontWheelY += carSpeed * this.dt * Math.Sin(normalHeadingRad + steerAngleRad);
+            /*if (carSpeed != 0)
+            {
+                carSpeed = (50 / (1 / (carSpeed * 1000 / 60 / 60 / 60)));
+            }*/
+
+            backWheelX += (carSpeed * 1000 / 60 / 60) * this.dt * Math.Cos(normalHeadingRad);
+            backWheelY += (carSpeed * 1000 / 60 / 60) * this.dt * Math.Sin(normalHeadingRad);
+            frontWheelX += (carSpeed * 1000 / 60 / 60) * this.dt * Math.Cos(normalHeadingRad + steerAngleRad);
+            frontWheelY += (carSpeed * 1000 / 60 / 60) * this.dt * Math.Sin(normalHeadingRad + steerAngleRad);
 
             car.X = Convert.ToInt32((frontWheelX + backWheelX) / 2);
             car.Y = Convert.ToInt32((frontWheelY + backWheelY) / 2);

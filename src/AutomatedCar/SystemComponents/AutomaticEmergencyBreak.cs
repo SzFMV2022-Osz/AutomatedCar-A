@@ -1,13 +1,13 @@
 ﻿namespace AutomatedCar.SystemComponents
 {
-    using AutomatedCar.Models;
     using System;
-    using Avalonia;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using AutomatedCar.Helpers;
+    using AutomatedCar.Models;
+    using Avalonia;
+    using Avalonia.Data;
+    using Avalonia.Media;
 
     public class AutomaticEmergencyBreak : SystemComponent
     {
@@ -94,6 +94,44 @@
         private double BreakingDistanceCalculator2(Point velocity)
         {
             return (0 - Math.Pow(this.ConvertToMeterPerSec(velocity), 2)) / (2 * (-9));
+        }
+        
+        /// <summary>
+        /// Calculates the possible crash point for two objects.
+        /// </summary>
+        /// <param name="carGeom">Cars's polylineGeometry.</param>
+        /// <param name="objGeom">target object's polylineGeometry.</param>
+        /// <param name="carPosition">Car's position.</param>
+        /// <param name="objPosition">Target's position.</param>
+        /// <returns>Returns the closest point where the car could crash with something, returns default Optional otherwise.</returns>
+        private Optional<Point> CalculateCollision(PolylineGeometry carGeom, PolylineGeometry objGeom, Point carPosition, Point objPosition)
+        {
+            PolylineGeometry closest;
+
+            bool couldCrash = CollisionDetection.BoundingBoxesCollide(carGeom, objGeom, 0);
+            if (couldCrash)
+            {
+                closest = objGeom;
+            }
+            else
+            {
+                return default(Optional<Point>);
+            }
+
+            Point closestPoint = objPosition;
+            var closestPointDistance = Math.Sqrt(Math.Pow(carPosition.X - objPosition.X, 2) + Math.Pow(carPosition.Y - objPosition.Y, 2));
+            var closestPoints = closest.Points.ToList();
+            foreach (var polyPoint in closestPoints)
+            {
+                var currentPointDistance = Math.Sqrt(Math.Pow(carPosition.X - polyPoint.X, 2) + Math.Pow(carPosition.Y - polyPoint.Y, 2));
+                if (carGeom.FillContains(polyPoint) && currentPointDistance < closestPointDistance)
+                {
+                    closestPoint = polyPoint;
+                    closestPointDistance = currentPointDistance;
+                }
+            }
+
+            return new Optional<Point>(closestPoint);
         }
     }
 }

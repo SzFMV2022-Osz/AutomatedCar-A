@@ -14,15 +14,17 @@ namespace AutomatedCar.SystemComponents.Powertrain
     {
         private static readonly float Pi = (float)Math.PI;
         private readonly IGearshift gearshift;
-        private readonly int mass;
-        private readonly float frontArea;
-        private readonly float wheelradius;
-        private readonly float dragCoefficient;
-        private readonly float diferential;
-        private readonly float transmissionefficiency;
-        private readonly float cBrake;
-        private readonly float maxrpm;
-        private readonly float minrpm;
+        private readonly int weight = 1800;
+        private readonly float frontArea = 2.2f;
+        private readonly float wheelradius = 0.34f;
+        private readonly float dragCoefficient = 0.30f;
+        private readonly float diferential = 3.42f;
+        private readonly float transmissionefficiency = 0.7f;
+        private readonly float brakeConstant = 100;
+        private readonly float maxrpm = 6000;
+        private readonly float minrpm = 1000;
+
+        private int[] torqueCurve = new int[7] { 400, 430, 450, 480, 460, 450, 390 };
         private float rpm;
         private float gasPedal;
         private float brakePedal;
@@ -31,8 +33,9 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// <summary>
         /// Initializes a new instance of the <see cref="Engine"/> class.
         /// </summary>
+        /// <param name="bus">A virtualfunctionbus.</param>
         /// <param name="gearshift">Gearshift to use.</param>
-        /// <param name="mass">Mass of the car.</param>
+        /// <param name="weight">weight of the car.</param>
         /// <param name="dragCoefficient">Drag coefficient of the car.</param>
         /// <param name="frontArea">Front area of the car.</param>
         /// <param name="diferential">Diferencial ratio of the car.</param>
@@ -41,20 +44,13 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// <param name="maxrpm">Maximum rpm.</param>
         /// <param name="minrpm">Minimum rpm.</param>
         /// <param name="cbrake">Max brake force rpm.</param>
-        public Engine(IGearshift gearshift, int mass = 1800, float dragCoefficient = 0.30f, float frontArea = 2.2f, float diferential = 3.42f, float transmissionefficiency = 0.7f, float wheelradius = 0.34f, float maxrpm = 6000, int minrpm = 1000, int cbrake = 100)
+        public Engine(IGearshift gearshift)
         {
             this.gearshift = gearshift;
-            this.mass = mass;
-            this.dragCoefficient = dragCoefficient;
-            this.frontArea = frontArea;
-            this.diferential = diferential;
-            this.transmissionefficiency = transmissionefficiency;
-            this.wheelradius = wheelradius;
-            this.maxrpm = maxrpm;
-            this.minrpm = minrpm;
-            this.cBrake = cbrake;
             this.rpm = 1000;
             this.velocity = 0;
+            this.brakePedal = 0;
+            this.gasPedal = 0;
         }
 
         /// <summary>
@@ -62,7 +58,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// </summary>
         public int GetSpeed
         {
-            get { return (int)(this.Velocity / 3.6); }
+            get { return (int)(this.Velocity * 3.6); }
         }
 
         /// <summary>
@@ -105,7 +101,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
         {
             get
             {
-                return brakePedal;
+                return this.brakePedal;
             }
         }
 
@@ -122,82 +118,16 @@ namespace AutomatedCar.SystemComponents.Powertrain
             }
         }
 
-        /// <summary>
-        /// Accelerates the car by adjusting gas and brake pedals, also calculates the velocity.
-        /// </summary>
-        /// <returns>driving force lenght.</returns>
-        public float Accelerate()
-        {
-            this.gasPedal += .01f;
-            this.brakePedal -= .01f;
-            this.ClampPedals();
-            this.Velocity += this.ChangeVelocity(false) + this.ChangeVelocity(true);
-            this.rpm = this.GetRPM();
-
-            if (this.rpm.Equals(this.maxrpm))
-            {
-                if (this.GetNextGearRPM() > this.minrpm)
-                {
-                    this.gearshift.ShiftUp();
-                    this.rpm = this.GetRPM();
-                }
-            }
-
-            return this.LongitudinalForce();
-        }
-
-        /// <summary>
-        /// Slows down the car by the engine brake.
-        /// </summary>
-        /// <returns>driving force lenght.</returns>
-        public float Lift()
-        {
-            this.rpm -= 0.75f; // enginebrake
-            this.brakePedal -= .25f;
-            this.gasPedal -= .25f;
-            this.Velocity = (int)this.GetSpeedByWheelRotation() + this.ChangeVelocity(false) + this.ChangeVelocity(true);
-            if (this.rpm < this.minrpm + 0.25f)
-            {
-                if (this.GetPrewGearRPM() < this.maxrpm)
-                {
-                    this.gearshift.ShiftDown();
-                    this.rpm = this.GetRPM();
-                }
-            }
-
-            return this.LongitudinalForce(true);
-        }
-
-        /// <summary>
-        /// Slows down the car by adjusting the gas and brake pedals, also calculates the new velocity.
-        /// </summary>
-        /// <returns>driving force lenght.</returns>
-        public float Braking()
-        {
-            this.brakePedal += .01f;
-            this.gasPedal -= .01f;
-            this.ClampPedals();
-            this.Velocity = (int)this.GetSpeedByWheelRotation() + this.ChangeVelocity(false) + this.ChangeVelocity(true);
-            this.rpm = this.GetRPM();
-
-            if (this.rpm < this.minrpm)
-            {
-                if (this.GetPrewGearRPM() < this.maxrpm)
-                {
-                    this.gearshift.ShiftDown();
-                    this.rpm = this.GetRPM();
-                }
-            }
-
-            return this.LongitudinalForce();
-        }
 
         /// <summary>
         /// Puts the gearbox state into a lower level.
         /// </summary>
         public void StateDown()
         {
-            this.gearshift.StateDown();
+            if (this.GetSpeed < 5)
+            {
+                this.gearshift.StateDown();
+            }
         }
 
         /// <summary>
@@ -205,43 +135,136 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// </summary>
         public void StateUp()
         {
-            this.gearshift.StateUp();
+            if (this.GetSpeed < 5)
+            {
+                this.gearshift.StateUp();
+            }
         }
 
-        private int GetRPM()
+        /// <summary>
+        /// Accelerates the car by adjusting gas and brake pedals, also calculates the velocity.
+        /// </summary>
+        public void Accelerate()
         {
-            int rpm = (int)(this.GetWheelRotationRateBySpeed() * this.gearshift.GetGearRatio() * this.diferential * 60 / 2 * Pi);
-            if (rpm > this.maxrpm)
+            this.gasPedal += .01f;
+            if (this.gasPedal > 1.0f)
             {
-                return (int)this.maxrpm;
+                this.gasPedal = 1.0f;
+            }
+            else if (this.gasPedal < 0.0f)
+            {
+                this.gasPedal = 0;
+            }
+
+            if (this.brakePedal > 0)
+            {
+                this.brakePedal -= .01f;
             }
             else
             {
-                return rpm;
+                this.brakePedal = 0;
+            }
+
+            this.Velocity = this.GetSpeedByWheelRotation() + this.ChangeVelocity(false);
+            this.rpm = this.GetRPM();
+
+            /*Debug.WriteLine("Gas: " + this.gasPedal);
+            Debug.WriteLine("Brake: " + this.brakePedal);*/
+            Debug.WriteLine("RPM: " + this.rpm);
+
+            /*if (this.rpm.Equals(this.maxrpm))
+            {
+                if (this.GetNextGearRPM() > this.minrpm)
+                {
+                    this.gearshift.ShiftUp();
+                    this.rpm = this.GetRPM();
+                }
+            }*/
+
+            if (this.rpm >= this.maxrpm)
+            {
+                this.gearshift.ShiftUp();
+                this.rpm = this.GetRPM();
             }
         }
 
-        private int GetNextGearRPM()
+        /// <summary>
+        /// Slows down the car by the engine brake.
+        /// </summary>
+        public void Lift()
         {
-            return (int)(this.GetWheelRotationRateBySpeed() * this.gearshift.NextGearRatio() * this.diferential * 60 / 2 * Pi);
+            this.rpm -= 1f; // enginebrake
+
+            if (this.gasPedal > 0)
+            {
+                this.gasPedal -= 0.25f;
+            }
+            else
+            {
+                this.gasPedal = 0;
+            }
+
+            if (this.brakePedal > 0)
+            {
+                this.brakePedal -= 0.25f;
+            }
+            else
+            {
+                this.brakePedal = 0;
+            }
+
+            this.Velocity += this.ChangeVelocity(false) + this.ChangeVelocity(true);
+
+            /*Debug.WriteLine("Gas: " + this.gasPedal);
+            Debug.WriteLine("Brake: " + this.brakePedal);*/
+            Debug.WriteLine("RPM: " + this.rpm);
+
+            if (this.rpm <= this.minrpm)
+            {
+                this.gearshift.ShiftDown();
+                this.rpm = this.GetRPM();
+            }
         }
 
-        private int GetPrewGearRPM()
+        /// <summary>
+        /// Slows down the car by adjusting the gas and brake pedals, also calculates the new velocity.
+        /// </summary>
+        public void Braking()
         {
-            return (int)(this.GetWheelRotationRateBySpeed() * this.gearshift.PreviousGearRatio() * this.diferential * 60 / 2 * Pi);
+            this.brakePedal += .01f;
+            if (this.brakePedal > 1.0f)
+            {
+                this.brakePedal = 1.0f;
+            }
+            else if (this.brakePedal < 0.0f)
+            {
+                this.brakePedal = 0;
+            }
+
+            if (this.gasPedal > 0)
+            {
+                this.gasPedal -= .01f;
+            }
+            else
+            {
+                this.brakePedal = 0;
+            }
+
+            this.Velocity = this.GetSpeedByWheelRotation() + this.ChangeVelocity(true);
+            this.rpm = this.GetRPM();
+
+            /*Debug.WriteLine("Gas: " + this.gasPedal);
+            Debug.WriteLine("Brake: " + this.brakePedal);*/
+            Debug.WriteLine("RPM: " + this.rpm);
+
+            if (this.rpm <= this.minrpm)
+            {
+                this.gearshift.ShiftDown();
+                this.rpm = this.GetRPM();
+            }
         }
 
-        private float GetWheelRotationRateByRPM()
-        {
-            return this.rpm / (this.gearshift.GetGearRatio() * this.diferential * 60 / 2 * Pi);
-        }
-
-        private float GetWheelRotationRateBySpeed()
-        {
-            return Math.Abs(this.Velocity / this.wheelradius);
-        }
-
-        private float GetSpeedByWheelRotation()
+        private int GetSpeedByWheelRotation()
         {
             float speed = 0;
             switch (this.gearshift.GetState())
@@ -260,32 +283,17 @@ namespace AutomatedCar.SystemComponents.Powertrain
                     break;
             }
 
-            return speed;
+            return (int)speed;
         }
 
-        private float Cdrag()
+        private float GetWheelRotationRateByRPM()
         {
-            return 0.5f * this.dragCoefficient * this.frontArea * 1.29f;
+            return this.rpm / (this.gearshift.GetGearRatio() * this.diferential * 60 / (2 * Pi));
         }
 
-        private float Crr()
+        private float ChangeVelocity(bool isbraking = false)
         {
-            return 30.0f * this.Cdrag();
-        }
-
-        private float DragForce()
-        {
-            return 0.5f * this.Cdrag() * this.frontArea * 1.29f * (this.Velocity * this.Velocity);
-        }
-
-        private float DrivingForce()
-        {
-            return this.GetTorque() * this.gearshift.GetGearRatio() * this.diferential * this.transmissionefficiency / this.wheelradius;
-        }
-
-        private float LongitudinalForce(bool isbraking = false)
-        {
-            float temp = 0.0f;
+            float longitudionalForce = 0.0f;
             switch (this.gearshift.GetState())
             {
                 case GearshiftState.P:
@@ -293,56 +301,128 @@ namespace AutomatedCar.SystemComponents.Powertrain
                 case GearshiftState.R:
                     if (isbraking)
                     {
-                        temp = this.BrakingForce() + this.DragForce() + this.Frr();
+                        longitudionalForce = this.BrakingForce() - this.DragForce() - this.Frr();
                     }
                     else
                     {
-                        temp = this.DrivingForce() + this.DragForce() + this.Frr();
+                        longitudionalForce = this.DrivingForce() - this.DragForce() - this.Frr();
                     }
 
-                    temp *= -1;
+                    longitudionalForce *= -1;
+
+                    if (longitudionalForce > 0 && !isbraking)
+                    {
+                        longitudionalForce = 0;
+                    }
+
                     break;
                 case GearshiftState.N:
                     break;
                 case GearshiftState.D:
                     if (isbraking)
                     {
-                        temp = this.BrakingForce() + this.DragForce() + this.Frr();
+                        longitudionalForce = this.BrakingForce() + this.DragForce() + this.Frr();
                     }
                     else
                     {
-                        temp = this.DrivingForce() + this.DragForce() + this.Frr();
+                        longitudionalForce = this.DrivingForce() + this.DragForce() + this.Frr();
+                        if (longitudionalForce < 0)
+                        {
+                            longitudionalForce = 0;
+                        }
                     }
 
                     break;
             }
 
-            return temp;
+            return longitudionalForce / this.weight;
         }
 
+        /// <summary>
+        /// Calculates the force applied by the pedal and constant.
+        /// </summary>
+        /// <returns>Returns th braking force.</returns>
         private float BrakingForce()
         {
-            return this.cBrake * this.brakePedal * -1;
+            return this.brakeConstant * this.brakePedal * -1;
         }
 
-        private float ChangeVelocity(bool isbreaking)
+        private float DrivingForce()
         {
-            return this.LongitudinalForce(isbreaking) / this.mass;
+            return this.GetTorque() * this.gearshift.GetGearRatio() * this.diferential * this.transmissionefficiency / this.wheelradius;
+        }
+
+        private float DragForce()
+        {
+            float dragConstant = 0.5f * this.dragCoefficient * this.frontArea * 1.29f;
+
+            return -1 * dragConstant * this.frontArea * 1.29f * (this.Velocity * this.Velocity);
+        }
+
+        private float Frr()
+        {
+            float dragConstant = 0.5f * this.dragCoefficient * this.frontArea * 1.29f;
+            float crr = 30.0f * dragConstant;
+
+            return -1 * crr * this.Velocity;
+        }
+
+        private int GetRPM()
+        {
+            float wheelRotation = this.GetWheelRotationRateBySpeed();
+            float gearRatio = this.gearshift.GetGearRatio();
+
+            Debug.WriteLine("Wheel rotation: " + wheelRotation);
+            Debug.WriteLine("Gear ratio" + gearRatio);
+
+            int rpm = (int)(wheelRotation * gearRatio * this.diferential * 60 / (2 * Pi));
+            if (rpm > this.maxrpm)
+            {
+                return (int)this.maxrpm;
+            }
+            else
+            {
+                if (this.GetSpeed == 0)
+                {
+                    return 1000;
+                }
+                else
+                {
+                    return rpm;
+                }
+
+                //return rpm;
+            }
+        }
+
+        private int GetNextGearRPM()
+        {
+            return (int)(this.GetWheelRotationRateBySpeed() * this.gearshift.NextGearRatio() * this.diferential * 60 / 2 * Pi);
+        }
+
+        private int GetPrewGearRPM()
+        {
+            return (int)(this.GetWheelRotationRateBySpeed() * this.gearshift.PreviousGearRatio() * this.diferential * 60 / 2 * Pi);
+        }
+
+        private float GetWheelRotationRateBySpeed()
+        {
+            return Math.Abs(this.Velocity / this.wheelradius);
         }
 
         private float GetTorque()
         {
-            return this.gasPedal * this.LookupTorqueCurve(this.rpm);
+            return this.gasPedal * this.LookupTorqueCurve(this.rpm) * 5252 / this.rpm;
         }
+
+        /*private float LookupTorqueCurve(float rpm)
+        {
+            return this.LookupHpCurve(rpm) * rpm / 5252;
+        }*/
 
         private float LookupTorqueCurve(float rpm)
         {
-            return this.LookupHpCurve(rpm) * 5252 / rpm;
-        }
-
-        private float LookupHpCurve(float rpm)
-        {
-            if (rpm >= 1000 && rpm <= 5000)
+            /*if (rpm >= 1000 && rpm <= 5000)
             {
                 return (0.06875f * rpm) - 18.75f;
             }
@@ -353,12 +433,38 @@ namespace AutomatedCar.SystemComponents.Powertrain
             else
             {
                 return 325.25f;
-            }
-        }
+            }*/
 
-        private float Frr()
-        {
-            return -1 * this.Crr() * this.Velocity;
+            if (rpm == 1000)
+            {
+                return this.torqueCurve[0];
+            }
+            else if (rpm > 1000 && rpm < 2000)
+            {
+                return this.torqueCurve[1];
+            }
+            else if (rpm < 3000)
+            {
+                return this.torqueCurve[2];
+            }
+            else if (rpm < 4000)
+            {
+                return this.torqueCurve[3];
+            }
+            else if (rpm < 5000)
+            {
+                return this.torqueCurve[4];
+            }
+            else if (rpm < 5500)
+            {
+                return this.torqueCurve[5];
+            }
+            else if (rpm < 6000)
+            {
+                return this.torqueCurve[6];
+            }
+
+            return 0;
         }
 
         private void ClampPedals()
