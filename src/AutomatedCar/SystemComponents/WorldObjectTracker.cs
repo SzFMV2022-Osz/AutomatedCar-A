@@ -8,8 +8,7 @@
 
     public class WorldObjectTracker
     {
-        private const double SecondsBetweenTrack = 0.25;
-        private const int PointsSize = 3;
+        private const int PointsSize = 10;
 
         private Queue<Tuple<Point, DateTime>> points;
 
@@ -46,6 +45,27 @@
             return distance / elapsedTime;
         }
 
+
+        public Point CalculateAverageSpeedVector()
+        {
+            if (this.Points.Count() < 2)
+            {
+                return default(Point);
+            }
+
+            Point accumulator = new Point(0, 0);
+
+            for (int i = 0; i < this.Points.Count() - 1; ++i)
+            {
+                var point1 = this.Points.ElementAt(i).Item1;
+                var point2 = this.Points.ElementAt(i + 1).Item1;
+                accumulator += point2 - point1;
+            }
+
+            // speed = distance(pixel)/time(second)
+            return accumulator / this.Points.Count();
+        }
+
         /// <summary>
         /// Adds new location to the radar's memory.
         /// Oldest data will be replaced if it exceeds the limit.
@@ -60,7 +80,7 @@
                 var point = entry.Item1;
                 var timestamp = entry.Item2;
 
-                if ((point == newPoint && timestamp == newTimestamp) || (newTimestamp - timestamp).TotalSeconds < SecondsBetweenTrack)
+                if ((point == newPoint && timestamp == newTimestamp) || (newTimestamp - timestamp).TotalSeconds < Helpers.Constants.SecondsBetweenTrack)
                 {
                     return;
                 }
