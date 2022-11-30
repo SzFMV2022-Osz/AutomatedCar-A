@@ -71,7 +71,15 @@ namespace AutomatedCar.SystemComponents.Sensors
             /// </summary>
             public double Length
             {
-                get { return Math.Sqrt(Math.Pow(this.B.X - this.A.X, 2) + Math.Pow(this.B.Y - this.A.Y, 2)); }
+                get { return Math.Sqrt(Math.Pow(this.VectorShortForm.X, 2) + Math.Pow(this.VectorShortForm.Y, 2)); }
+            }
+
+            /// <summary>
+            /// Gets vector shortform.
+            /// </summary>
+            public (int X, int Y) VectorShortForm
+            {
+                get { return (this.B.X - this.A.X, this.B.Y - this.A.Y); }
             }
 
             /// <summary>
@@ -79,7 +87,7 @@ namespace AutomatedCar.SystemComponents.Sensors
             /// </summary>
             public double GetVecotrRotation
             {
-                get { return (Math.PI / 180) * Math.Acos((this.A.X * 1) + (this.A.Y * 0)) / (this.Length * 1); }
+                get { return (Math.PI / 180) * Math.Acos((this.VectorShortForm.X * 1) + (this.VectorShortForm.Y * (0 - 0))) / (this.Length * 1); }
             }
 
             /// <summary>
@@ -88,7 +96,7 @@ namespace AutomatedCar.SystemComponents.Sensors
             /// <param name="alpha">Degree of the rotation.</param>
             public void Rotate(double alpha)
             {
-                Point tempB = new Point((int)((this.B.X - this.A.X) * Math.Cos(alpha)), (int)((this.B.Y - this.A.Y) * Math.Sin(alpha)));
+                Point tempB = new Point((int)(this.VectorShortForm.X * Math.Cos(alpha)), (int)(this.VectorShortForm.Y * Math.Sin(alpha)));
                 this.B = new Point(tempB.X + this.A.X, tempB.Y + this.A.Y);
             }
 
@@ -99,7 +107,8 @@ namespace AutomatedCar.SystemComponents.Sensors
             /// <returns>Degree between two vectors.</returns>
             public double DegreeCalculation(Vector vector)
             {
-                return (Math.PI / 180) * Math.Acos(((this.B.X * vector.B.X) + (this.B.Y * vector.B.Y)) / (this.Length * vector.Length));
+                return (Math.PI / 180) * Math.Acos(((this.VectorShortForm.X * vector.VectorShortForm.X) +
+                    (this.VectorShortForm.Y * vector.VectorShortForm.Y)) / (this.Length * vector.Length));
             }
 
             /// <summary>
@@ -109,7 +118,7 @@ namespace AutomatedCar.SystemComponents.Sensors
             public void Move(Vector vector)
             {
                 this.A = vector.B;
-                this.B = new Point(this.B.X + (vector.B.X - vector.A.X), this.B.Y + (vector.B.Y - vector.A.Y));
+                this.B = new Point(this.B.X + vector.VectorShortForm.X, this.B.Y + vector.VectorShortForm.Y);
             }
         }
     }
