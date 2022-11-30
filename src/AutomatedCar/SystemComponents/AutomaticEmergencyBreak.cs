@@ -77,6 +77,25 @@
             return Math.Sqrt(Math.Pow(velocity.X, 2) + Math.Pow(velocity.Y, 2)) / Constants.SecondsBetweenTrack * Constants.MeterInPixels;
         }
 
+        public bool AEB(Point collisionPoint, Point velocity)
+        {
+            AutomatedCar car = World.Instance.ControlledCar;
+
+            double distanceToCollision = Math.Sqrt(Math.Pow(collisionPoint.X - car.X, 2) + Math.Pow(collisionPoint.Y - car.Y, 2)) / Constants.MeterInPixels;
+            double breakingDistance = this.BreakingDistanceCalculator(velocity);
+            return breakingDistance >= distanceToCollision;
+        }
+
+        private double BreakingDistanceCalculator(Point velocity)
+        {
+            return Math.Pow(this.ConvertToMeterPerSec(velocity), 2) / (2 * 0.6 * 9.8);
+        }
+
+        private double BreakingDistanceCalculator2(Point velocity)
+        {
+            return (0 - Math.Pow(this.ConvertToMeterPerSec(velocity), 2)) / (2 * (-9));
+        }
+        
         /// <summary>
         /// Calculates the possible crash point for two objects.
         /// </summary>
