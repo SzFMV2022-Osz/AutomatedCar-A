@@ -5,6 +5,7 @@
 namespace AutomatedCar.SystemComponents.InputManager.Messenger
 {
     using System;
+    using System.Diagnostics;
 
     /// <summary>
     /// Control Messenger class for the communication.
@@ -102,6 +103,7 @@ namespace AutomatedCar.SystemComponents.InputManager.Messenger
         /// <param name="cruiseControlInput">The type of input received for the cruise control.</param>
         public void FireCruiseControlEvent(CruiseControlInputs cruiseControlInput)
         {
+            Debug.WriteLine(cruiseControlInput.ToString());
             ControlEventArgs eventArgs = new ControlEventArgs();
             if (this.CruiseControlEventHandler != null)
             {

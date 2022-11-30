@@ -46,15 +46,17 @@
                             <TextBlock Text="Brake"/>
                             <ProgressBar Minimum="0" Maximum="1" HorizontalAlignment="Center" VerticalAlignment="Center" Value="{Binding Car.VirtualFunctionBus.PowertrainPacket.CurrentBrakeValue}"></ProgressBar>
                             <Separator Height="12"></Separator>
-                          <Image
-                              Width="90" Height="90"
-                              RenderTransformOrigin="{Binding RotationPoint, Converter={x:Static visualization:RenderTransformOriginTransformer.Instance}}"
-                              Source="resm:AutomatedCar.Assets.steering-wheel.png?assembly=AutomatedCar">
-                          </Image>
+
+                            <Image Width="90" Height="90" Source="resm:AutomatedCar.Assets.steering-wheel.png?assembly=AutomatedCar">
+                                <Image.RenderTransform>
+                                    <RotateTransform Angle="{Binding Car.VirtualFunctionBus.PowertrainPacket.RotationAngle}"/>
+                                </Image.RenderTransform>
+                            </Image>
                             <Border BorderThickness="2" BorderBrush="Yellow" Margin="4" IsVisible="{Binding ShouldShowAEBWarning}">
-	                            <TextBlock Margin="4" Foreground="Yellow" FontWeight="Bold">WARNING: AEB won't work properly above 70 km/h</TextBlock>
+	                              <TextBlock Margin="4" Foreground="Yellow" FontWeight="Bold">WARNING: AEB won't work properly above 70 km/h</TextBlock>
                             </Border>
-                            <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
+                            <Grid ColumnDefinitions="100,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+
                                 <TextBlock Grid.Row="0" Grid.Column="0">X:</TextBlock>
                                 <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding X}"/>
                                 <TextBlock Grid.Row="1" Grid.Column="0">Y:</TextBlock>
@@ -67,6 +69,12 @@
                                 <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding VirtualFunctionBus.DummyPacket.DistanceX}"/>
                                 <TextBlock Grid.Row="5" Grid.Column="0">Distance Y:</TextBlock>
                                 <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding VirtualFunctionBus.DummyPacket.DistanceY}"/>
+                                <TextBlock Grid.Row="6" Grid.Column="0">ACC enabled:</TextBlock>
+                                <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding Car.VirtualFunctionBus.CruiseControlPacket.ACCEnabled}"/>
+                                <TextBlock Grid.Row="7" Grid.Column="0">Target distance: </TextBlock>
+                                <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding Car.VirtualFunctionBus.CruiseControlPacket.TargetDistance}"/>
+                                <TextBlock Grid.Row="8" Grid.Column="0">Target speed:</TextBlock>
+                                <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding Car.VirtualFunctionBus.CruiseControlPacket.TargetSpeed}"/>
                             </Grid>
 							<Border BorderThickness="0.5" BorderBrush="White" CornerRadius="3,3,3,3" Margin="0,5,0,0">
 									<DockPanel MaxHeight="130">

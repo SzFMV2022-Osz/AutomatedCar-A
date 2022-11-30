@@ -32,7 +32,7 @@ namespace AutomatedCar
         {
             if (this.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                var world = this.CreateWorld(TEST_WORLD);
+                var world = this.CreateWorld(OVAL);
                 desktop.MainWindow = new MainWindow { DataContext = new MainWindowViewModel(world) };
             }
 
@@ -149,7 +149,6 @@ namespace AutomatedCar
             controlledCar.Geometries.Add(controlledCar.Geometry);
             controlledCar.RotationPoint = new System.Drawing.Point(54, 120);
             controlledCar.Rotation = rotation;
-            controlledCar.CarCollisionDetector = new SystemComponents.CarCollisionDetector(controlledCar.VirtualFunctionBus);
 
             controlledCar.Start();
 
