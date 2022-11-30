@@ -14,31 +14,45 @@ namespace AutomatedCar.SystemComponents.InputManager.Messenger
         /// <summary>
         /// Event for the steering.
         /// </summary>
-        static event EventHandler<ControlEventArgs> SteeringEventHandler;
+        event EventHandler<ControlEventArgs> SteeringEventHandler;
 
         /// <summary>
         /// Event for the pedals.
         /// </summary>
-        static event EventHandler<ControlEventArgs> PedalsEventHandler;
+        event EventHandler<ControlEventArgs> PedalEventHandler;
 
         /// <summary>
         /// Event for the gears.
         /// </summary>
-        static event EventHandler<ControlEventArgs> GearsEventHandler;
+        event EventHandler<ControlEventArgs> GearboxEventHandler;
 
         /// <summary>
-        /// Gets or sets the position of steering wheel.
+        /// Event for the cruise control.
         /// </summary>
-        SteeringState Steering { get; set; }
+        event EventHandler<ControlEventArgs> CruiseControlEventHandler;
 
         /// <summary>
-        /// Gets or sets the position of pedals.
+        /// Fires the event for steering wheel state change.
         /// </summary>
-        Pedals Pedal { get; set; }
+        /// <param name="steeringState">Gets a steeringtate for the steering wheel.</param>
+        public void FireSteeringEvent(SteeringState steeringState);
 
         /// <summary>
-        /// Gets or sets the position of the transmission gearshift.
+        /// Fires the event for steering wheel state change.
         /// </summary>
-        Gears Gear { get; set; }
+        /// <param name="pedalState">Gets a steeringtate for the steering wheel.</param>
+        public void FirePedalEvent(Pedals pedalState);
+
+        /// <summary>
+        /// Fires the event for steering wheel state change.
+        /// </summary>
+        /// <param name="gearState">Gets a steeringtate for the steering wheel.</param>
+        public void FireGearboxEvent(Gears gearState);
+
+        /// <summary>
+        /// Fires the even for cruise control controlling.
+        /// </summary>
+        /// <param name="cruiseControlInput">Tells the cruise control what type of input was received.</param>
+        public void FireCruiseControlEvent(CruiseControlInputs cruiseControlInput);
     }
 }

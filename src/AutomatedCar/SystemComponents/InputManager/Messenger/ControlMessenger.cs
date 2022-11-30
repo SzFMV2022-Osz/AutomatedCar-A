@@ -5,99 +5,110 @@
 namespace AutomatedCar.SystemComponents.InputManager.Messenger
 {
     using System;
+    using System.Diagnostics;
 
     /// <summary>
     /// Control Messenger class for the communication.
     /// </summary>
     public class ControlMessenger : IControlMessenger
     {
-        private SteeringState steering;
+        private static readonly object CMLOCK = new object();
 
-        private Pedals pedal;
-
-        private Gears gears;
+        private static ControlMessenger instance = null;
 
         /// <summary>
         /// Event for the steering.
         /// </summary>
-        public static event EventHandler<ControlEventArgs> SteeringEventHandler;
+        public event EventHandler<ControlEventArgs> SteeringEventHandler;
 
         /// <summary>
         /// Event for the pedals.
         /// </summary>
-        public static event EventHandler<ControlEventArgs> PedalEventHandler;
+        public event EventHandler<ControlEventArgs> PedalEventHandler;
 
         /// <summary>
         /// Event for the gearbox.
         /// </summary>
-        public static event EventHandler<ControlEventArgs> GearboxEventHandler;
+        public event EventHandler<ControlEventArgs> GearboxEventHandler;
 
         /// <summary>
-        /// Gets or sets the position of steering wheel.
+        /// Event for the cruise control.
         /// </summary>
-        public SteeringState Steering
+        public event EventHandler<ControlEventArgs> CruiseControlEventHandler;
+
+        /// <summary>
+        /// Gets a ControlMessenger instance.
+        /// </summary>
+        public static ControlMessenger Instance
         {
             get
             {
-                return this.steering;
-            }
-
-            set
-            {
-                EventHandler<ControlEventArgs> handler = SteeringEventHandler;
-                ControlEventArgs eventArgs = new ControlEventArgs();
-                if (handler != null)
+                lock (CMLOCK)
                 {
-                    eventArgs.Steering = value;
-                    this.steering = value;
-                    handler?.Invoke(this, eventArgs);
+                    if (instance == null)
+                    {
+                        instance = new ControlMessenger();
+                    }
+
+                    return instance;
                 }
             }
         }
 
         /// <summary>
-        /// Gets or sets the position of pedals.
+        /// Fires the event for steering wheel state change.
         /// </summary>
-        public Pedals Pedal
+        /// <param name="steeringState">Gets a steeringtate for the steering wheel.</param>
+        public void FireSteeringEvent(SteeringState steeringState)
         {
-            get
+            ControlEventArgs eventArgs = new ControlEventArgs();
+            if (this.SteeringEventHandler != null)
             {
-                return this.pedal;
-            }
-
-            set
-            {
-                EventHandler<ControlEventArgs> handler = PedalEventHandler;
-                ControlEventArgs eventArgs = new ControlEventArgs();
-                if (handler != null)
-                {
-                    eventArgs.Pedal = value;
-                    this.pedal = value;
-                    handler?.Invoke(this, eventArgs);
-                }
+                eventArgs.Steering = steeringState;
+                this.SteeringEventHandler?.Invoke(this, eventArgs);
             }
         }
 
         /// <summary>
-        /// Gets or sets the position of the transmission gearshift.
+        /// Fires the event for steering wheel state change.
         /// </summary>
-        public Gears Gear
+        /// <param name="pedalState">Gets a steeringtate for the steering wheel.</param>
+        public void FirePedalEvent(Pedals pedalState)
         {
-            get
+            ControlEventArgs eventArgs = new ControlEventArgs();
+            if (this.PedalEventHandler != null)
             {
-                return this.gears;
+                eventArgs.Pedal = pedalState;
+                this.PedalEventHandler?.Invoke(this, eventArgs);
             }
+        }
 
-            set
+        /// <summary>
+        /// Fires the event for steering wheel state change.
+        /// </summary>
+        /// <param name="gearState">Gets a steeringtate for the steering wheel.</param>
+        public void FireGearboxEvent(Gears gearState)
+        {
+            ControlEventArgs eventArgs = new ControlEventArgs();
+            if (this.GearboxEventHandler != null)
             {
-                EventHandler<ControlEventArgs> handler = GearboxEventHandler;
-                ControlEventArgs eventArgs = new ControlEventArgs();
-                if (handler != null)
-                {
-                    eventArgs.Gear = value;
-                    this.gears = value;
-                    handler?.Invoke(this, eventArgs);
-                }
+                eventArgs.Gear = gearState;
+                this.GearboxEventHandler?.Invoke(this, eventArgs);
+            }
+        }
+
+        /// <summary>
+        /// Fires the event for cruise control input received.
+        /// </summary>
+        /// <param name="cruiseControlInput">The type of input received for the cruise control.</param>
+        public void FireCruiseControlEvent(CruiseControlInputs cruiseControlInput)
+        {
+            Debug.WriteLine(cruiseControlInput.ToString());
+            ControlEventArgs eventArgs = new ControlEventArgs();
+            if (this.CruiseControlEventHandler != null)
+            {
+                eventArgs.CruiseControlInput = cruiseControlInput;
+                this.CruiseControlEventHandler?.Invoke(this, eventArgs);
             }
         }
     }

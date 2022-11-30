@@ -19,13 +19,22 @@
         {
             this.packet = new CollisionPacket();
             virtualFunctionBus.CollisionPacket = packet;
-            this.collidableWorldObjects = World.Instance.WorldObjects
-                .Where(obj => obj.Collideable &&
-                obj != World.Instance.ControlledCar);
+        }
+
+        private void SetCollidableWorldObjectsIfNotSet()
+        {
+            if (this.collidableWorldObjects == null)
+            {
+                this.collidableWorldObjects = World.Instance.WorldObjects
+                    .Where(obj => obj.Collideable &&
+                    obj != World.Instance.ControlledCar);
+            }
         }
 
         public override void Process()
         {
+            this.SetCollidableWorldObjectsIfNotSet();
+
             var collisions = this.collidableWorldObjects
                 .Where(obj => this.CollisionCheck(World.Instance.ControlledCar, obj));
 

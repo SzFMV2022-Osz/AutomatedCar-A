@@ -10,6 +10,8 @@
     public class CarViewModel : WorldObjectViewModel
     {
         public AutomatedCar Car { get; set; }
+        public Boolean ShouldShowAEBWarning => this.Car.VirtualFunctionBus.PowertrainPacket.CurrentSpeed >= 70;
+
         public CarViewModel(AutomatedCar car) : base(car)
         {
             this.Car = car;

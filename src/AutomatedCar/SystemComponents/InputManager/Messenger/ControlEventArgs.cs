@@ -25,5 +25,10 @@ namespace AutomatedCar.SystemComponents.InputManager.Messenger
         /// Gets or sets the position of the transmission gearshift.
         /// </summary>
         public Gears Gear { get; set; }
+
+        /// <summary>
+        /// Gets or sets the type of input the cruise control will receive.
+        /// </summary>
+        public CruiseControlInputs CruiseControlInput { get; set; }
     }
 }

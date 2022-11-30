@@ -21,10 +21,13 @@ namespace AutomatedCar.Views
                 e.Cancel = true;
                 Keyboard.Keys.Clear();
             };
-            this.WhenActivated(x => x(ViewModel.WhenAnyValue(x => x.PopUp.ControlledCar.Car.VirtualFunctionBus.CollisionPacket.Collided).Where(x => x == true).Subscribe(x =>
+            this.WhenActivated(x => x(this.ViewModel.WhenAnyValue(x => x.PopUp.ControlledCar.Car.VirtualFunctionBus.CollisionPacket.Collided).Where(x => x == true).Subscribe(x =>
             {
-                popUpWindow.DataContext = ViewModel.PopUp;
-                popUpWindow.ShowDialog(this);
+                if (!popUpWindow.IsVisible && this.ViewModel.CourseDisplay.DebugStatus.Enabled)
+                {
+                    popUpWindow.DataContext = this.ViewModel.PopUp;
+                    popUpWindow.ShowDialog(this);
+                }
             })));
         }
 
@@ -108,6 +111,26 @@ namespace AutomatedCar.Views
                 Keyboard.Keys.Remove(Key.F5);
             }
 
+            if (Keyboard.IsKeyDown(Key.C))
+            {
+                viewModel.CourseDisplay.TurnCruiseControlOnOff();
+            }
+
+            if (Keyboard.IsKeyDown(Key.T))
+            {
+                viewModel.CourseDisplay.ChangeTargetDistance();
+            }
+
+            if (Keyboard.IsKeyDown(Key.OemPlus))
+            {
+                viewModel.CourseDisplay.IncreaseTargetSpeed();
+            }
+
+            if (Keyboard.IsKeyDown(Key.OemMinus))
+            {
+                viewModel.CourseDisplay.DecreaseTargetSpeed();
+            }
+
             var scrollViewer = this.Get<CourseDisplayView>("courseDisplay").Get<ScrollViewer>("scrollViewer");
             viewModel.CourseDisplay.FocusCar(scrollViewer);
         }
@@ -116,15 +139,7 @@ namespace AutomatedCar.Views
         {
             MainWindowViewModel viewModel = (MainWindowViewModel)this.DataContext;
 
-            if (e.Key == Key.Up || e.Key == Key.Down)
-            {
-                viewModel.CourseDisplay.OnKeyUp("Empty");
-            }
-
-            if (e.Key == Key.Left || e.Key == Key.Right)
-            {
-                viewModel.CourseDisplay.OnKeyUp("Center");
-            }
+            viewModel.CourseDisplay.OnKeyUp(e.Key);
 
             Keyboard.Keys.Remove(e.Key);
             base.OnKeyUp(e);
