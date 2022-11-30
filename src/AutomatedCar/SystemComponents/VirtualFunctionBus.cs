@@ -21,6 +21,8 @@ namespace AutomatedCar.SystemComponents
 
         public CruiseControlPacket CruiseControlPacket { get; set; }
 
+        public IReadOnlyAEBPacket AEBPacket { get; set; }
+
         public void RegisterComponent(SystemComponent component)
         {
             this.components.Add(component);
