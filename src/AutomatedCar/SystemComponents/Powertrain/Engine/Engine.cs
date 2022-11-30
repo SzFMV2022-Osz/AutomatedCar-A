@@ -307,7 +307,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
                 case GearshiftState.R:
                     if (isbraking)
                     {
-                        longitudionalForce = this.BrakingForce() + this.DragForce() + this.Frr();
+                        longitudionalForce = this.BrakingForce() + this.DragForce() - this.Frr();
                     }
                     else
                     {
