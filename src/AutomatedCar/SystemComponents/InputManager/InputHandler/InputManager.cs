@@ -32,6 +32,7 @@ namespace AutomatedCar.SystemComponents.InputManager.InputHandler
             ControlMessenger.Instance.PedalEventHandler += this.OnPedal;
             ControlMessenger.Instance.GearboxEventHandler += this.OnGearbox;
             ControlMessenger.Instance.CruiseControlEventHandler += this.OnCruiseControlInput;
+            ControlMessenger.Instance.LKAEventHandler += this.OnLKAEventInput;
         }
 
         /// <summary>
@@ -145,6 +146,22 @@ namespace AutomatedCar.SystemComponents.InputManager.InputHandler
                     break;
                 case CruiseControlInputs.TurnOff:
                     InputPacket.CruiseControlInputs.Enqueue(CruiseControlInputs.TurnOff);
+                    break;
+            }
+        }
+
+        public void OnLKAEventInput(object sender, ControlEventArgs eventArgs)
+        {
+            switch (eventArgs.LkaInput)
+            {
+                case LkaInputs.TurnOnOrOff:
+                    InputPacket.LKAInputs.Enqueue(LkaInputs.TurnOnOrOff);
+                    break;
+                case LkaInputs.Enabled:
+                    InputPacket.LKAInputs.Enqueue(LkaInputs.Enabled);
+                    break;
+                case LkaInputs.Disabled:
+                    InputPacket.LKAInputs.Enqueue(LkaInputs.Disabled);
                     break;
             }
         }

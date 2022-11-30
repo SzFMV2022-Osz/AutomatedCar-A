@@ -8,6 +8,7 @@ namespace AutomatedCar.Models
     using global::AutomatedCar.SystemComponents;
     using global::AutomatedCar.SystemComponents.CruiseControl;
     using global::AutomatedCar.SystemComponents.InputManager.InputHandler;
+    using global::AutomatedCar.SystemComponents.LaneKeepingAssistant;
     using global::AutomatedCar.SystemComponents.Powertrain;
     using global::AutomatedCar.SystemComponents.Sensors;
 
@@ -29,6 +30,8 @@ namespace AutomatedCar.Models
 
         public AutomaticEmergencyBreak AEB;
 
+        public LKAManager LKAManager;
+
         public AutomatedCar(int x, int y, string filename)
             : base(x, y, filename)
         {
@@ -43,7 +46,11 @@ namespace AutomatedCar.Models
             this.powertrainManager = new PowertrainManager(this.virtualFunctionBus);
             this.cruiseControl = new CruiseControl(this.virtualFunctionBus, this);
             this.AEB = new AutomaticEmergencyBreak(this.virtualFunctionBus);
+
+            //this.LKAManager= new LKAManager(this.virtualFunctionBus);
+
             this.carCollisionDetector = new CarCollisionDetector(this.virtualFunctionBus);
+
         }
 
         public VirtualFunctionBus VirtualFunctionBus { get => this.virtualFunctionBus; }

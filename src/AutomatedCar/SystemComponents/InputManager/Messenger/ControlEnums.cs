@@ -82,4 +82,15 @@ namespace AutomatedCar.SystemComponents.InputManager.Messenger
 
         TurnOff
     }
+
+    public enum LkaInputs
+    {
+        Empty,
+
+        TurnOnOrOff,
+
+        Enabled,
+
+        Disabled,
+    }
 }

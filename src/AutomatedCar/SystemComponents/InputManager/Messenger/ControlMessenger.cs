@@ -37,6 +37,11 @@ namespace AutomatedCar.SystemComponents.InputManager.Messenger
         public event EventHandler<ControlEventArgs> CruiseControlEventHandler;
 
         /// <summary>
+        /// Event for the lka.
+        /// </summary>
+        public event EventHandler<ControlEventArgs> LKAEventHandler;
+
+        /// <summary>
         /// Gets a ControlMessenger instance.
         /// </summary>
         public static ControlMessenger Instance
@@ -109,6 +114,21 @@ namespace AutomatedCar.SystemComponents.InputManager.Messenger
             {
                 eventArgs.CruiseControlInput = cruiseControlInput;
                 this.CruiseControlEventHandler?.Invoke(this, eventArgs);
+            }
+        }
+
+        /// <summary>
+        /// Fires the event for lka input received.
+        /// </summary>
+        /// <param name="lkaInput">The type of input received for the lka.</param>
+        public void FireLKAEvent(LkaInputs lkaInput)
+        {
+            Debug.WriteLine(lkaInput.ToString());
+            ControlEventArgs eventArgs = new ControlEventArgs();
+            if (this.LKAEventHandler != null)
+            {
+                eventArgs.LkaInput = lkaInput;
+                this.LKAEventHandler?.Invoke(this, eventArgs);
             }
         }
     }
