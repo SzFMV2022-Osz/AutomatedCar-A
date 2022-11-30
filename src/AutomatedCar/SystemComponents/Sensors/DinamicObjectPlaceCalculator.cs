@@ -87,7 +87,7 @@ namespace AutomatedCar.SystemComponents.Sensors
             /// </summary>
             public double GetVecotrRotation
             {
-                get { return (Math.PI / 180) * Math.Acos((this.VectorShortForm.X * 1) + (this.VectorShortForm.Y * (0 - 0))) / (this.Length * 1); }
+                get { return (180 / Math.PI) * Math.Acos(((this.VectorShortForm.X * 0) + (this.VectorShortForm.Y * 1)) / (this.Length * 1)); }
             }
 
             /// <summary>
@@ -96,7 +96,9 @@ namespace AutomatedCar.SystemComponents.Sensors
             /// <param name="alpha">Degree of the rotation.</param>
             public void Rotate(double alpha)
             {
-                Point tempB = new Point((int)(this.VectorShortForm.X * Math.Cos(alpha)), (int)(this.VectorShortForm.Y * Math.Sin(alpha)));
+                Point tempB = new Point(
+                    (int)((this.B.X * Math.Cos(alpha * Math.PI / 180)) - (this.B.Y * -Math.Sin(alpha * Math.PI / 180))),
+                    (int)((this.B.X * Math.Sin(alpha * Math.PI / 180)) + (this.B.Y * Math.Cos(alpha * Math.PI / 180))));
                 this.B = new Point(tempB.X + this.A.X, tempB.Y + this.A.Y);
             }
 
@@ -107,7 +109,7 @@ namespace AutomatedCar.SystemComponents.Sensors
             /// <returns>Degree between two vectors.</returns>
             public double DegreeCalculation(Vector vector)
             {
-                return (Math.PI / 180) * Math.Acos(((this.VectorShortForm.X * vector.VectorShortForm.X) +
+                return (180 / Math.PI) * Math.Acos(((this.VectorShortForm.X * vector.VectorShortForm.X) +
                     (this.VectorShortForm.Y * vector.VectorShortForm.Y)) / (this.Length * vector.Length));
             }
 
