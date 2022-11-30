@@ -124,10 +124,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// </summary>
         public void StateDown()
         {
-            if (this.GetSpeed < 5)
-            {
-                this.gearshift.StateDown();
-            }
+            this.gearshift.StateDown();
         }
 
         /// <summary>
@@ -135,10 +132,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
         /// </summary>
         public void StateUp()
         {
-            if (this.GetSpeed < 5)
-            {
-                this.gearshift.StateUp();
-            }
+            this.gearshift.StateUp();
         }
 
         /// <summary>
@@ -250,7 +244,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
                 this.brakePedal = 0;
             }
 
-            this.Velocity = this.GetSpeedByWheelRotation() + this.ChangeVelocity(true);
+            this.Velocity += this.ChangeVelocity(true);
             this.rpm = this.GetRPM();
 
             /*Debug.WriteLine("Gas: " + this.gasPedal);
@@ -276,7 +270,19 @@ namespace AutomatedCar.SystemComponents.Powertrain
                     speed = -1 * this.GetWheelRotationRateByRPM() * this.wheelradius;
                     break;
                 case GearshiftState.N:
-                    speed = 0;
+                    if (this.gearshift.GetPrevState() == GearshiftState.R)
+                    {
+                        speed = -1 * this.GetWheelRotationRateByRPM() * this.wheelradius;
+                    }
+                    else if (this.gearshift.GetPrevState() == GearshiftState.D)
+                    {
+                        speed = this.GetWheelRotationRateByRPM() * this.wheelradius;
+                    }
+                    else
+                    {
+                        speed = 0;
+                    }
+
                     break;
                 case GearshiftState.D:
                     speed = this.GetWheelRotationRateByRPM() * this.wheelradius;
@@ -301,11 +307,15 @@ namespace AutomatedCar.SystemComponents.Powertrain
                 case GearshiftState.R:
                     if (isbraking)
                     {
-                        longitudionalForce = this.BrakingForce() - this.DragForce() - this.Frr();
+                        longitudionalForce = this.BrakingForce() + this.DragForce() + this.Frr();
                     }
                     else
                     {
-                        longitudionalForce = this.DrivingForce() - this.DragForce() - this.Frr();
+                        longitudionalForce = this.DrivingForce() + this.DragForce() + this.Frr();
+                        if (longitudionalForce < 0)
+                        {
+                            longitudionalForce = 0;
+                        }
                     }
 
                     longitudionalForce *= -1;
@@ -317,6 +327,11 @@ namespace AutomatedCar.SystemComponents.Powertrain
 
                     break;
                 case GearshiftState.N:
+                    if (isbraking)
+                    {
+                        longitudionalForce = this.BrakingForce() + this.DragForce() + this.Frr();
+                    }
+
                     break;
                 case GearshiftState.D:
                     if (isbraking)

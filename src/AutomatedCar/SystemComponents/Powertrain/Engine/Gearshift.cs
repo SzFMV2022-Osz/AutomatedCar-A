@@ -11,6 +11,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
     {
         private readonly float[] ratios = { 2.66f, 1.78f, 1.3f, 1f, 0.74f, 0.5f };
         private GearshiftState state;
+        private GearshiftState prevState;
         private int gear;
 
         /// <summary>
@@ -21,6 +22,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
         {
             this.gear = 0;
             this.state = GearshiftState.P;
+            this.prevState = GearshiftState.P;
         }
 
         /// <summary>
@@ -39,6 +41,15 @@ namespace AutomatedCar.SystemComponents.Powertrain
         public GearshiftState GetState()
         {
             return this.state;
+        }
+
+        /// <summary>
+        /// Return the previous gear state.
+        /// </summary>
+        /// <returns>state.</returns>
+        public GearshiftState GetPrevState()
+        {
+            return this.prevState;
         }
 
         /// <summary>
@@ -111,6 +122,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
         {
             if (this.state != GearshiftState.P)
             {
+                this.prevState = this.state;
                 this.state--;
             }
         }
@@ -122,6 +134,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
         {
             if (this.state != GearshiftState.D)
             {
+                this.prevState = this.state;
                 this.state++;
             }
         }

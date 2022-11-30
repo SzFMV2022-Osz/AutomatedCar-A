@@ -56,6 +56,12 @@ namespace AutomatedCar.SystemComponents.Powertrain
         GearshiftState GetState();
 
         /// <summary>
+        /// Return the previous gear state.
+        /// </summary>
+        /// <returns>state.</returns>
+        GearshiftState GetPrevState();
+
+        /// <summary>
         /// Switch state dawn.
         /// </summary>
         void StateDown();
