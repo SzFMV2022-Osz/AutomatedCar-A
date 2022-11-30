@@ -43,6 +43,7 @@ namespace AutomatedCar.Models
             this.powertrainManager = new PowertrainManager(this.virtualFunctionBus);
             this.cruiseControl = new CruiseControl(this.virtualFunctionBus, this);
             this.AEB = new AutomaticEmergencyBreak(this.virtualFunctionBus);
+            this.carCollisionDetector = new CarCollisionDetector(this.virtualFunctionBus);
         }
 
         public VirtualFunctionBus VirtualFunctionBus { get => this.virtualFunctionBus; }
