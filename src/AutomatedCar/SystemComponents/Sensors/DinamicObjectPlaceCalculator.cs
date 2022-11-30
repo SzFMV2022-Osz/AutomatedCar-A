@@ -6,7 +6,7 @@ namespace AutomatedCar.SystemComponents.Sensors
 {
     using System;
     using System.Collections.Generic;
-    using System.Drawing;
+    using Avalonia;
 
     /// <summary>
     /// Calculate dinamic object positions.
@@ -77,7 +77,7 @@ namespace AutomatedCar.SystemComponents.Sensors
             /// <summary>
             /// Gets vector shortform.
             /// </summary>
-            public (int X, int Y) VectorShortForm
+            public (double X, double Y) VectorShortForm
             {
                 get { return (this.B.X - this.A.X, this.B.Y - this.A.Y); }
             }
