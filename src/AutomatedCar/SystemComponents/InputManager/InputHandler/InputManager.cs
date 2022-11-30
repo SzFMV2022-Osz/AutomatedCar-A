@@ -143,6 +143,9 @@ namespace AutomatedCar.SystemComponents.InputManager.InputHandler
                 case CruiseControlInputs.DecreaseTargetSpeed:
                     InputPacket.CruiseControlInputs.Enqueue(CruiseControlInputs.DecreaseTargetSpeed);
                     break;
+                case CruiseControlInputs.TurnOff:
+                    InputPacket.CruiseControlInputs.Enqueue(CruiseControlInputs.TurnOff);
+                    break;
             }
         }
 
