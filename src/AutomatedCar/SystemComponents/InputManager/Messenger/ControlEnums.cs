@@ -78,7 +78,9 @@ namespace AutomatedCar.SystemComponents.InputManager.Messenger
 
         IncreaseTargetSpeed,
 
-        DecreaseTargetSpeed
+        DecreaseTargetSpeed,
+
+        TurnOff
     }
 
     public enum LkaInputs
