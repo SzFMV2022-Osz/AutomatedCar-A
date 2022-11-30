@@ -2,12 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Linq;
-    using System.Numerics;
     using AutomatedCar.Helpers;
     using AutomatedCar.Models;
-    using AutomatedCar.Models.NPC;
     using AutomatedCar.SystemComponents.Packets;
     using Avalonia;
     using Avalonia.Media;
@@ -18,6 +15,12 @@
         private int dist;
         private int distInGame;
 
+        private WorldObject radarViewField;
+        private PolylineGeometry viewFieldGeometry;
+
+        private WorldObject laneViewField;
+        private PolylineGeometry laneFieldGeometry;
+
         public Radar(VirtualFunctionBus virtualFunctionBus)
             : base(virtualFunctionBus)
         {
@@ -25,21 +28,60 @@
             this.dist = 200;
             this.distInGame = 50 * this.dist;
 
-            // finding car's width
-            //var carWith = this.GetAutomatedCar().RawGeometries[0].Points.Max(x => x.X);
-
-            // positioning sensor on the car
             this.vision = SensorVision.CalculateVision(this.dist, this.deg, new Point(0, 0));
             this.virtualFunctionBus.RadarPacket = new RadarPacket();
             this.virtualFunctionBus.RadarPacket.ObjectTrackingDatas = new Dictionary<WorldObject, WorldObjectTracker>();
         }
 
+        private void InitRadarViewField()
+        {
+            var car = World.Instance.ControlledCar;
+            var carWidth = car.RawGeometries[0].Points.Max(x => x.X);
+            var carHeight = car.RawGeometries[0].Points.Max(x => x.Y);
+
+            Point radarPos = new Point(car.RotationPoint.X, car.Geometry.Bounds.Top);
+
+            this.radarViewField = new WorldObject(0, 0, string.Empty);
+            var radarViewFieldGeometries = new PolylineGeometry();
+            radarViewFieldGeometries.Points.Add(this.vision.SensorPos + radarPos);
+            radarViewFieldGeometries.Points.Add(this.vision.Left + radarPos);
+            radarViewFieldGeometries.Points.Add(this.vision.Right + radarPos);
+
+            this.radarViewField.RawGeometries.Add(radarViewFieldGeometries);
+            this.radarViewField.RotationPoint = car.RotationPoint;
+
+            Point lanePos = new Point(car.Geometry.Bounds.Left, car.Geometry.Bounds.Top);
+
+            this.laneViewField = new WorldObject(0, 0, string.Empty);
+            PolylineGeometry laneViewFieldGeometries = new PolylineGeometry();
+            Point relativeLanePoint = new Point(carWidth, -this.distInGame);
+            laneViewFieldGeometries.Points.Add(new Point(0, 0) + lanePos);
+            laneViewFieldGeometries.Points.Add(new Point(relativeLanePoint.X, 0) + lanePos);
+            laneViewFieldGeometries.Points.Add(relativeLanePoint + lanePos);
+            laneViewFieldGeometries.Points.Add(new Point(0, relativeLanePoint.Y) + lanePos);
+
+            this.laneViewField.RawGeometries.Add(laneViewFieldGeometries);
+            this.laneViewField.RotationPoint = car.RotationPoint;
+        }
+
         public override void Process()
         {
-            if (World.Instance.controlledCars.Count == 0)
+            if (this.radarViewField is null)
             {
-                return;
+                this.InitRadarViewField();
             }
+
+            var car = this.GetAutomatedCar();
+
+            this.radarViewField.X = car.X;
+            this.radarViewField.Y = car.Y;
+            this.radarViewField.Rotation = car.Rotation;
+            this.viewFieldGeometry = CollisionDetection.TransformRawGeometry(this.radarViewField);
+
+            this.laneViewField.X = car.X;
+            this.laneViewField.Y = car.Y;
+            this.laneViewField.Rotation = car.Rotation;
+            this.laneFieldGeometry = CollisionDetection.TransformRawGeometry(this.laneViewField);
 
             this.SaveWorldObjectsToPacket();
         }
@@ -96,22 +138,16 @@
             this.virtualFunctionBus.RadarPacket.RelevantWorldObjs = list;
             this.virtualFunctionBus.RadarPacket.Closest = this.NearestWorldObject(list);
             this.virtualFunctionBus.RadarPacket.ClosestInLane = this.ClosestInLane(list);
-
-            /*
-            Trace.WriteLine(packet.RelevantWorldObjs.Count);
-            packet.RelevantWorldObjs.ForEach(x => Trace.Write(x.X + "," + x.Y + " " + x.Filename + "; "));
-            Trace.WriteLine(" ");
-
-            Trace.WriteLine("CLOSEST: ");
-            Trace.WriteLine(packet.Closest == null ? "no closest" : packet.Closest.Filename + "," + packet.Closest.X + ", " + packet.Closest.Y);
-            Trace.WriteLine("CLOSEST IN LANE:");
-            Trace.WriteLine(packet.ClosestInLane == null ? "no closest" : packet.ClosestInLane.Filename + ", " + packet.ClosestInLane.X + ", " + packet.ClosestInLane.Y);
-            */
         }
 
         private bool IsRelevant(WorldObject obj)
         {
-            AutomatedCar car = this.GetAutomatedCar();
+            var radarTriangle = new Tuple<Point, Point, Point>(
+                this.viewFieldGeometry.Points[0],
+                this.viewFieldGeometry.Points[1],
+                this.viewFieldGeometry.Points[2]);
+
+            var car = this.GetAutomatedCar();
 
             if (obj.Equals(car))
             {
@@ -129,12 +165,10 @@
 
             var objPoly = CollisionDetection.TransformRawGeometry(obj);
 
-            var roi = this.GetROI();
-
             bool isInTriangle = false;
             for (int i = 0; i < objPoly.Points.Count && !isInTriangle; ++i)
             {
-                isInTriangle = CollisionDetection.PointInTriangle(objPoly.Points[i], new Tuple<Point, Point, Point>(roi.Item1, roi.Item2, roi.Item3));
+                isInTriangle = CollisionDetection.PointInTriangle(objPoly.Points[i], radarTriangle);
             }
 
             return isInTriangle;
@@ -142,10 +176,8 @@
 
         private List<WorldObject> OrderByDistance(List<WorldObject> list)
         {
-            var sensorPos = this.GetROI().Item3;
-
             // distance = sqrt((x2-x1)^2+(y2-y1)^2)
-            return list.OrderBy(obj => Math.Sqrt(Math.Pow(obj.X - sensorPos.X, 2) + Math.Pow(obj.Y - sensorPos.Y, 2))).ToList();
+            return list.OrderBy(obj => Math.Sqrt(Math.Pow(obj.X - this.vision.SensorPos.X, 2) + Math.Pow(obj.Y - this.vision.SensorPos.Y, 2))).ToList();
         }
 
         private WorldObject ClosestInLane(List<WorldObject> relevantList)
@@ -155,42 +187,25 @@
                 return null;
             }
 
-            var car = this.GetAutomatedCar();
-            var carPos = new Point(car.X, car.Y);
-            var roi = this.GetROI();
-
-            var carWidth = this.GetAutomatedCar().RawGeometries[0].Points.Max(x => x.X);
-
-            Point relativePoint = new Point(carWidth, -this.distInGame);
-            Point relativeNextPoint = CollisionDetection.RotatePoint(relativePoint, car.Rotation);
-
-            Rect rect = new Rect(car.X + this.vision.SensorPos.X - (carWidth / 2), car.Y + this.vision.SensorPos.Y, relativeNextPoint.X, relativeNextPoint.Y);
-            PolylineGeometry poly = new PolylineGeometry();
-            poly.Points.Add(rect.TopLeft);
-            poly.Points.Add(rect.TopRight);
-            poly.Points.Add(rect.BottomLeft);
-            poly.Points.Add(rect.BottomRight);
-
             double closestDist = double.MaxValue;
-            WorldObject closest = relevantList[0];
+            WorldObject closest = null;
+
             for (int i = 0; i < relevantList.Count; ++i)
             {
-                if (!CollisionDetection.BoundingBoxesCollide(poly, CollisionDetection.TransformRawGeometry(closest), 0))
+                var transformed = CollisionDetection.TransformRawGeometry(relevantList[i]);
+                bool collide = CollisionDetection.BoundingBoxesCollide(this.laneFieldGeometry, transformed, 1);
+
+                if (!collide)
                 {
                     continue;
                 }
 
-                double calculated = Math.Sqrt(Math.Pow(roi.Item3.X - relevantList[i].X, 2) + Math.Pow(roi.Item3.Y - relevantList[i].Y, 2));
+                double calculated = Math.Sqrt(Math.Pow(this.vision.SensorPos.X - relevantList[i].X, 2) + Math.Pow(this.vision.SensorPos.Y - relevantList[i].Y, 2));
                 if (calculated < closestDist)
                 {
                     closestDist = calculated;
                     closest = relevantList[i];
                 }
-            }
-
-            if (closestDist == double.MaxValue)
-            {
-                return null;
             }
 
             return closest;

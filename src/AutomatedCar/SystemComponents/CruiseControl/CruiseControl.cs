@@ -103,6 +103,7 @@
                             if (selectedACC.ACCenabled)
                             {
                                 selectedACC.ACCenabled = !selectedACC.ACCenabled;
+                                ControlMessenger.Instance.FirePedalEvent(Pedals.Empty);
                                 this.targetSpeed = 0;
                             }
                             else if (!selectedACC.ACCenabled)
@@ -174,14 +175,17 @@
         private void HandleCC()
         {
             int currentSpeed = this.virtualFunctionBus.PowertrainPacket.CurrentSpeed;
-            double carSpeedKph = this.PixelPerSecondToKph(currentSpeed);
+            double carSpeedKph = currentSpeed; // this.PixelPerSecondToKph(currentSpeed);
+
+            ControlMessenger.Instance.FirePedalEvent(Pedals.Empty);
+
             if (carSpeedKph < this.targetSpeed)
             {
-                this.virtualFunctionBus.InputPacket.PedalState = Pedals.Gas;
+                ControlMessenger.Instance.FirePedalEvent(Pedals.Gas);
             }
             else if (carSpeedKph > this.minTargetSpeed)
             {
-                this.virtualFunctionBus.InputPacket.PedalState = Pedals.Brake;
+                ControlMessenger.Instance.FirePedalEvent(Pedals.Brake);
             }
             else
             {
@@ -192,28 +196,32 @@
         private void HandleACC(double distCarInFront)
         {
             int currentSpeed = this.virtualFunctionBus.PowertrainPacket.CurrentSpeed;
-            double gap = distCarInFront / currentSpeed;
+            double gap = (distCarInFront / 50) / (currentSpeed / 3.6);
             double gapGoal = this.accDistances[this.currentAccDistanceIdx];
-            double carSpeedKph = this.PixelPerSecondToKph(currentSpeed);
+            double carSpeedKph = currentSpeed; //this.PixelPerSecondToKph(currentSpeed);
 
-            this.virtualFunctionBus.InputPacket.PedalState = Pedals.Empty;
+            ControlMessenger.Instance.FirePedalEvent(Pedals.Empty);
 
             if (gap > gapGoal)
             {
                 if (carSpeedKph < this.targetSpeed)
                 {
-                    this.virtualFunctionBus.InputPacket.PedalState = Pedals.Gas;
+                    ControlMessenger.Instance.FirePedalEvent(Pedals.Gas);
+                }
+                else
+                {
+                    ControlMessenger.Instance.FirePedalEvent(Pedals.Empty);
                 }
             }
             else if (gap < gapGoal)
             {
                 if (carSpeedKph > this.minTargetSpeed)
                 {
-                    this.virtualFunctionBus.InputPacket.PedalState = Pedals.Brake;
+                    ControlMessenger.Instance.FirePedalEvent(Pedals.Brake);
                 }
                 else
                 {
-                    this.ACCenabled = false; // TODO: megkérdezni mi történjen ha 30 kph alatt megy az előttünk lévő autó -> kikapcsolni az ACC-t és majd a vészfékező intézi?
+                    ControlMessenger.Instance.FireCruiseControlEvent(CruiseControlInputs.TurnOnOrOff); // this.ACCenabled = false; // TODO: megkérdezni mi történjen ha 30 kph alatt megy az előttünk lévő autó -> kikapcsolni az ACC-t és majd a vészfékező intézi?
                 }
             }
         }
