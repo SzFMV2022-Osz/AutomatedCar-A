@@ -52,6 +52,9 @@
                                     <RotateTransform Angle="{Binding Car.VirtualFunctionBus.PowertrainPacket.RotationAngle}"/>
                                 </Image.RenderTransform>
                             </Image>
+                            <Border BorderThickness="2" BorderBrush="Yellow" Margin="4" IsVisible="{Binding ShouldShowAEBWarning}">
+	                              <TextBlock Margin="4" Foreground="Yellow" FontWeight="Bold">WARNING: AEB won't work properly above 70 km/h</TextBlock>
+                            </Border>
                             <Grid ColumnDefinitions="100,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
 
                                 <TextBlock Grid.Row="0" Grid.Column="0">X:</TextBlock>
