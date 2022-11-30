@@ -87,7 +87,15 @@ namespace AutomatedCar.SystemComponents.Sensors
             /// </summary>
             public double GetVecotrRotation
             {
-                get { return (180 / Math.PI) * Math.Acos(((this.VectorShortForm.X * 0) + (this.VectorShortForm.Y * 1)) / (this.Length * 1)); }
+                get
+                {
+                    if (this.Length == 0)
+                    {
+                        return 0;
+                    }
+
+                    return (180 / Math.PI) * Math.Acos(((this.VectorShortForm.X * 0) + (this.VectorShortForm.Y * 1)) / (this.Length * 1));
+                }
             }
 
             /// <summary>
@@ -109,6 +117,11 @@ namespace AutomatedCar.SystemComponents.Sensors
             /// <returns>Degree between two vectors.</returns>
             public double DegreeCalculation(Vector vector)
             {
+                if (this.Length == 0 || vector.Length == 0)
+                {
+                    return 0;
+                }
+
                 return (180 / Math.PI) * Math.Acos(((this.VectorShortForm.X * vector.VectorShortForm.X) +
                     (this.VectorShortForm.Y * vector.VectorShortForm.Y)) / (this.Length * vector.Length));
             }
