@@ -17,6 +17,8 @@ namespace AutomatedCar.SystemComponents
 
         public IPowertrainPacket PowertrainPacket { get; set; }
 
+        public ILaneKeepingPacket LeaneKeepingPacket { get; set; }
+
         public InputPacket InputPacket { get; set; }
 
         public CruiseControlPacket CruiseControlPacket { get; set; }
