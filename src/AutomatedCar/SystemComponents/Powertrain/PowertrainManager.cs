@@ -55,7 +55,7 @@ namespace AutomatedCar.SystemComponents.Powertrain
                     this.virtualFunctionBus.PowertrainPacket.CurrentBrakeValue = this.engine.GetBrakeValue;
                     break;
                 case Pedals.Brake:
-                    if (this.engine.GetGearshiftState == GearshiftState.D || this.engine.GetGearshiftState == GearshiftState.R)
+                    if (this.engine.GetGearshiftState == GearshiftState.D || this.engine.GetGearshiftState == GearshiftState.R || this.engine.GetGearshiftState == GearshiftState.N)
                     {
                         this.engine.Braking();
                     }
