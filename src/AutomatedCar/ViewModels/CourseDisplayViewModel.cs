@@ -56,6 +56,7 @@ namespace AutomatedCar.ViewModels
         {
             // World.Instance.ControlledCar.Y += 5;
             ControlMessenger.Instance.FirePedalEvent(Pedals.Brake);
+            ControlMessenger.Instance.FireCruiseControlEvent(CruiseControlInputs.TurnOff);
         }
 
         public void KeyLeft()

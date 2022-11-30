@@ -96,7 +96,6 @@ namespace AutomatedCar.SystemComponents.InputManager.InputHandler
                     this.CurrendPedalState = Pedals.Empty;
                     break;
                 case Pedals.Brake:
-                    this.CurrentCruiseControlInput = CruiseControlInputs.TurnOnOrOff;
                     this.CurrendPedalState = Pedals.Brake;
                     break;
             }
@@ -143,6 +142,9 @@ namespace AutomatedCar.SystemComponents.InputManager.InputHandler
                     break;
                 case CruiseControlInputs.DecreaseTargetSpeed:
                     InputPacket.CruiseControlInputs.Enqueue(CruiseControlInputs.DecreaseTargetSpeed);
+                    break;
+                case CruiseControlInputs.TurnOff:
+                    InputPacket.CruiseControlInputs.Enqueue(CruiseControlInputs.TurnOff);
                     break;
             }
         }

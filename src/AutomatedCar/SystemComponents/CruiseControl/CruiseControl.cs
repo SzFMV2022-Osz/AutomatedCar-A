@@ -67,6 +67,10 @@
                 {
                     switch (input)
                     {
+                        case CruiseControlInputs.TurnOff:
+                            selectedACC.ACCenabled = !selectedACC.ACCenabled;
+                            this.targetSpeed = 0;
+                            break;
                         case CruiseControlInputs.TurnOnOrOff:
                             if (selectedACC.ACCenabled)
                             {
