@@ -107,6 +107,11 @@ namespace AutomatedCar.SystemComponents.Sensors
             /// <returns>Degree between two vectors.</returns>
             public double DegreeCalculation(Vector vector)
             {
+                if (this.VectorShortForm.Equals(vector.VectorShortForm))
+                {
+                    return 0;
+                }
+
                 return (Math.PI / 180) * Math.Acos(((this.VectorShortForm.X * vector.VectorShortForm.X) +
                     (this.VectorShortForm.Y * vector.VectorShortForm.Y)) / (this.Length * vector.Length));
             }
