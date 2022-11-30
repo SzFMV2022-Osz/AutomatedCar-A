@@ -4,12 +4,7 @@
 
 namespace AutomatedCar.SystemComponents.Sensors
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Drawing;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
+    using Avalonia;
 
     /// <summary>
     /// Dinamic object predicated position and rotation.

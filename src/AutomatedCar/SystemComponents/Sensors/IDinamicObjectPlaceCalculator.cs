@@ -5,7 +5,7 @@
 namespace AutomatedCar.SystemComponents.Sensors
 {
     using System.Collections.Generic;
-    using System.Drawing;
+    using Avalonia;
 
     /// <summary>
     /// Calculate dinamic object positions.
