@@ -90,5 +90,10 @@
         {
             return Math.Pow(this.ConvertToMeterPerSec(velocity), 2) / (2 * 0.6 * 9.8);
         }
+
+        private double BreakingDistanceCalculator2(Point velocity)
+        {
+            return (0 - Math.Pow(this.ConvertToMeterPerSec(velocity), 2)) / (2 * (-9));
+        }
     }
 }
