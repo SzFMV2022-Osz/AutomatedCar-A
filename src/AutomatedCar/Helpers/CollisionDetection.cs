@@ -225,5 +225,11 @@
             }
             return geoms;
         }
+
+        public static bool PointInRectangle(Point point, Rect rectangle)
+        {
+            return point.X >= rectangle.Right && point.X <= rectangle.Left &&
+                point.Y >= rectangle.Top && point.Y <= rectangle.Bottom;
+        }
     }
 }
