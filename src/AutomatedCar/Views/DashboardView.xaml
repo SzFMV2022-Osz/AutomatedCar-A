@@ -52,7 +52,7 @@
                                     <RotateTransform Angle="{Binding Car.VirtualFunctionBus.PowertrainPacket.RotationAngle}"/>
                                 </Image.RenderTransform>
                             </Image>
-                            <Border BorderThickness="2" BorderBrush="Yellow" Margin="4" IsVisible="{Binding ShouldShowAEBWarning}">
+                            <Border BorderThickness="2" BorderBrush="Yellow" Margin="4" IsVisible="{Binding Car.VirtualFunctionBus.AEBPacket.ShouldShowAEBWarning}">
 	                              <TextBlock Margin="4" Foreground="Yellow" FontWeight="Bold">WARNING: AEB won't work properly above 70 km/h</TextBlock>
                             </Border>
 							<Border BorderThickness="2" BorderBrush="Yellow" Margin="4" IsVisible="{Binding Car.VirtualFunctionBus.AEBPacket.CollisionPredicted}">

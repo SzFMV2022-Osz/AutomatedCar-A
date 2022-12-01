@@ -25,11 +25,25 @@
             this.calculator = new DinamicObjectPlaceCalculator();
             this.packet = new AEBPacket();
             virtualFunctionBus.AEBPacket = packet;
+            this.packet.ShouldShowAEBWarning = false;
         }
 
         public override void Process()
         {
+            CheckAEBWarning();
             UseDummySimulate();
+        }
+
+        private void CheckAEBWarning()
+        {
+            if(this.virtualFunctionBus.PowertrainPacket.CurrentSpeed >= 70)
+            {
+                this.packet.ShouldShowAEBWarning = true;
+            }
+            else
+            {
+                this.packet.ShouldShowAEBWarning = false;
+            }
         }
 
         private void UseAdvancedSimulate()
