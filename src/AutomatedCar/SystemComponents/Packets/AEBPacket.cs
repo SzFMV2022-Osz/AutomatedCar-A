@@ -11,6 +11,7 @@
     {
         private bool collisionPredicted;
         private bool emergencyBreakActivated;
+        private bool shouldShowAEBWarning;
 
         public bool CollisionPredicted
         {
@@ -23,6 +24,12 @@
         {
             get => this.emergencyBreakActivated;
             set => this.RaiseAndSetIfChanged(ref this.emergencyBreakActivated, value);
+        }
+
+        public bool ShouldShowAEBWarning
+        {
+            get => this.shouldShowAEBWarning;
+            set => this.RaiseAndSetIfChanged(ref this.shouldShowAEBWarning, value);
         }
     }
 }
